@@ -226,6 +226,8 @@ const getFallbackImage = (title: string) => {
     categoryTheme = '#0284c7';
   }
 
+  const safeTitle = (title || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">
     <rect width="600" height="400" fill="url(#grad)"/>
     <defs>
@@ -236,7 +238,7 @@ const getFallbackImage = (title: string) => {
     </defs>
     <circle cx="300" cy="170" r="65" fill="rgba(255,255,255,0.12)"/>
     <text x="300" y="190" font-size="65" text-anchor="middle" dominant-baseline="middle">${iconText}</text>
-    <text x="300" y="290" font-size="22" font-family="sans-serif" font-weight="bold" fill="#ffffff" text-anchor="middle">${title}</text>
+    <text x="300" y="290" font-size="22" font-family="sans-serif" font-weight="bold" fill="#ffffff" text-anchor="middle">${safeTitle}</text>
     <text x="300" y="325" font-size="13" font-family="sans-serif" fill="#a78bfa" text-anchor="middle">Fixily Verified Service • Kerala</text>
   </svg>`;
 

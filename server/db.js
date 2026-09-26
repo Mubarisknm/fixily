@@ -20,7 +20,7 @@ export const SERVICES = [
     tagline: 'Breakdown jumpstart, engine diagnostic, brake fix & towing.',
     badge: 'Roadside Rescue',
     icon: 'Wrench',
-    imageUrl: 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?w=600&auto=format&fit=crop&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=600&auto=format&fit=crop&q=80',
     eta: '20 mins',
     isInstant: true,
     priceType: 'flat_diagnostic',
