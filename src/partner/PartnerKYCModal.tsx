@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   ShieldCheck,
   UserCheck,
@@ -18,7 +18,9 @@ import {
   ChevronLeft,
   Sparkles,
   Phone,
-  Check
+  Check,
+  Image as ImageIcon,
+  RefreshCw
 } from 'lucide-react';
 import { GigPartner, ThemeMode } from '../types';
 import { api } from '../services/api';
@@ -29,6 +31,39 @@ interface PartnerKYCModalProps {
   onSuccess: (newPartner: GigPartner) => void;
   theme: ThemeMode;
 }
+
+// Comprehensive Catalog of Freelance & Gig Trades
+const FREELANCE_TRADES = [
+  { value: 'Freelance Acting Driver ("Drive My Car")', label: '🚗 Freelance Acting Driver ("Drive My Car") - Kerala Police PCC' },
+  { value: 'Doorstep Car & Bike Mechanic', label: '🔧 Doorstep Car & Bike Mechanic (20-Min Roadside Rescue)' },
+  { value: 'Electrician & Wiring Technician', label: '⚡ Certified Electrician & Inverter/Wiring Technician' },
+  { value: 'Plumber & Sanitary Specialist', label: '💧 Licensed Plumber, Leak Detection & Pipeline Specialist' },
+  { value: 'AC & Appliance Servicing Technician', label: '❄️ AC, Refrigerator & Washing Machine Servicing' },
+  { value: 'Full House Deep Cleaning Specialist', label: '🧹 Full House Deep Cleaning & Sanitization' },
+  { value: 'Carpenter & Emergency Locksmith', label: '🔨 Carpenter, Door Locks & Modular Furniture' },
+  { value: 'CCTV & Smart Security Installer', label: '📹 CCTV, Smart Video Doorbell & WiFi Setup' },
+  { value: 'Painter & Waterproofing Expert', label: '🎨 Painter, Dampness Putty & Terrace Waterproofing' },
+  { value: 'At-Home Salon, Hair & Beautician', label: '✂️ At-Home Salon, Hair Stylist & Beautician' },
+  { value: 'Doorstep Mobile & Laptop Repair', label: '📱 Doorstep Smartphone, Tablet & Laptop Repair' },
+  { value: 'Gardener & Landscape Maintenance', label: '🌿 Gardener, Lawn Mowing & Landscape Maintenance' },
+  { value: 'Pest Control & Fumigation Specialist', label: '🐜 Termite, Cockroach & Mosquito Pest Control' },
+  { value: 'Packers & Movers Logistics', label: '🚚 Packers & Movers, House Relocation & Loading' },
+  { value: 'Solar Panel & Inverter Technician', label: '☀️ Solar Panel Installation & Battery Backup Tech' },
+  { value: 'Tile, Marble & Masonry Specialist', label: '🧱 Masonry, Tile Layer & Marble Polishing' },
+  { value: 'Private Home Chef & Caterer', label: '🍳 Private Home Chef & Party Catering Assistant' },
+  { value: 'Courier, Parcel & Delivery Agent', label: '📦 Local Delivery, Documents & Parcel Courier' },
+  { value: 'Pet Care, Dog Walker & Groomer', label: '🐕 Pet Sitter, Dog Walker & Pet Grooming' },
+  { value: 'Home Nursing & Elderly Care Attendant', label: '👵 Home Nursing Attendant & Elderly Patient Care' },
+  { value: 'Welder & Metal Fabrication Worker', label: '🪚 Arc Welder, Iron Gate & Grill Fabrication' },
+  { value: 'Interlock & Compound Pressure Washer', label: '🚿 High-Pressure Interlock & Compound Wall Wash' },
+  { value: 'Water Tanker Delivery Driver', label: '🚚 Water Tanker Supply & Sump Water Driver' },
+  { value: 'Sofa, Carpet & Mattress Shampooing', label: '🧽 Sofa, Carpet & Car Interior Foam Shampoo' },
+  { value: 'Network, WiFi & Optical Fiber Tech', label: '🌐 Home WiFi Router, LAN & Optical Fiber Tech' },
+  { value: 'Tailor, Saree Draping & Alterations', label: '🪡 Doorstep Tailor, Saree Draping & Alterations' },
+  { value: 'Event Photographer & Videographer', label: '📸 Event Photographer, Videographer & Drone Pilot' },
+  { value: 'Septic Tank & Sump Cleaning Specialist', label: '🚽 Septic Tank, Drainage & Sump Cleaning' },
+  { value: 'Other', label: '✨ Other (Type your own custom profession / trade)' }
+];
 
 export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
   isOpen,
@@ -43,12 +78,18 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
   // Step 1: Personal & Trade
   const [name, setName] = useState<string>('Rahul Ramesh');
   const [phone, setPhone] = useState<string>('+91 98472 88990');
-  const [role, setRole] = useState<string>('Freelance Acting Driver ("Drive My Car")');
+  const [selectedRole, setSelectedRole] = useState<string>('Freelance Acting Driver ("Drive My Car")');
+  const [customRole, setCustomRole] = useState<string>('');
   const [city, setCity] = useState<string>('Kakkanad (InfoPark & Seaport), Kochi');
   const [vehicle, setVehicle] = useState<string>('LMV Commercial Driver (Manual & Auto)');
+
+  // Own Photo Upload State
   const [photoUrl, setPhotoUrl] = useState<string>(
     'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80'
   );
+  const [isCustomPhoto, setIsCustomPhoto] = useState<boolean>(false);
+  const [customPhotoFileName, setCustomPhotoFileName] = useState<string>('');
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Step 2: KYC & Government Verification
   const [aadhaarNumber, setAadhaarNumber] = useState<string>('5489 2210 9043');
@@ -65,6 +106,26 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
 
   if (!isOpen) return null;
 
+  // Handle uploading personal photo from device
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 8 * 1024 * 1024) {
+        alert('Image file size should be less than 8MB');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          setPhotoUrl(event.target.result as string);
+          setIsCustomPhoto(true);
+          setCustomPhotoFileName(file.name);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSimulateDigiLocker = () => {
     setIsVerifyingAadhaar(true);
     setTimeout(() => {
@@ -79,24 +140,41 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
       alert('Please enter your full name and phone number');
       return;
     }
+
+    const finalRole = selectedRole === 'Other'
+      ? customRole.trim()
+      : selectedRole;
+
+    if (selectedRole === 'Other' && !finalRole) {
+      alert('Please type your specific profession / trade in the custom field');
+      setStep(1);
+      return;
+    }
+
     if (!aadhaarNumber.trim()) {
       alert('Please enter your 12-digit Aadhaar number');
+      setStep(2);
       return;
     }
 
     setIsSubmitting(true);
     try {
+      const isDrivingRole = finalRole.toLowerCase().includes('driver') ||
+        finalRole.toLowerCase().includes('mechanic') ||
+        finalRole.toLowerCase().includes('courier') ||
+        finalRole.toLowerCase().includes('delivery');
+
       const newPartner = await api.registerPartner({
-        name,
-        phone,
-        role,
-        city,
-        vehicle,
-        dlNumber: role.toLowerCase().includes('driver') || role.toLowerCase().includes('mechanic') ? dlNumber : undefined,
-        aadhaarNumber,
+        name: name.trim(),
+        phone: phone.trim(),
+        role: finalRole,
+        city: city.trim(),
+        vehicle: vehicle.trim(),
+        dlNumber: isDrivingRole || dlNumber.trim() ? dlNumber.trim() : undefined,
+        aadhaarNumber: aadhaarNumber.trim(),
         pccRefNo: pccRefNo.trim() || 'THUNA-PCC-SUBMITTED',
         pccExpiry,
-        upiId,
+        upiId: upiId.trim(),
         photoUrl
       });
 
@@ -131,10 +209,10 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
                 </span>
               </div>
               <h2 className="text-xl sm:text-2xl font-black mt-0.5 text-slate-950">
-                Partner KYC & Police Verification
+                Partner KYC & Profile Setup
               </h2>
               <p className="text-xs text-slate-900 font-medium">
-                Register as a certified Fixily service partner with instant Aadhaar & Thuna PCC validation.
+                Register as a certified Fixily service partner with instant photo upload, custom trade, & Kerala Police Thuna PCC.
               </p>
             </div>
           </div>
@@ -176,43 +254,123 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
           {/* STEP 1: Personal & Trade Details */}
           {step === 1 && (
             <div className="space-y-4">
-              <div className="flex items-center space-x-4 p-3 rounded-2xl border border-amber-500/20 bg-amber-500/5">
-                <img
-                  src={photoUrl}
-                  alt="Partner Avatar"
-                  className="w-14 h-14 rounded-2xl object-cover border-2 border-amber-400 shadow-md shrink-0"
-                />
-                <div className="flex-1">
-                  <div className="text-xs font-bold">Profile Photo</div>
-                  <p className="text-[11px] text-slate-400">
-                    High-resolution portrait required for Kerala Police verification badge.
-                  </p>
-                  <div className="flex gap-2 mt-1.5">
+              
+              {/* 1. Use Own Photo Upload Card */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 p-4 rounded-2xl border border-amber-500/30 bg-amber-500/5">
+                <div className="relative group shrink-0">
+                  <img
+                    src={photoUrl}
+                    alt="Partner Avatar Preview"
+                    className="w-20 h-20 rounded-2xl object-cover border-2 border-amber-400 shadow-lg shadow-amber-500/20"
+                  />
+                  {isCustomPhoto && (
+                    <span className="absolute -bottom-1 -right-1 bg-emerald-500 text-slate-950 text-[9px] font-black px-1.5 py-0.5 rounded-full shadow">
+                      ✓ Custom Photo
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex-1 space-y-2">
+                  <div>
+                    <div className="text-xs font-black flex items-center space-x-1.5">
+                      <span>Your Profile Photo</span>
+                      <span className="text-[10px] text-amber-500 bg-amber-500/20 px-2 py-0.2 rounded-full font-bold">
+                        Customer & PCC Badge
+                      </span>
+                    </div>
+                    <p className={`text-[11px] mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                      {isCustomPhoto && customPhotoFileName
+                        ? `Loaded: "${customPhotoFileName}"`
+                        : 'Upload your own clear photo from your phone or PC, or choose a preset.'}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    {/* Native File Input for Own Photo */}
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      accept="image/*"
+                      onChange={handlePhotoUpload}
+                      className="hidden"
+                    />
+
                     <button
                       type="button"
-                      onClick={() => setPhotoUrl('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80')}
-                      className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-200 hover:bg-slate-700"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black transition-all shadow-md flex items-center space-x-1.5 hover:scale-105 active:scale-95 cursor-pointer"
                     >
-                      Photo 1
+                      <Upload className="w-3.5 h-3.5" />
+                      <span>{isCustomPhoto ? 'Change Uploaded Photo' : 'Upload Your Photo'}</span>
                     </button>
+
                     <button
                       type="button"
-                      onClick={() => setPhotoUrl('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80')}
-                      className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-200 hover:bg-slate-700"
+                      onClick={() => fileInputRef.current?.click()}
+                      className={`px-3 py-2 rounded-xl text-xs font-bold border transition-colors flex items-center space-x-1 ${
+                        isDark
+                          ? 'border-slate-700 bg-slate-800 text-slate-200 hover:bg-slate-700'
+                          : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100 shadow-sm'
+                      }`}
                     >
-                      Photo 2
+                      <Camera className="w-3.5 h-3.5" />
+                      <span>Take Photo</span>
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => setPhotoUrl('https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80')}
-                      className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-200 hover:bg-slate-700"
-                    >
-                      Photo 3 (Female)
-                    </button>
+
+                    {/* Preset Avatars */}
+                    <div className="flex items-center space-x-1 pl-2 border-l border-slate-700">
+                      <span className="text-[10px] text-slate-400 mr-1 hidden sm:inline">Presets:</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPhotoUrl('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80');
+                          setIsCustomPhoto(false);
+                          setCustomPhotoFileName('');
+                        }}
+                        className={`text-[10px] font-bold px-2 py-1 rounded transition-colors ${
+                          !isCustomPhoto && photoUrl.includes('photo-1507003211169')
+                            ? 'bg-amber-500 text-slate-950'
+                            : isDark ? 'bg-slate-800 text-slate-300 hover:bg-slate-700' : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
+                        }`}
+                      >
+                        Male 1
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPhotoUrl('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80');
+                          setIsCustomPhoto(false);
+                          setCustomPhotoFileName('');
+                        }}
+                        className={`text-[10px] font-bold px-2 py-1 rounded transition-colors ${
+                          !isCustomPhoto && photoUrl.includes('photo-1500648767791')
+                            ? 'bg-amber-500 text-slate-950'
+                            : isDark ? 'bg-slate-800 text-slate-300 hover:bg-slate-700' : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
+                        }`}
+                      >
+                        Male 2
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPhotoUrl('https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80');
+                          setIsCustomPhoto(false);
+                          setCustomPhotoFileName('');
+                        }}
+                        className={`text-[10px] font-bold px-2 py-1 rounded transition-colors ${
+                          !isCustomPhoto && photoUrl.includes('photo-1573496359142')
+                            ? 'bg-amber-500 text-slate-950'
+                            : isDark ? 'bg-slate-800 text-slate-300 hover:bg-slate-700' : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
+                        }`}
+                      >
+                        Female 1
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
 
+              {/* Personal Details */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div>
                   <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
@@ -247,29 +405,55 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+              {/* Primary Service Role / Trade with Comprehensive Options + Other */}
+              <div className="space-y-2">
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">
                   Primary Service Role / Trade *
                 </label>
                 <select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
+                  value={selectedRole}
+                  onChange={(e) => setSelectedRole(e.target.value)}
                   className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-amber-500 font-bold ${
                     isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
                   }`}
                 >
-                  <option value='Freelance Acting Driver ("Drive My Car")'>Freelance Acting Driver ("Drive My Car") - Kerala Police PCC</option>
-                  <option value="Doorstep Car & Bike Mechanic">Doorstep Car & Bike Mechanic (20-Min Roadside Rescue)</option>
-                  <option value="Electrician & Consultation">Certified Electrician & Wiring Technician</option>
-                  <option value="Plumbing & Leak Specialist">Licensed Plumber & Water Pipeline Specialist</option>
-                  <option value="AC & Appliance Servicing">AC, Refrigerator & Washing Machine Technician</option>
-                  <option value="Full House Deep Cleaning">Housekeeping & Deep Cleaning Specialist</option>
-                  <option value="Carpenter & Locksmith">Carpenter & Emergency Locksmith</option>
-                  <option value="CCTV & Smart Security">CCTV & Smart Home Security Installer</option>
-                  <option value="At-Home Salon & Wellness">At-Home Salon & Personal Wellness Specialist</option>
+                  {FREELANCE_TRADES.map((trade) => (
+                    <option key={trade.value} value={trade.value} className={isDark ? 'bg-slate-900 text-white' : 'bg-white text-slate-900'}>
+                      {trade.label}
+                    </option>
+                  ))}
                 </select>
+
+                {/* Dedicated Custom Profession Input when 'Other' is Selected */}
+                {selectedRole === 'Other' && (
+                  <div className={`p-4 rounded-2xl border-2 space-y-2 transition-all ${
+                    isDark
+                      ? 'border-amber-500/80 bg-gradient-to-r from-amber-950/40 via-slate-900 to-amber-950/20 text-white'
+                      : 'border-amber-400 bg-amber-50/80 text-slate-900'
+                  }`}>
+                    <label className="block text-[11px] font-black uppercase tracking-wider text-amber-500 flex items-center space-x-1.5">
+                      <Sparkles className="w-4 h-4" />
+                      <span>Specify Your Custom Profession / Trade *</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={customRole}
+                      onChange={(e) => setCustomRole(e.target.value)}
+                      placeholder="e.g. Aquarium Maintenance Specialist, Acoustic Soundproofer, Locksmith..."
+                      className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-amber-500 font-bold ${
+                        isDark ? 'bg-slate-950 border-amber-500/60 text-white placeholder-slate-500' : 'bg-white border-amber-400 text-slate-900 placeholder-slate-400 shadow-sm'
+                      }`}
+                      autoFocus
+                    />
+                    <p className={`text-[10px] ${isDark ? 'text-amber-300/80' : 'text-amber-800'}`}>
+                      Your custom title will be shown to customers and printed on your certified Fixily Partner profile.
+                    </p>
+                  </div>
+                )}
               </div>
 
+              {/* City Hub & Vehicle */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div>
                   <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
@@ -347,7 +531,7 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
                     type="button"
                     onClick={handleSimulateDigiLocker}
                     disabled={isVerifyingAadhaar || aadhaarVerified}
-                    className="px-4 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black transition-all shrink-0 disabled:opacity-50"
+                    className="px-4 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black transition-all shrink-0 disabled:opacity-50 cursor-pointer"
                   >
                     {isVerifyingAadhaar ? 'Verifying...' : aadhaarVerified ? 'Verified ✓' : 'Verify UIDAI'}
                   </button>
@@ -380,7 +564,7 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
                     href="https://thuna.keralapolice.gov.in"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[10px] text-emerald-400 font-bold hover:underline flex items-center space-x-1 shrink-0"
+                    className="text-[10px] text-emerald-500 font-bold hover:underline flex items-center space-x-1 shrink-0"
                   >
                     <span>Apply on Thuna</span>
                     <ExternalLink className="w-3 h-3" />
@@ -423,21 +607,21 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
                 <div className="flex items-center justify-between p-2.5 rounded-xl border border-dashed border-emerald-500/30 text-xs">
                   <div className="flex items-center space-x-2 text-slate-300">
                     <FileText className="w-4 h-4 text-emerald-500" />
-                    <span className="text-[11px] font-medium">
-                      {pccFileAttached ? 'kerala_police_thuna_pcc_rahul.pdf (Attached)' : 'Attach PCC PDF/Image'}
+                    <span className="text-[11px] font-medium text-slate-300">
+                      {pccFileAttached ? 'kerala_police_thuna_pcc_verified.pdf (Attached)' : 'Attach PCC PDF/Image'}
                     </span>
                   </div>
                   <button
                     type="button"
                     onClick={() => setPccFileAttached(!pccFileAttached)}
-                    className="text-[10px] font-bold text-emerald-400 hover:underline"
+                    className="text-[10px] font-bold text-emerald-500 hover:underline cursor-pointer"
                   >
                     {pccFileAttached ? 'Change Document' : 'Browse File'}
                   </button>
                 </div>
               </div>
 
-              {/* 3. Driving License (If Driver or Roadside) */}
+              {/* 3. Motor Driving License (If Driver or Roadside) */}
               <div className={`p-4 rounded-2xl border space-y-2 ${
                 isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
               }`}>
@@ -517,7 +701,7 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
                   />
                   <div className="text-xs">
                     <span className="font-extrabold text-indigo-400">Fixily Partner Fair Pay Guarantee:</span>
-                    <p className="text-[11px] text-slate-400 mt-0.5">
+                    <p className={`text-[11px] mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                       I agree to the Fixily code of conduct. I understand that <strong>100% of customer return bus fares and meal batta</strong> are paid directly to me with zero platform deductions.
                     </p>
                   </div>
@@ -528,7 +712,9 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
           )}
 
           {/* Modal Footer Controls */}
-          <div className="pt-3 border-t border-slate-800 flex items-center justify-between">
+          <div className={`pt-3 border-t flex items-center justify-between ${
+            isDark ? 'border-slate-800' : 'border-slate-200'
+          }`}>
             {step > 1 ? (
               <button
                 type="button"
@@ -554,7 +740,7 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
               <button
                 type="button"
                 onClick={() => setStep(step + 1)}
-                className="bg-amber-500 hover:bg-amber-400 text-slate-950 px-6 py-2.5 rounded-xl text-xs font-black shadow-lg transition-transform hover:scale-105 flex items-center space-x-1"
+                className="bg-amber-500 hover:bg-amber-400 text-slate-950 px-6 py-2.5 rounded-xl text-xs font-black shadow-lg transition-transform hover:scale-105 flex items-center space-x-1 cursor-pointer"
               >
                 <span>Continue to Step {step + 1}</span>
                 <ChevronRight className="w-4 h-4" />
@@ -563,7 +749,7 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
               <button
                 type="submit"
                 disabled={isSubmitting || !agreeAllowancePolicy}
-                className="bg-gradient-to-r from-emerald-500 to-teal-400 hover:brightness-110 text-slate-950 px-6 py-2.5 rounded-xl text-xs font-black shadow-xl transition-transform hover:scale-105 flex items-center space-x-1.5 disabled:opacity-50"
+                className="bg-gradient-to-r from-emerald-500 to-teal-400 hover:brightness-110 text-slate-950 px-6 py-2.5 rounded-xl text-xs font-black shadow-xl transition-transform hover:scale-105 flex items-center space-x-1.5 disabled:opacity-50 cursor-pointer"
               >
                 <CheckCircle2 className="w-4 h-4" />
                 <span>{isSubmitting ? 'Registering & Verifying...' : 'Complete KYC & Activate Partner'}</span>
