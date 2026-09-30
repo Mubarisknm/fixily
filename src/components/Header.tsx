@@ -49,11 +49,11 @@ export const Header: React.FC<HeaderProps> = ({
                     Fixily
                   </span>
                   <span className="text-[10px] font-black uppercase tracking-wider bg-purple-500/10 text-purple-600 dark:text-purple-400 px-2 py-0.5 rounded-full border border-purple-500/20">
-                    Kochi
+                    On-Demand
                   </span>
                 </div>
                 <p className="text-[10px] text-slate-400 font-medium hidden sm:block">
-                  Doorstep Services & Mechanics
+                  Doorstep Services & 24/7 Roadside Rescue
                 </p>
               </div>
             </div>

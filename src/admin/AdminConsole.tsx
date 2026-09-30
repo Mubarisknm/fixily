@@ -75,7 +75,7 @@ export const AdminConsole: React.FC<AdminConsoleProps> = ({
             <span className="bg-emerald-500/20 text-emerald-300 text-xs font-black px-3 py-1 rounded-full border border-emerald-500/30">
               Operations Central Command
             </span>
-            <span className="text-xs text-slate-400">Kochi Hub</span>
+            <span className="text-xs text-slate-400">Multi-City Operations</span>
           </div>
           <h1 className="text-2xl font-black text-white mt-1">Fixily Admin Dispatch & Compliance Hub</h1>
           <p className="text-xs text-slate-300 mt-0.5">
@@ -176,7 +176,7 @@ export const AdminConsole: React.FC<AdminConsoleProps> = ({
           <div className="bg-slate-900 rounded-3xl border border-slate-800 p-6 shadow-2xl space-y-4">
             <h3 className="text-lg font-bold text-white flex items-center space-x-2">
               <MapPin className="w-5 h-5 text-teal-400" />
-              <span>Live Provider & Booking Dispatch Map (Kochi)</span>
+              <span>Live Provider & Booking Dispatch Map</span>
             </h3>
 
             <LiveMap

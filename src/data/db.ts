@@ -1,13 +1,22 @@
 // Mock Database & Business Logic Store for Fixily Kerala — Expanded Service Categories with Mechanic
 
 export const KOCHI_LOCATIONS = [
-  { id: 'kakkanad', name: 'Kakkanad (InfoPark & Seaport)', pin: '682030', lat: 10.0159, lng: 76.3419 },
-  { id: 'edappally', name: 'Edappally (Lulu Mall & Toll)', pin: '682024', lat: 10.0261, lng: 76.3084 },
-  { id: 'vyttila', name: 'Vyttila Mobility Hub', pin: '682019', lat: 9.9674, lng: 76.3182 },
-  { id: 'fortkochi', name: 'Fort Kochi & Mattancherry', pin: '682001', lat: 9.9648, lng: 76.2427 },
-  { id: 'aluva', name: 'Aluva Metro & Bank Junction', pin: '683101', lat: 10.1076, lng: 76.3516 },
-  { id: 'trippunithura', name: 'Trippunithura (Statue Junction)', pin: '682301', lat: 9.9482, lng: 76.3478 },
-  { id: 'palarivattom', name: 'Palarivattom & Kaloor', pin: '682025', lat: 9.9984, lng: 76.3018 }
+  // Kochi Metro
+  { id: 'kakkanad', name: 'Kakkanad, Kochi (InfoPark)', city: 'Kochi', state: 'Kerala', pin: '682030', lat: 10.0159, lng: 76.3419 },
+  { id: 'edappally', name: 'Edappally & Lulu, Kochi', city: 'Kochi', state: 'Kerala', pin: '682024', lat: 10.0261, lng: 76.3084 },
+  { id: 'vyttila', name: 'Vyttila Mobility Hub, Kochi', city: 'Kochi', state: 'Kerala', pin: '682019', lat: 9.9674, lng: 76.3182 },
+  { id: 'fortkochi', name: 'Fort Kochi & Mattancherry', city: 'Kochi', state: 'Kerala', pin: '682001', lat: 9.9648, lng: 76.2427 },
+  { id: 'aluva', name: 'Aluva Metro & Transit Zone', city: 'Kochi', state: 'Kerala', pin: '683101', lat: 10.1076, lng: 76.3516 },
+  
+  // Other Key Cities & Hubs
+  { id: 'trivandrum', name: 'Trivandrum (Technopark & Kowdiar)', city: 'Trivandrum', state: 'Kerala', pin: '695581', lat: 8.5241, lng: 76.9366 },
+  { id: 'kozhikode', name: 'Kozhikode (Hilite City & Calicut Beach)', city: 'Kozhikode', state: 'Kerala', pin: '673001', lat: 11.2588, lng: 75.7804 },
+  { id: 'thrissur', name: 'Thrissur (Swaraj Round & East Fort)', city: 'Thrissur', state: 'Kerala', pin: '680001', lat: 10.5276, lng: 76.2144 },
+  { id: 'kannur', name: 'Kannur (Thavakkara & Payyambalam)', city: 'Kannur', state: 'Kerala', pin: '670001', lat: 11.8745, lng: 75.3704 },
+  
+  // Major Metros (Expansion Hubs)
+  { id: 'bengaluru', name: 'Bengaluru (Koramangala & Indiranagar)', city: 'Bengaluru', state: 'Karnataka', pin: '560034', lat: 12.9352, lng: 77.6245 },
+  { id: 'mumbai', name: 'Mumbai (Bandra & Andheri West)', city: 'Mumbai', state: 'Maharashtra', pin: '400050', lat: 19.0596, lng: 72.8295 }
 ];
 
 export const SERVICES = [

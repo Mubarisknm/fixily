@@ -326,7 +326,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
           <div>
             <h3 className="text-lg font-extrabold text-white flex items-center space-x-2">
               <Zap className="w-5 h-5 text-teal-400" />
-              <span>Incoming Job Radar ({currentPartner.currentLocation.name || 'Kochi'})</span>
+              <span>Incoming Job Radar ({currentPartner.currentLocation.name || 'Active Zone'})</span>
             </h3>
             <p className="text-xs text-slate-400">Live requests ready for immediate dispatch</p>
           </div>
@@ -343,7 +343,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
             <AlertTriangle className="w-8 h-8 text-amber-400 mx-auto" />
             <h4 className="font-bold text-white">You are currently OFFLINE</h4>
             <p className="text-xs text-slate-300 max-w-sm mx-auto">
-              Toggle your duty status ONLINE using the top switcher to start receiving incoming job requests across Kochi.
+              Toggle your duty status ONLINE using the top switcher to start receiving incoming job requests across your coverage zone.
             </p>
           </div>
         ) : pendingJobs.length === 0 ? (

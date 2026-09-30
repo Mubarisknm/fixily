@@ -201,7 +201,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       setIsSubmitting(false);
       setSelectedService(null);
       onRefreshJobs();
-      alert('🎉 Booking Confirmed! Your dispatch is being assigned to the closest verified partner in Kochi.');
+      alert(`🎉 Booking Confirmed! Your dispatch is being assigned to the closest verified partner near ${selectedLocation.name}.`);
     } catch (err) {
       setIsSubmitting(false);
       alert('Booking failed. Please try again.');
@@ -226,11 +226,11 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
           </div>
 
           <h1 className="text-2xl sm:text-4xl font-black tracking-tight leading-tight">
-            Reliable doorstep services & roadside rescue in Kochi.
+            Reliable doorstep services & 20-minute roadside rescue.
           </h1>
 
           <p className={`text-sm sm:text-base font-medium max-w-2xl leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
-            Book verified mechanics, Kerala Police Thuna PCC-checked drivers, electricians, and home cleaners in seconds.
+            Book verified mechanics, certified drivers, electricians, and trusted home care specialists in seconds.
           </p>
 
           {/* Interactive Search Bar */}
@@ -315,7 +315,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
               </span>
             </div>
             <h3 className={`text-base font-extrabold mt-0.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>
-              Stranded on the road in Kochi? Jumpstart, flat tire & towing.
+              Stranded on the road? Rapid jumpstart, flat tire & breakdown rescue.
             </h3>
             <p className={`text-xs mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
               Our nearest certified technician reaches your vehicle with hydraulic jacks, booster cables & tools.
@@ -556,7 +556,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             Fixily Guarantee
           </span>
           <h3 className={`text-xl font-black mt-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>
-            Why Kerala Trusts Fixily at Doorstep
+            Why Customers Trust Fixily at Their Doorstep
           </h3>
         </div>
 
@@ -577,7 +577,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             </div>
             <h4 className="font-extrabold text-xs">20-Min Rapid Arrival</h4>
             <p className="text-[11px] text-slate-400 mt-1">
-              Emergency roadside mechanics and technicians dispatched immediately across Kochi.
+              Emergency roadside mechanics and technicians dispatched rapidly to your live location.
             </p>
           </div>
 

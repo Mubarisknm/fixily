@@ -3,10 +3,14 @@ export type ThemeMode = 'light' | 'dark';
 export interface KochiLocation {
   id: string;
   name: string;
+  city?: string;
+  state?: string;
   pin: string;
   lat: number;
   lng: number;
 }
+
+export type ServiceLocation = KochiLocation;
 
 export interface ServiceTier {
   name: string;
