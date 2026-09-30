@@ -36,6 +36,57 @@ export const api = {
     return data || localPartners;
   },
 
+  async registerPartner(payload: {
+    name: string;
+    phone: string;
+    role: string;
+    city?: string;
+    vehicle?: string;
+    dlNumber?: string;
+    aadhaarNumber?: string;
+    pccRefNo?: string;
+    pccExpiry?: string;
+    upiId?: string;
+    photoUrl?: string;
+  }): Promise<GigPartner> {
+    const data = await fetchJson(`${API_BASE}/partners`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (data) return data;
+
+    const newPartner: GigPartner = {
+      id: `p-${Date.now().toString().slice(-4)}`,
+      name: payload.name || 'Fixily Verified Partner',
+      phone: payload.phone || '+91 98470 00000',
+      role: payload.role || 'Freelance Service Partner',
+      rating: 5.0,
+      jobsCompleted: 0,
+      isOnline: true,
+      currentLocation: {
+        name: payload.city || 'Kochi Hub',
+        lat: 10.0159,
+        lng: 76.3419
+      },
+      kyc: {
+        aadhaarVerified: Boolean(payload.aadhaarNumber),
+        dlNumber: payload.dlNumber || undefined,
+        pccStatus: payload.pccRefNo ? 'VERIFIED' : 'PENDING_REVIEW',
+        pccRefNo: payload.pccRefNo || 'THUNA-PCC-SUBMITTED',
+        pccExpiry: payload.pccExpiry || '2027-09-30',
+        bankVerified: true
+      },
+      vehicle: payload.vehicle || 'Standard Service Kit',
+      walletBalance: 250, // Welcome joining bonus
+      todaysEarnings: 0,
+      photoUrl: payload.photoUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'
+    };
+
+    localPartners.unshift(newPartner);
+    return newPartner;
+  },
+
   async togglePartnerDuty(id: string, isOnline: boolean): Promise<GigPartner> {
     const data = await fetchJson(`${API_BASE}/partners/${id}/duty`, {
       method: 'POST',

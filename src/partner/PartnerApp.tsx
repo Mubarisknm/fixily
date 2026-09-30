@@ -19,22 +19,27 @@ import {
   TrendingUp,
   Award
 } from 'lucide-react';
-import { GigPartner, BookingJob } from '../types';
+import { GigPartner, BookingJob, ThemeMode } from '../types';
 import { api } from '../services/api';
+import { PartnerKYCModal } from './PartnerKYCModal';
 
 interface PartnerAppProps {
   partners: GigPartner[];
   jobs: BookingJob[];
   onRefreshData: () => void;
+  theme?: ThemeMode;
 }
 
 export const PartnerApp: React.FC<PartnerAppProps> = ({
   partners,
   jobs,
-  onRefreshData
+  onRefreshData,
+  theme = 'dark'
 }) => {
+  const isDark = theme === 'dark';
   const [selectedPartnerId, setSelectedPartnerId] = useState<string>(partners[0]?.id || 'p-101');
   const [showPrecheckModal, setShowPrecheckModal] = useState<BookingJob | null>(null);
+  const [showKYCModal, setShowKYCModal] = useState<boolean>(false);
   const [withdrawalAmount, setWithdrawalAmount] = useState<string>('');
   const [upiId, setUpiId] = useState<string>('anand.driver@okicici');
   const [isProcessingWithdrawal, setIsProcessingWithdrawal] = useState<boolean>(false);
@@ -114,22 +119,35 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
     }
   };
 
+  const handleKYCSuccess = (newPartner: GigPartner) => {
+    onRefreshData();
+    setSelectedPartnerId(newPartner.id);
+  };
+
   if (!currentPartner) return null;
 
   return (
     <div className="space-y-8 pb-16">
       
-      {/* Partner Persona Switcher Bar */}
-      <div className="bg-slate-900/90 text-white rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 border border-slate-800 shadow-xl">
+      {/* Partner Persona Switcher & Onboarding Bar */}
+      <div className={`rounded-2xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border shadow-xl transition-all ${
+        isDark ? 'bg-slate-900/90 text-white border-slate-800' : 'bg-white text-slate-900 border-slate-200'
+      }`}>
         <div className="flex items-center space-x-3">
-          <div className="p-2 bg-amber-500/20 text-amber-400 rounded-xl">
+          <div className="p-2 bg-amber-500/20 text-amber-500 rounded-xl">
             <UserCheck className="w-5 h-5" />
           </div>
-          <span className="text-xs font-black uppercase tracking-wider text-slate-300">
-            Select Active Partner Persona
-          </span>
+          <div>
+            <span className="text-xs font-black uppercase tracking-wider text-amber-500">
+              Active Partner Console
+            </span>
+            <p className={`text-[11px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+              Switch active gig worker profile or onboard with new credentials
+            </p>
+          </div>
         </div>
-        <div className="flex flex-wrap gap-2">
+
+        <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
           {partners.map(p => (
             <button
               key={p.id}
@@ -137,17 +155,66 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
               className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all ${
                 selectedPartnerId === p.id
                   ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 shadow-lg font-black'
-                  : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white'
+                  : isDark
+                  ? 'bg-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
               }`}
             >
-              {p.name} ({p.role})
+              {p.name} ({p.role.split(' ')[0]})
             </button>
           ))}
+
+          <button
+            onClick={() => setShowKYCModal(true)}
+            className="px-4 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-emerald-500 to-teal-400 hover:brightness-110 text-slate-950 shadow-md hover:scale-105 transition-all flex items-center space-x-1.5"
+          >
+            <UserCheck className="w-3.5 h-3.5" />
+            <span>+ Register New Partner</span>
+          </button>
         </div>
       </div>
 
+      {/* Partner KYC Onboarding Callout Banner */}
+      <div className={`rounded-3xl p-5 sm:p-6 border transition-all flex flex-col md:flex-row items-center justify-between gap-5 shadow-lg ${
+        isDark
+          ? 'bg-gradient-to-r from-purple-950/50 via-slate-900 to-amber-950/30 border-purple-500/30 text-white'
+          : 'bg-gradient-to-r from-purple-50 via-white to-amber-50 border-purple-200 text-slate-900'
+      }`}>
+        <div className="flex items-start space-x-4">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-purple-600 text-white flex items-center justify-center shrink-0 shadow-md">
+            <ShieldCheck className="w-7 h-7" />
+          </div>
+          <div>
+            <div className="flex items-center space-x-2">
+              <span className="text-[10px] font-black uppercase tracking-wider bg-purple-500/20 text-purple-400 px-2.5 py-0.5 rounded-full border border-purple-500/30">
+                Kerala Police Thuna PCC Verified Network
+              </span>
+              <span className="text-[10px] font-bold text-amber-500">₹250 Joining Bonus</span>
+            </div>
+            <h3 className="text-base sm:text-lg font-extrabold mt-1">
+              Want to earn with Fixily? Complete 3-Minute Aadhaar & Thuna KYC
+            </h3>
+            <p className={`text-xs mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+              Accept on-demand jobs in your area with zero platform cut on customer travel allowances and daily instant UPI payouts.
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={() => setShowKYCModal(true)}
+          className="w-full md:w-auto px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:brightness-110 text-slate-950 font-black text-xs transition-all shadow-xl hover:scale-105 shrink-0 flex items-center justify-center space-x-1.5"
+        >
+          <UserCheck className="w-4 h-4" />
+          <span>Complete Partner KYC</span>
+        </button>
+      </div>
+
       {/* Main Profile & Duty Toggle Card Widget */}
-      <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 rounded-3xl border border-slate-800 p-6 sm:p-8 shadow-2xl space-y-6 text-white">
+      <div className={`rounded-3xl border p-6 sm:p-8 shadow-2xl space-y-6 transition-all ${
+        isDark
+          ? 'bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 border-slate-800 text-white'
+          : 'bg-white border-slate-200 text-slate-900 shadow-md'
+      }`}>
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           
           {/* Partner Info Widget */}
@@ -159,28 +226,38 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
             />
             <div>
               <div className="flex items-center space-x-2">
-                <h2 className="text-xl font-black text-white">{currentPartner.name}</h2>
-                <span className="bg-amber-400/20 text-amber-300 border border-amber-400/40 text-xs px-2.5 py-0.5 rounded-full font-bold">
+                <h2 className="text-xl font-black">{currentPartner.name}</h2>
+                <span className="bg-amber-400/20 text-amber-500 border border-amber-400/40 text-xs px-2.5 py-0.5 rounded-full font-bold">
                   ★ {currentPartner.rating} ({currentPartner.jobsCompleted} Jobs)
                 </span>
               </div>
-              <p className="text-xs font-semibold text-teal-400 mt-0.5">{currentPartner.role}</p>
+              <p className="text-xs font-semibold text-teal-500 mt-0.5">{currentPartner.role}</p>
               
               {/* Verification Badges */}
               <div className="flex flex-wrap items-center gap-2 mt-2">
-                <span className="inline-flex items-center space-x-1 text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-800 px-2 py-0.5 rounded-md font-bold">
-                  <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                <span className={`inline-flex items-center space-x-1 text-[10px] px-2 py-0.5 rounded-md font-bold ${
+                  isDark ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                }`}>
+                  <ShieldCheck className="w-3 h-3 text-emerald-500" />
                   <span>Aadhaar Verified</span>
                 </span>
 
                 <span className={`inline-flex items-center space-x-1 text-[10px] px-2 py-0.5 rounded-md font-bold ${
                   currentPartner.kyc.pccStatus === 'VERIFIED'
-                    ? 'bg-teal-950 text-teal-300 border border-teal-800'
-                    : 'bg-amber-950 text-amber-300 border border-amber-800'
+                    ? isDark ? 'bg-teal-950 text-teal-300 border border-teal-800' : 'bg-teal-50 text-teal-700 border border-teal-200'
+                    : isDark ? 'bg-amber-950 text-amber-300 border border-amber-800' : 'bg-amber-50 text-amber-700 border border-amber-200'
                 }`}>
                   <ShieldCheck className="w-3 h-3" />
                   <span>Kerala Police Thuna PCC: {currentPartner.kyc.pccStatus}</span>
                 </span>
+
+                {currentPartner.kyc.pccRefNo && (
+                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded-md ${
+                    isDark ? 'bg-slate-800 text-slate-300' : 'bg-slate-100 text-slate-600'
+                  }`}>
+                    Ref: {currentPartner.kyc.pccRefNo}
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -514,6 +591,14 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
           </div>
         </div>
       )}
+
+      {/* Partner KYC Onboarding Modal */}
+      <PartnerKYCModal
+        isOpen={showKYCModal}
+        onClose={() => setShowKYCModal(false)}
+        onSuccess={handleKYCSuccess}
+        theme={theme}
+      />
 
     </div>
   );

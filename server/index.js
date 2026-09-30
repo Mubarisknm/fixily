@@ -36,6 +36,53 @@ app.get('/api/partners', (req, res) => {
   res.json({ success: true, data: partners });
 });
 
+// POST Register New Partner / Onboarding with KYC
+app.post('/api/partners', (req, res) => {
+  const {
+    name,
+    phone,
+    role,
+    city,
+    vehicle,
+    dlNumber,
+    aadhaarNumber,
+    pccRefNo,
+    pccExpiry,
+    upiId,
+    photoUrl
+  } = req.body;
+
+  const newPartner = {
+    id: `p-${Date.now().toString().slice(-4)}`,
+    name: name || 'Fixily Verified Partner',
+    phone: phone || '+91 98470 00000',
+    role: role || 'Freelance Service Partner',
+    rating: 5.0,
+    jobsCompleted: 0,
+    isOnline: true,
+    currentLocation: {
+      name: city || 'Kochi Hub',
+      lat: 10.0159,
+      lng: 76.3419
+    },
+    kyc: {
+      aadhaarVerified: Boolean(aadhaarNumber),
+      dlNumber: dlNumber || undefined,
+      pccStatus: pccRefNo ? 'VERIFIED' : 'PENDING_REVIEW',
+      pccRefNo: pccRefNo || 'THUNA-PCC-SUBMITTED',
+      pccExpiry: pccExpiry || '2027-09-30',
+      bankVerified: true
+    },
+    vehicle: vehicle || 'Standard Service Kit',
+    walletBalance: 250, // Welcome joining bonus
+    todaysEarnings: 0,
+    photoUrl: photoUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'
+  };
+
+  partners.unshift(newPartner);
+  res.status(201).json({ success: true, data: newPartner });
+});
+
 // Toggle Partner Online Status
 app.post('/api/partners/:id/duty', (req, res) => {
   const { id } = req.params;

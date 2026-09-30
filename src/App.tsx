@@ -110,6 +110,7 @@ export function App() {
                 partners={partners}
                 jobs={jobs}
                 onRefreshData={loadAllData}
+                theme={theme}
               />
             )}
 
