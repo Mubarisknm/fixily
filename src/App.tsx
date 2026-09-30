@@ -8,7 +8,10 @@ import { api } from './services/api';
 
 export function App() {
   const [activeTab, setActiveTab] = useState<'customer' | 'partner' | 'admin'>('customer');
-  const [theme, setTheme] = useState<ThemeMode>('light');
+  const [theme, setTheme] = useState<ThemeMode>(() => {
+    const saved = localStorage.getItem('fixily_theme');
+    return (saved === 'light' || saved === 'dark') ? (saved as ThemeMode) : 'dark';
+  });
   const [locations, setLocations] = useState<KochiLocation[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<KochiLocation>({
     id: 'kakkanad',
@@ -46,8 +49,21 @@ export function App() {
     }
   };
 
+  useEffect(() => {
+    try {
+      localStorage.setItem('fixily_theme', theme);
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    } catch (e) {
+      // Local storage protection
+    }
+  }, [theme]);
+
   const handleToggleTheme = () => {
-    setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
+    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
   };
 
   const isDark = theme === 'dark';

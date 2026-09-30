@@ -99,22 +99,22 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Day / Night Switchable Theme Toggle Button */}
             <button
               onClick={onToggleTheme}
-              className={`flex items-center space-x-1.5 px-3 py-2 rounded-xl border text-xs font-bold transition-all shadow-sm ${
+              className={`flex items-center space-x-1.5 px-3 py-2 rounded-xl border text-xs font-extrabold transition-all shadow-sm ${
                 isDark
-                  ? 'bg-slate-900 border-slate-800 text-amber-300 hover:bg-slate-800'
-                  : 'bg-slate-100 border-slate-200 text-slate-800 hover:bg-slate-200'
+                  ? 'bg-slate-900 border-amber-500/40 text-amber-300 hover:bg-slate-800 hover:border-amber-400'
+                  : 'bg-slate-100 border-purple-200 text-slate-800 hover:bg-slate-200'
               }`}
-              title="Toggle Day / Night Theme"
+              title={isDark ? "Switch to Day Mode" : "Switch to Dark Mode"}
             >
               {isDark ? (
                 <>
                   <Sun className="w-4 h-4 text-amber-400 fill-amber-400" />
-                  <span className="hidden sm:inline">Day Light</span>
+                  <span className="hidden sm:inline">Day Mode</span>
                 </>
               ) : (
                 <>
-                  <Moon className="w-4 h-4 text-slate-700 fill-slate-700" />
-                  <span className="hidden sm:inline">Night Dark</span>
+                  <Moon className="w-4 h-4 text-purple-700 fill-purple-700" />
+                  <span className="hidden sm:inline">Dark Mode</span>
                 </>
               )}
             </button>
