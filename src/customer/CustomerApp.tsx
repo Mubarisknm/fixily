@@ -29,10 +29,19 @@ import {
   Smartphone,
   Droplet,
   ShoppingBag,
-  Hammer
+  Hammer,
+  Siren,
+  PhoneCall,
+  ShieldAlert,
+  HeartPulse,
+  Flame,
+  Share2,
+  Copy,
+  Check
 } from 'lucide-react';
 import { ServiceItem, KochiLocation, BookingJob, ThemeMode } from '../types';
 import { LiveMap } from '../components/LiveMap';
+import { EmergencyModal } from '../components/EmergencyModal';
 import { api } from '../services/api';
 
 interface CustomerAppProps {
@@ -41,6 +50,8 @@ interface CustomerAppProps {
   jobs: BookingJob[];
   onRefreshJobs: () => void;
   theme: ThemeMode;
+  isEmergencyModalOpen?: boolean;
+  setIsEmergencyModalOpen?: (open: boolean) => void;
 }
 
 // Fallback SVG Generator for bulletproof image rendering under all network conditions
@@ -117,9 +128,16 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
   selectedLocation,
   jobs,
   onRefreshJobs,
-  theme
+  theme,
+  isEmergencyModalOpen,
+  setIsEmergencyModalOpen
 }) => {
   const isDark = theme === 'dark';
+  const [internalEmergencyOpen, setInternalEmergencyOpen] = useState<boolean>(false);
+  const emergencyModalOpen = isEmergencyModalOpen !== undefined ? isEmergencyModalOpen : internalEmergencyOpen;
+  const setEmergencyModalOpen = setIsEmergencyModalOpen || setInternalEmergencyOpen;
+  const [gpsCopied, setGpsCopied] = useState<boolean>(false);
+
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategoryTab, setSelectedCategoryTab] = useState<string>('all');
 
@@ -333,6 +351,113 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
           <span>Request 20-Min Mechanic</span>
           <ArrowRight className="w-4 h-4" />
         </button>
+      </div>
+
+      {/* 2.5 Dedicated 24/7 Emergency Department & Public Safety Section */}
+      <div className={`rounded-3xl p-5 sm:p-6 border shadow-md transition-all ${
+        isDark
+          ? 'bg-gradient-to-br from-red-950/40 via-slate-900 to-slate-900 border-red-500/30 text-white'
+          : 'bg-gradient-to-br from-red-50/70 via-white to-amber-50/50 border-red-200 text-slate-900'
+      }`}>
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-red-500/20 pb-4">
+          <div className="flex items-center space-x-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-red-600 text-white flex items-center justify-center shrink-0 shadow-lg shadow-red-600/30">
+              <Siren className="w-6 h-6 animate-pulse" />
+            </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="text-[10px] font-black uppercase tracking-widest bg-red-600 text-white px-2 py-0.5 rounded-full">
+                  24/7 Public Safety & SOS
+                </span>
+                <span className="text-xs text-slate-400">Police • Medical • Fire • Highway</span>
+              </div>
+              <h3 className="text-lg font-black mt-0.5">Emergency Department Helplines</h3>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-2 w-full md:w-auto">
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(`Emergency Location: ${selectedLocation.name} (GPS: ${selectedLocation.lat.toFixed(4)}, ${selectedLocation.lng.toFixed(4)})`);
+                setGpsCopied(true);
+                setTimeout(() => setGpsCopied(false), 2000);
+              }}
+              className={`flex-1 md:flex-initial px-3 py-1.5 rounded-xl border text-xs font-bold transition-all flex items-center justify-center space-x-1.5 ${
+                isDark ? 'bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700' : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-100'
+              }`}
+            >
+              {gpsCopied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+              <span>{gpsCopied ? 'GPS Copied!' : 'Copy Location Beacon'}</span>
+            </button>
+
+            <button
+              onClick={() => setEmergencyModalOpen(true)}
+              className="flex-1 md:flex-initial px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-black shadow-md flex items-center justify-center space-x-1"
+            >
+              <Siren className="w-3.5 h-3.5" />
+              <span>Full Emergency Hub</span>
+            </button>
+          </div>
+        </div>
+
+        {/* 1-Tap Quick Dial Helpline Cards */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4">
+          <a
+            href="tel:112"
+            className="p-3.5 rounded-2xl bg-blue-600/10 border border-blue-500/30 hover:bg-blue-600 hover:text-white transition-all duration-200 group flex flex-col justify-between"
+          >
+            <div className="flex items-center justify-between">
+              <ShieldAlert className="w-5 h-5 text-blue-500 group-hover:text-white" />
+              <span className="text-[10px] font-black bg-blue-600 text-white px-1.5 py-0.5 rounded">112 / 100</span>
+            </div>
+            <div className="mt-3">
+              <div className="text-xs font-black">Police Emergency</div>
+              <div className="text-[10px] opacity-75">PCR Van & Distress SOS</div>
+            </div>
+          </a>
+
+          <a
+            href="tel:108"
+            className="p-3.5 rounded-2xl bg-red-600/10 border border-red-500/30 hover:bg-red-600 hover:text-white transition-all duration-200 group flex flex-col justify-between"
+          >
+            <div className="flex items-center justify-between">
+              <HeartPulse className="w-5 h-5 text-red-500 group-hover:text-white" />
+              <span className="text-[10px] font-black bg-red-600 text-white px-1.5 py-0.5 rounded">108 / 102</span>
+            </div>
+            <div className="mt-3">
+              <div className="text-xs font-black">Medical Ambulance</div>
+              <div className="text-[10px] opacity-75">Trauma & Hospital Transfer</div>
+            </div>
+          </a>
+
+          <a
+            href="tel:101"
+            className="p-3.5 rounded-2xl bg-orange-600/10 border border-orange-500/30 hover:bg-orange-600 hover:text-white transition-all duration-200 group flex flex-col justify-between"
+          >
+            <div className="flex items-center justify-between">
+              <Flame className="w-5 h-5 text-orange-500 group-hover:text-white" />
+              <span className="text-[10px] font-black bg-orange-600 text-white px-1.5 py-0.5 rounded">101</span>
+            </div>
+            <div className="mt-3">
+              <div className="text-xs font-black">Fire & Rescue Force</div>
+              <div className="text-[10px] opacity-75">Fire, Gas Leak & Rescue</div>
+            </div>
+          </a>
+
+          <a
+            href="tel:1033"
+            className="p-3.5 rounded-2xl bg-amber-600/10 border border-amber-500/30 hover:bg-amber-600 hover:text-white transition-all duration-200 group flex flex-col justify-between"
+          >
+            <div className="flex items-center justify-between">
+              <Car className="w-5 h-5 text-amber-500 group-hover:text-white" />
+              <span className="text-[10px] font-black bg-amber-600 text-white px-1.5 py-0.5 rounded">1033</span>
+            </div>
+            <div className="mt-3">
+              <div className="text-xs font-black">Highway Patrol</div>
+              <div className="text-[10px] opacity-75">Accident Aid & Towing</div>
+            </div>
+          </a>
+        </div>
       </div>
 
       {/* 3. Active Order Live Banner */}
@@ -942,6 +1067,16 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             </div>
           </div>
         </div>
+      )}
+
+      {/* 9. Standalone Emergency SOS Modal Fallback */}
+      {isEmergencyModalOpen === undefined && (
+        <EmergencyModal
+          isOpen={emergencyModalOpen}
+          onClose={() => setEmergencyModalOpen(false)}
+          currentLocation={selectedLocation}
+          theme={theme}
+        />
       )}
 
     </div>

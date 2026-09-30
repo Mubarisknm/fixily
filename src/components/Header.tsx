@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, UserCheck, LayoutDashboard, MapPin, Wrench, Sun, Moon, Search } from 'lucide-react';
+import { ShieldCheck, UserCheck, LayoutDashboard, MapPin, Wrench, Sun, Moon, Search, Siren } from 'lucide-react';
 import { KochiLocation, ThemeMode } from '../types';
 
 interface HeaderProps {
@@ -10,6 +10,7 @@ interface HeaderProps {
   onSelectLocation: (loc: KochiLocation) => void;
   theme: ThemeMode;
   onToggleTheme: () => void;
+  onOpenEmergency?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -19,7 +20,8 @@ export const Header: React.FC<HeaderProps> = ({
   locations,
   onSelectLocation,
   theme,
-  onToggleTheme
+  onToggleTheme,
+  onOpenEmergency
 }) => {
   const isDark = theme === 'dark';
 
@@ -82,9 +84,21 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           </div>
 
-          {/* Right Controls: Day/Night Theme Toggle & Portal Switcher */}
+          {/* Right Controls: SOS Emergency, Theme Toggle & Portal Switcher */}
           <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
             
+            {/* SOS Emergency Helpline Button */}
+            {onOpenEmergency && (
+              <button
+                onClick={onOpenEmergency}
+                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-black shadow-md shadow-red-600/30 transition-transform hover:scale-105 active:scale-95 animate-pulse"
+                title="24/7 Emergency Helplines: Police 112, Ambulance 108, Fire 101"
+              >
+                <Siren className="w-3.5 h-3.5" />
+                <span>SOS</span>
+              </button>
+            )}
+
             {/* Theme Toggle Button */}
             <button
               onClick={onToggleTheme}

@@ -3,6 +3,7 @@ import { Header } from './components/Header';
 import { CustomerApp } from './customer/CustomerApp';
 import { PartnerApp } from './partner/PartnerApp';
 import { AdminConsole } from './admin/AdminConsole';
+import { EmergencyModal } from './components/EmergencyModal';
 import { KochiLocation, ServiceItem, GigPartner, BookingJob, ThemeMode } from './types';
 import { api } from './services/api';
 
@@ -24,6 +25,7 @@ export function App() {
   const [partners, setPartners] = useState<GigPartner[]>([]);
   const [jobs, setJobs] = useState<BookingJob[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isEmergencyModalOpen, setIsEmergencyModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     loadAllData();
@@ -80,6 +82,7 @@ export function App() {
         onSelectLocation={setSelectedLocation}
         theme={theme}
         onToggleTheme={handleToggleTheme}
+        onOpenEmergency={() => setIsEmergencyModalOpen(true)}
       />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -97,6 +100,8 @@ export function App() {
                 jobs={jobs}
                 onRefreshJobs={loadAllData}
                 theme={theme}
+                isEmergencyModalOpen={isEmergencyModalOpen}
+                setIsEmergencyModalOpen={setIsEmergencyModalOpen}
               />
             )}
 
@@ -119,6 +124,13 @@ export function App() {
           </>
         )}
       </main>
+
+      <EmergencyModal
+        isOpen={isEmergencyModalOpen}
+        onClose={() => setIsEmergencyModalOpen(false)}
+        currentLocation={selectedLocation}
+        theme={theme}
+      />
 
       <footer className={`border-t py-6 text-center text-xs transition-colors duration-200 ${
         isDark ? 'bg-slate-950 border-slate-900 text-slate-400' : 'bg-white border-slate-200 text-slate-500'
