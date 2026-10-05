@@ -43,13 +43,38 @@ export interface ServiceItem {
   isInstant?: boolean;
 }
 
+export interface PartnerReview {
+  id: string;
+  customerName: string;
+  rating: number;
+  comment: string;
+  jobId?: string;
+  serviceTitle?: string;
+  createdAt: string;
+}
+
+export interface TargetAchievement {
+  weeklyTarget: number;
+  completedJobsThisWeek: number;
+  bonusAmount: number;
+  isBonusUnlocked: boolean;
+  tierLevel: 'STANDARD' | 'BRONZE_PRO' | 'SILVER_PRO' | 'GOLD_TOP_RATED';
+  commissionDiscountPercent: number;
+}
+
 export interface PartnerKYC {
   aadhaarVerified: boolean;
+  aadhaarNumber?: string;
+  govtIdType?: 'AADHAAR' | 'PAN' | 'VOTER_ID' | 'DRIVING_LICENSE' | 'PASSPORT';
+  govtIdNumber?: string;
+  govtIdFileAttached?: boolean;
   dlNumber?: string;
   pccStatus: 'VERIFIED' | 'PENDING_REVIEW' | 'REJECTED';
   pccRefNo?: string;
   pccExpiry?: string;
   bankVerified: boolean;
+  damageLiabilityAgreed: boolean;
+  liabilityAgreementTimestamp?: string;
 }
 
 export interface GigPartner {
@@ -59,12 +84,19 @@ export interface GigPartner {
   role: string;
   rating: number;
   jobsCompleted: number;
+  reviewsCount?: number;
+  reviews?: PartnerReview[];
   isOnline: boolean;
+  isTopRated?: boolean;
+  hourlyRateMultiplier?: number;
   currentLocation: {
     name: string;
     lat: number;
     lng: number;
   };
+  availableSlots?: string[];
+  targetAchievement?: TargetAchievement;
+  damageLiabilityAgreed?: boolean;
   kyc: PartnerKYC;
   equipment?: string;
   vehicle?: string;
@@ -94,6 +126,15 @@ export interface JobPricing {
   allowanceReturnBus?: number;
 }
 
+export interface JobFeedback {
+  rating: number;
+  comment: string;
+  serviceQualityRating?: number;
+  punctualityRating?: number;
+  zeroDamageConfirmed?: boolean;
+  createdAt: string;
+}
+
 export interface BookingJob {
   id: string;
   serviceId: string;
@@ -108,6 +149,10 @@ export interface BookingJob {
     lng: number;
   };
   scheduledTime: string;
+  targetDate?: string;
+  targetTimeSlot?: string;
+  preferredPartnerId?: string | null;
+  preferredPartnerName?: string | null;
   status: 'PENDING' | 'ASSIGNED' | 'PRE_INSPECTION_DONE' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
   assignedPartnerId?: string | null;
   assignedPartnerName?: string | null;
@@ -116,6 +161,9 @@ export interface BookingJob {
   paymentStatus: 'PAID_UPI' | 'PAY_ON_SERVICE';
   vehicleDetails?: string;
   preServiceChecklist?: PreServiceChecklist | null;
+  customerFeedback?: JobFeedback | null;
+  damageReported?: boolean;
+  damageNotes?: string;
   createdAt: string;
 }
 

@@ -92,9 +92,12 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Step 2: KYC & Government Verification
+  const [govtIdType, setGovtIdType] = useState<'AADHAAR' | 'PAN' | 'VOTER_ID' | 'DRIVING_LICENSE' | 'PASSPORT'>('AADHAAR');
+  const [govtIdNumber, setGovtIdNumber] = useState<string>('5489 2210 9043');
   const [aadhaarNumber, setAadhaarNumber] = useState<string>('5489 2210 9043');
-  const [aadhaarVerified, setAadhaarVerified] = useState<boolean>(true);
-  const [isVerifyingAadhaar, setIsVerifyingAadhaar] = useState<boolean>(false);
+  const [govtIdVerified, setGovtIdVerified] = useState<boolean>(true);
+  const [isVerifyingGovtId, setIsVerifyingGovtId] = useState<boolean>(false);
+  const [govtIdFileAttached, setGovtIdFileAttached] = useState<boolean>(true);
   const [pccRefNo, setPccRefNo] = useState<string>('THUNA-PCC-2024-91204');
   const [pccExpiry, setPccExpiry] = useState<string>('2027-10-15');
   const [pccFileAttached, setPccFileAttached] = useState<boolean>(true);
@@ -103,6 +106,7 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
   // Step 3: Payout Banking & Activation
   const [upiId, setUpiId] = useState<string>('rahul.fixily@okicici');
   const [agreeAllowancePolicy, setAgreeAllowancePolicy] = useState<boolean>(true);
+  const [agreeDamageLiability, setAgreeDamageLiability] = useState<boolean>(true);
 
   if (!isOpen) return null;
 
@@ -126,11 +130,11 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
     }
   };
 
-  const handleSimulateDigiLocker = () => {
-    setIsVerifyingAadhaar(true);
+  const handleSimulateGovtIdVerification = () => {
+    setIsVerifyingGovtId(true);
     setTimeout(() => {
-      setIsVerifyingAadhaar(false);
-      setAadhaarVerified(true);
+      setIsVerifyingGovtId(false);
+      setGovtIdVerified(true);
     }, 1000);
   };
 
@@ -151,9 +155,15 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
       return;
     }
 
-    if (!aadhaarNumber.trim()) {
-      alert('Please enter your 12-digit Aadhaar number');
+    if (!govtIdNumber.trim()) {
+      alert(`Please enter your valid ${govtIdType} number`);
       setStep(2);
+      return;
+    }
+
+    if (!agreeDamageLiability) {
+      alert('You must accept the Damage Responsibility & Service Liability Agreement to activate your Fixily partner profile');
+      setStep(3);
       return;
     }
 
@@ -171,7 +181,10 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
         city: city.trim(),
         vehicle: vehicle.trim(),
         dlNumber: isDrivingRole || dlNumber.trim() ? dlNumber.trim() : undefined,
-        aadhaarNumber: aadhaarNumber.trim(),
+        aadhaarNumber: govtIdType === 'AADHAAR' ? govtIdNumber.trim() : aadhaarNumber.trim(),
+        govtIdType,
+        govtIdNumber: govtIdNumber.trim(),
+        damageLiabilityAgreed: true,
         pccRefNo: pccRefNo.trim() || 'THUNA-PCC-SUBMITTED',
         pccExpiry,
         upiId: upiId.trim(),
@@ -238,13 +251,13 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
           <div className={`py-3 flex items-center justify-center space-x-1.5 border-b-2 transition-all ${
             step === 2 ? 'border-amber-500 text-amber-500' : step > 2 ? 'border-emerald-500 text-emerald-500' : 'border-transparent text-slate-400'
           }`}>
-            <span>2. Aadhaar & Thuna PCC</span>
+            <span>2. Govt ID & Thuna PCC</span>
             {step > 2 && <Check className="w-3.5 h-3.5" />}
           </div>
           <div className={`py-3 flex items-center justify-center space-x-1.5 border-b-2 transition-all ${
             step === 3 ? 'border-amber-500 text-amber-500' : 'border-transparent text-slate-400'
           }`}>
-            <span>3. Banking & Bonus</span>
+            <span>3. Banking & Liability</span>
           </div>
         </div>
 
@@ -489,51 +502,123 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
             </div>
           )}
 
-          {/* STEP 2: Government & Public Safety KYC (Aadhaar & Kerala Police Thuna PCC) */}
+          {/* STEP 2: Government & Public Safety KYC */}
           {step === 2 && (
             <div className="space-y-4">
               
-              {/* 1. Aadhaar Card Verification */}
-              <div className={`p-4 rounded-2xl border space-y-3 ${
+              {/* 1. Government ID Verification */}
+              <div className={`p-4 rounded-2xl border space-y-3.5 ${
                 isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
               }`}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <CreditCard className="w-5 h-5 text-amber-500" />
                     <div>
-                      <h4 className="text-xs font-black">1. Government Aadhaar Verification</h4>
-                      <p className="text-[10px] text-slate-400">UIDAI / DigiLocker 12-digit identity validation</p>
+                      <h4 className="text-xs font-black">1. Official Government ID Verification *</h4>
+                      <p className="text-[10px] text-slate-400">Choose official photo identity for legal verification & DigiLocker authentication</p>
                     </div>
                   </div>
-                  {aadhaarVerified && (
+                  {govtIdVerified && (
                     <span className="inline-flex items-center space-x-1 text-[10px] font-bold bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/30">
                       <CheckCircle2 className="w-3 h-3" />
-                      <span>DigiLocker Verified</span>
+                      <span>Govt Verified</span>
                     </span>
                   )}
                 </div>
 
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="text"
-                    required
-                    value={aadhaarNumber}
-                    onChange={(e) => {
-                      setAadhaarNumber(e.target.value);
-                      setAadhaarVerified(false);
-                    }}
-                    placeholder="12-digit Aadhaar Number (XXXX XXXX XXXX)"
-                    className={`flex-1 text-xs p-3 rounded-xl border focus:outline-none focus:border-amber-500 font-mono font-bold ${
-                      isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-900'
-                    }`}
-                  />
+                {/* ID Type Selection Chips */}
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                    Select Government ID Type:
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
+                    {[
+                      { id: 'AADHAAR', label: 'Aadhaar Card' },
+                      { id: 'PAN', label: 'PAN Card' },
+                      { id: 'DRIVING_LICENSE', label: 'Driving License' },
+                      { id: 'VOTER_ID', label: 'Voter ID' },
+                      { id: 'PASSPORT', label: 'Passport' }
+                    ].map((type) => (
+                      <button
+                        key={type.id}
+                        type="button"
+                        onClick={() => {
+                          setGovtIdType(type.id as any);
+                          setGovtIdVerified(false);
+                        }}
+                        className={`py-2 px-2 rounded-xl text-[11px] font-black transition-all border text-center ${
+                          govtIdType === type.id
+                            ? 'bg-amber-500 border-amber-400 text-slate-950 shadow-md scale-[1.02]'
+                            : isDark
+                            ? 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800'
+                            : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'
+                        }`}
+                      >
+                        {type.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* ID Number input and live verify button */}
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                  <div className="flex-1">
+                    <input
+                      type="text"
+                      required
+                      value={govtIdNumber}
+                      onChange={(e) => {
+                        setGovtIdNumber(e.target.value);
+                        setGovtIdVerified(false);
+                      }}
+                      placeholder={
+                        govtIdType === 'AADHAAR' ? '12-digit Aadhaar Number (XXXX XXXX XXXX)' :
+                        govtIdType === 'PAN' ? '10-character PAN (e.g. ABCDE1234F)' :
+                        govtIdType === 'DRIVING_LICENSE' ? 'DL Number (e.g. KL-07-2016-0038491)' :
+                        govtIdType === 'VOTER_ID' ? 'Voter ID EPIC (e.g. KL/05/032/123456)' :
+                        'Passport Number (e.g. Z1234567)'
+                      }
+                      className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-amber-500 font-mono font-bold ${
+                        isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-900'
+                      }`}
+                    />
+                  </div>
                   <button
                     type="button"
-                    onClick={handleSimulateDigiLocker}
-                    disabled={isVerifyingAadhaar || aadhaarVerified}
-                    className="px-4 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black transition-all shrink-0 disabled:opacity-50 cursor-pointer"
+                    onClick={handleSimulateGovtIdVerification}
+                    disabled={isVerifyingGovtId || govtIdVerified}
+                    className="px-4 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black transition-all shrink-0 disabled:opacity-50 cursor-pointer shadow-md flex items-center justify-center space-x-1.5"
                   >
-                    {isVerifyingAadhaar ? 'Verifying...' : aadhaarVerified ? 'Verified ✓' : 'Verify UIDAI'}
+                    {isVerifyingGovtId ? (
+                      <>
+                        <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                        <span>Verifying...</span>
+                      </>
+                    ) : govtIdVerified ? (
+                      <>
+                        <Check className="w-3.5 h-3.5" />
+                        <span>DigiLocker Verified</span>
+                      </>
+                    ) : (
+                      <span>Verify {govtIdType.replace('_', ' ')}</span>
+                    )}
+                  </button>
+                </div>
+
+                {/* Attached Document File Status */}
+                <div className="flex items-center justify-between p-2.5 rounded-xl border border-dashed border-amber-500/30 text-xs">
+                  <div className="flex items-center space-x-2 text-slate-300">
+                    <FileText className="w-4 h-4 text-amber-500" />
+                    <span className="text-[11px] font-medium text-slate-300">
+                      {govtIdFileAttached ? `${govtIdType.toLowerCase()}_front_back_proof.pdf (Uploaded)` : 'Attach Front & Back Photo/PDF'}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setGovtIdFileAttached(!govtIdFileAttached)}
+                    className="text-[10px] font-bold text-amber-500 hover:underline cursor-pointer"
+                  >
+                    {govtIdFileAttached ? 'Replace Document' : 'Browse File'}
                   </button>
                 </div>
               </div>
@@ -555,7 +640,7 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
                         </span>
                       </div>
                       <p className="text-[10px] text-slate-400">
-                        Official Police Clearance Certificate for zero criminal record check
+                        Official Police Clearance Certificate for zero criminal record verification
                       </p>
                     </div>
                   </div>
@@ -627,7 +712,7 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
               }`}>
                 <div className="flex items-center space-x-2">
                   <Car className="w-4 h-4 text-purple-400" />
-                  <h4 className="text-xs font-black">3. Motor Driving License (DL) Number</h4>
+                  <h4 className="text-xs font-black">3. Motor Driving License (DL) Number (if driving)</h4>
                 </div>
                 <input
                   type="text"
@@ -643,7 +728,7 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
             </div>
           )}
 
-          {/* STEP 3: Payout Banking, Allowance Agreement & Welcome Bonus */}
+          {/* STEP 3: Payout Banking, Damage Liability Agreement & Activation */}
           {step === 3 && (
             <div className="space-y-4">
               
@@ -671,7 +756,7 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
               }`}>
                 <div className="flex items-center space-x-2">
                   <Zap className="w-4 h-4 text-amber-500" />
-                  <h4 className="text-xs font-black">Instant 1-Tap Daily UPI Payout Handle</h4>
+                  <h4 className="text-xs font-black">Instant 1-Tap Daily UPI Payout Handle *</h4>
                 </div>
                 <p className="text-[11px] text-slate-400">
                   Every evening or on-demand, your earnings transfer directly to this UPI address (GPay / PhonePe / Paytm).
@@ -688,6 +773,65 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
                 />
               </div>
 
+              {/* MANDATORY FREELANCER DAMAGE RESPONSIBILITY & SERVICE QUALITY AGREEMENT */}
+              <div className={`p-4 rounded-2xl border-2 space-y-3 ${
+                agreeDamageLiability
+                  ? isDark ? 'border-amber-500/60 bg-amber-500/5' : 'border-amber-500/50 bg-amber-50/50'
+                  : 'border-red-500/60 bg-red-500/5'
+              }`}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2 text-amber-500">
+                    <AlertCircle className="w-5 h-5 text-amber-400" />
+                    <span className="text-xs font-black uppercase tracking-wider">
+                      Mandatory Damage Responsibility & Risk Agreement
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-black uppercase bg-red-500/20 text-red-400 border border-red-500/30 px-2 py-0.5 rounded-full">
+                    Required for Activation
+                  </span>
+                </div>
+
+                <div className={`text-[11px] space-y-1.5 p-3 rounded-xl border ${
+                  isDark ? 'bg-slate-900/80 border-slate-800 text-slate-300' : 'bg-white border-slate-200 text-slate-700'
+                }`}>
+                  <p className="font-bold text-amber-400">
+                    Service Liability & Product Risk Undertaking:
+                  </p>
+                  <ul className="list-disc list-inside space-y-1 text-[10.5px] leading-relaxed">
+                    <li>
+                      <strong>100% Operational Risk Assumption:</strong> As an independent freelancer/partner on Fixily, I assume full operational responsibility and care for the customer's property, appliances, materials, and vehicles during service delivery.
+                    </li>
+                    <li>
+                      <strong>Damage Rectification:</strong> In the event of any accidental damage, leakage, breakage, or operational failure caused by negligence or improper workmanship, I agree to rectify the issue or bear the direct cost of repair/replacement.
+                    </li>
+                    <li>
+                      <strong>Fixily Guarantee Deductions:</strong> If Fixily steps in to compensate the customer under the Fixily Trust Guarantee, I authorize the settlement of validated damages against my platform wallet and future payouts.
+                    </li>
+                    <li>
+                      <strong>Platform Integrity:</strong> Accepting offline side-work without Fixily safety logging automatically voids partner insurance coverage and Kerala Police Thuna PCC badge accreditation.
+                    </li>
+                  </ul>
+                </div>
+
+                <label className="flex items-start space-x-2.5 cursor-pointer pt-1">
+                  <input
+                    type="checkbox"
+                    required
+                    checked={agreeDamageLiability}
+                    onChange={(e) => setAgreeDamageLiability(e.target.checked)}
+                    className="mt-0.5 rounded text-amber-500 focus:ring-amber-400 w-4 h-4 cursor-pointer"
+                  />
+                  <div className="text-xs font-bold">
+                    <span className={agreeDamageLiability ? 'text-emerald-400' : 'text-red-400'}>
+                      I acknowledge, agree, and legally accept full damage responsibility and product/service risk as a Fixily Partner *
+                    </span>
+                    <p className={`text-[10px] font-normal mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                      Your acceptance timestamp and verified Govt ID ({govtIdType}: {govtIdNumber}) will be recorded upon activation.
+                    </p>
+                  </div>
+                </label>
+              </div>
+
               {/* Zero-Commission Allowance Policy Agreement */}
               <div className={`p-4 rounded-2xl border space-y-2 ${
                 isDark ? 'bg-slate-950 border-indigo-900/40' : 'bg-indigo-50/50 border-indigo-200'
@@ -697,7 +841,7 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
                     type="checkbox"
                     checked={agreeAllowancePolicy}
                     onChange={(e) => setAgreeAllowancePolicy(e.target.checked)}
-                    className="mt-0.5 rounded text-amber-500 focus:ring-amber-400"
+                    className="mt-0.5 rounded text-amber-500 focus:ring-amber-400 w-4 h-4 cursor-pointer"
                   />
                   <div className="text-xs">
                     <span className="font-extrabold text-indigo-400">Fixily Partner Fair Pay Guarantee:</span>
@@ -748,7 +892,7 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
             ) : (
               <button
                 type="submit"
-                disabled={isSubmitting || !agreeAllowancePolicy}
+                disabled={isSubmitting || !agreeAllowancePolicy || !agreeDamageLiability}
                 className="bg-gradient-to-r from-emerald-500 to-teal-400 hover:brightness-110 text-slate-950 px-6 py-2.5 rounded-xl text-xs font-black shadow-xl transition-transform hover:scale-105 flex items-center space-x-1.5 disabled:opacity-50 cursor-pointer"
               >
                 <CheckCircle2 className="w-4 h-4" />

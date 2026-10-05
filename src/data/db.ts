@@ -355,20 +355,218 @@ export const MOCK_PARTNERS = [
     role: 'Freelance Acting Driver & Mechanic',
     rating: 4.96,
     jobsCompleted: 342,
+    reviewsCount: 184,
     isOnline: true,
+    isTopRated: true,
+    hourlyRateMultiplier: 1.25,
+    damageLiabilityAgreed: true,
     currentLocation: { name: 'Kakkanad Metro Station', lat: 10.0165, lng: 76.3425 },
+    availableSlots: [
+      'Today, 02:00 PM - 04:00 PM',
+      'Today, 05:00 PM - 07:00 PM',
+      'Tomorrow, 09:00 AM - 12:00 PM',
+      'Tomorrow, 02:00 PM - 05:00 PM'
+    ],
+    targetAchievement: {
+      weeklyTarget: 15,
+      completedJobsThisWeek: 12,
+      bonusAmount: 1500,
+      isBonusUnlocked: false,
+      tierLevel: 'GOLD_TOP_RATED' as const,
+      commissionDiscountPercent: 5
+    },
+    reviews: [
+      {
+        id: 'rev-1',
+        customerName: 'Mathew Thomas',
+        rating: 5,
+        comment: 'Extremely polite driver and expert mechanic! Jumpstarted my car within 15 minutes with zero scratches.',
+        serviceTitle: 'Doorstep Car & Bike Mechanic',
+        createdAt: '2026-10-02'
+      },
+      {
+        id: 'rev-2',
+        customerName: 'Sneha George',
+        rating: 5,
+        comment: 'Drove my family to Nedumbassery Airport during peak rain. Very safe, Thuna PCC verified driver.',
+        serviceTitle: 'Freelance Acting Driver',
+        createdAt: '2026-09-28'
+      }
+    ],
     kyc: {
       aadhaarVerified: true,
+      aadhaarNumber: '5489 2210 9043',
+      govtIdType: 'AADHAAR' as const,
+      govtIdNumber: '5489 2210 9043',
+      govtIdFileAttached: true,
       dlNumber: 'KL-07-2015-0049281',
       pccStatus: 'VERIFIED' as const,
       pccRefNo: 'THUNA-PCC-2024-88912',
       pccExpiry: '2027-04-15',
-      bankVerified: true
+      bankVerified: true,
+      damageLiabilityAgreed: true,
+      liabilityAgreementTimestamp: '2026-04-15T09:30:00Z'
     },
     vehicle: 'LMV Driver & Mechanic Toolkit',
     walletBalance: 2840,
     todaysEarnings: 1250,
     photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'
+  },
+  {
+    id: 'p-102',
+    name: 'Suresh Babu',
+    phone: '+91 98471 22334',
+    role: 'Electrician & Inverter/Wiring Technician',
+    rating: 4.92,
+    jobsCompleted: 215,
+    reviewsCount: 96,
+    isOnline: true,
+    isTopRated: true,
+    hourlyRateMultiplier: 1.20,
+    damageLiabilityAgreed: true,
+    currentLocation: { name: 'Edappally Toll', lat: 10.0236, lng: 76.3115 },
+    availableSlots: [
+      'Today, 03:30 PM - 06:00 PM',
+      'Tomorrow, 10:00 AM - 01:00 PM',
+      'Tomorrow, 03:00 PM - 06:00 PM'
+    ],
+    targetAchievement: {
+      weeklyTarget: 15,
+      completedJobsThisWeek: 9,
+      bonusAmount: 1500,
+      isBonusUnlocked: false,
+      tierLevel: 'SILVER_PRO' as const,
+      commissionDiscountPercent: 4
+    },
+    reviews: [
+      {
+        id: 'rev-3',
+        customerName: 'Arun Varma',
+        rating: 5,
+        comment: 'Diagnosed our main circuit trip problem in 10 mins. Very knowledgeable and clean work.',
+        serviceTitle: 'Electrician Consultation & Wiring',
+        createdAt: '2026-10-01'
+      }
+    ],
+    kyc: {
+      aadhaarVerified: true,
+      govtIdType: 'AADHAAR' as const,
+      govtIdNumber: '6612 8820 4419',
+      govtIdFileAttached: true,
+      pccStatus: 'VERIFIED' as const,
+      pccRefNo: 'THUNA-PCC-2024-55120',
+      pccExpiry: '2027-06-20',
+      bankVerified: true,
+      damageLiabilityAgreed: true,
+      liabilityAgreementTimestamp: '2026-06-20T10:00:00Z'
+    },
+    vehicle: 'Electrical Pro Toolbag & Testing Meter',
+    walletBalance: 1950,
+    todaysEarnings: 850,
+    photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80'
+  },
+  {
+    id: 'p-103',
+    name: 'Manoj Varghese',
+    phone: '+91 98472 33445',
+    role: 'Licensed Plumber & Pipeline Specialist',
+    rating: 4.88,
+    jobsCompleted: 140,
+    reviewsCount: 62,
+    isOnline: false,
+    isTopRated: false,
+    hourlyRateMultiplier: 1.10,
+    damageLiabilityAgreed: true,
+    currentLocation: { name: 'Aluva Flyover', lat: 10.1076, lng: 76.3516 },
+    availableSlots: [
+      'Tomorrow, 09:30 AM - 12:30 PM',
+      'Tomorrow, 04:00 PM - 07:00 PM'
+    ],
+    targetAchievement: {
+      weeklyTarget: 12,
+      completedJobsThisWeek: 6,
+      bonusAmount: 1200,
+      isBonusUnlocked: false,
+      tierLevel: 'BRONZE_PRO' as const,
+      commissionDiscountPercent: 2
+    },
+    reviews: [
+      {
+        id: 'rev-4',
+        customerName: 'Deepa Nair',
+        rating: 5,
+        comment: 'Fixed concealed pipe leak without damaging bathroom tiles. Very satisfied.',
+        serviceTitle: 'Plumbing & Water Management',
+        createdAt: '2026-09-25'
+      }
+    ],
+    kyc: {
+      aadhaarVerified: true,
+      govtIdType: 'AADHAAR' as const,
+      govtIdNumber: '9920 3311 7742',
+      govtIdFileAttached: true,
+      pccStatus: 'VERIFIED' as const,
+      pccRefNo: 'THUNA-PCC-2024-33891',
+      pccExpiry: '2027-05-11',
+      bankVerified: true,
+      damageLiabilityAgreed: true
+    },
+    vehicle: 'Plumbing Pipe Threader & Pressure Pump',
+    walletBalance: 1420,
+    todaysEarnings: 0,
+    photoUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80'
+  },
+  {
+    id: 'p-104',
+    name: 'Priya Nair',
+    phone: '+91 98473 44556',
+    role: 'At-Home Salon, Hair Stylist & Beautician',
+    rating: 4.98,
+    jobsCompleted: 198,
+    reviewsCount: 110,
+    isOnline: true,
+    isTopRated: true,
+    hourlyRateMultiplier: 1.30,
+    damageLiabilityAgreed: true,
+    currentLocation: { name: 'Panampilly Nagar', lat: 9.9620, lng: 76.2970 },
+    availableSlots: [
+      'Today, 02:30 PM - 05:30 PM',
+      'Tomorrow, 11:00 AM - 02:00 PM',
+      'Tomorrow, 04:00 PM - 07:00 PM'
+    ],
+    targetAchievement: {
+      weeklyTarget: 15,
+      completedJobsThisWeek: 14,
+      bonusAmount: 1500,
+      isBonusUnlocked: false,
+      tierLevel: 'GOLD_TOP_RATED' as const,
+      commissionDiscountPercent: 5
+    },
+    reviews: [
+      {
+        id: 'rev-5',
+        customerName: 'Anjali Menon',
+        rating: 5,
+        comment: 'Clean single-use kits, wonderful facial and pedicure. Loved the doorstep convenience!',
+        serviceTitle: 'At-Home Salon & Wellness',
+        createdAt: '2026-10-03'
+      }
+    ],
+    kyc: {
+      aadhaarVerified: true,
+      govtIdType: 'AADHAAR' as const,
+      govtIdNumber: '7721 4409 1198',
+      govtIdFileAttached: true,
+      pccStatus: 'VERIFIED' as const,
+      pccRefNo: 'THUNA-PCC-2024-99120',
+      pccExpiry: '2027-08-01',
+      bankVerified: true,
+      damageLiabilityAgreed: true
+    },
+    vehicle: 'Sanitized Spa Kit & Professional Blowdryer',
+    walletBalance: 3200,
+    todaysEarnings: 1400,
+    photoUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80'
   }
 ];
 
@@ -387,6 +585,10 @@ export const MOCK_JOBS = [
       lng: 76.3450
     },
     scheduledTime: 'Today, 03:30 PM',
+    targetDate: '2026-10-05',
+    targetTimeSlot: '03:00 PM - 05:00 PM',
+    preferredPartnerId: 'p-101',
+    preferredPartnerName: 'Anand Kumar',
     status: 'IN_PROGRESS' as const,
     assignedPartnerId: 'p-101',
     assignedPartnerName: 'Anand Kumar',
@@ -401,6 +603,47 @@ export const MOCK_JOBS = [
     },
     paymentStatus: 'PAID_UPI' as const,
     vehicleDetails: 'Honda City (KL-07-CC-4091) - Engine Trouble',
-    createdAt: '2026-09-26T10:45:00.000Z'
+    createdAt: '2026-10-05T09:45:00.000Z'
+  },
+  {
+    id: 'FIX-7712',
+    serviceId: 'acting-driver',
+    serviceTitle: 'Freelance Acting Driver ("Drive My Car")',
+    tierName: 'City Travel (2 Hours)',
+    customerName: 'George Kurian',
+    customerPhone: '+91 98951 88990',
+    location: {
+      address: 'Skyline Citylights, Edappally',
+      microMarket: 'Edappally',
+      lat: 10.0240,
+      lng: 76.3120
+    },
+    scheduledTime: 'Yesterday, 05:00 PM',
+    targetDate: '2026-10-04',
+    targetTimeSlot: '05:00 PM - 07:00 PM',
+    status: 'COMPLETED' as const,
+    assignedPartnerId: 'p-101',
+    assignedPartnerName: 'Anand Kumar',
+    assignedPartnerPhone: '+91 98470 11223',
+    pricing: {
+      baseFare: 250,
+      platformCommission: 35,
+      partnerEarnings: 215,
+      convenienceFee: 25,
+      microInsurance: 19,
+      totalPaid: 294,
+      allowanceReturnBus: 50
+    },
+    paymentStatus: 'PAID_UPI' as const,
+    vehicleDetails: 'Hyundai Creta (KL-07-BW-2219)',
+    customerFeedback: {
+      rating: 5,
+      comment: 'Very polite, smooth driving in heavy Kochi rain. Zero damage confirmed.',
+      serviceQualityRating: 5,
+      punctualityRating: 5,
+      zeroDamageConfirmed: true,
+      createdAt: '2026-10-04T19:30:00.000Z'
+    },
+    createdAt: '2026-10-04T15:30:00.000Z'
   }
 ];

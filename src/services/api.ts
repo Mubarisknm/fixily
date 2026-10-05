@@ -44,6 +44,9 @@ export const api = {
     vehicle?: string;
     dlNumber?: string;
     aadhaarNumber?: string;
+    govtIdType?: 'AADHAAR' | 'PAN' | 'VOTER_ID' | 'DRIVING_LICENSE' | 'PASSPORT';
+    govtIdNumber?: string;
+    damageLiabilityAgreed?: boolean;
     pccRefNo?: string;
     pccExpiry?: string;
     upiId?: string;
@@ -71,12 +74,30 @@ export const api = {
       },
       kyc: {
         aadhaarVerified: Boolean(payload.aadhaarNumber),
+        aadhaarNumber: payload.aadhaarNumber || undefined,
+        govtIdType: payload.govtIdType || 'AADHAAR',
+        govtIdNumber: payload.govtIdNumber || payload.aadhaarNumber || undefined,
+        govtIdFileAttached: true,
         dlNumber: payload.dlNumber || undefined,
         pccStatus: payload.pccRefNo ? 'VERIFIED' : 'PENDING_REVIEW',
         pccRefNo: payload.pccRefNo || 'THUNA-PCC-SUBMITTED',
         pccExpiry: payload.pccExpiry || '2027-09-30',
-        bankVerified: true
+        bankVerified: true,
+        damageLiabilityAgreed: Boolean(payload.damageLiabilityAgreed),
+        liabilityAgreementTimestamp: new Date().toISOString()
       },
+      damageLiabilityAgreed: Boolean(payload.damageLiabilityAgreed),
+      targetAchievement: {
+        weeklyTarget: 15,
+        completedJobsThisWeek: 0,
+        bonusAmount: 1500,
+        isBonusUnlocked: false,
+        tierLevel: 'STANDARD',
+        commissionDiscountPercent: 0
+      },
+      reviews: [],
+      reviewsCount: 0,
+      hourlyRateMultiplier: 1.0,
       vehicle: payload.vehicle || 'Standard Service Kit',
       walletBalance: 250, // Welcome joining bonus
       todaysEarnings: 0,
@@ -161,8 +182,14 @@ export const api = {
         lat: 10.0159 + (Math.random() - 0.5) * 0.02,
         lng: 76.3419 + (Math.random() - 0.5) * 0.02
       },
-      scheduledTime: payload.scheduledTime || 'Immediate Dispatch',
-      status: 'PENDING',
+      scheduledTime: payload.scheduledTime || (payload.targetDate && payload.targetTimeSlot ? `${payload.targetDate} (${payload.targetTimeSlot})` : 'Immediate Dispatch'),
+      targetDate: payload.targetDate || new Date().toISOString().split('T')[0],
+      targetTimeSlot: payload.targetTimeSlot || 'Immediate Dispatch',
+      preferredPartnerId: payload.preferredPartnerId || null,
+      preferredPartnerName: payload.preferredPartnerName || null,
+      status: payload.preferredPartnerId ? 'ASSIGNED' : 'PENDING',
+      assignedPartnerId: payload.preferredPartnerId || null,
+      assignedPartnerName: payload.preferredPartnerName || null,
       pricing: {
         baseFare: 499,
         platformCommission: 75,
@@ -177,6 +204,52 @@ export const api = {
     };
     localJobs.unshift(newJob);
     return newJob;
+  },
+
+  async submitJobFeedback(jobId: string, feedback: {
+    rating: number;
+    comment: string;
+    serviceQualityRating?: number;
+    punctualityRating?: number;
+    zeroDamageConfirmed?: boolean;
+  }): Promise<BookingJob> {
+    const data = await fetchJson(`${API_BASE}/jobs/${jobId}/feedback`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(feedback)
+    });
+    if (data) return data;
+
+    const job = localJobs.find((j: BookingJob) => j.id === jobId);
+    if (job) {
+      job.customerFeedback = {
+        ...feedback,
+        createdAt: new Date().toISOString()
+      };
+
+      if (job.assignedPartnerId) {
+        const partner = localPartners.find((p: GigPartner) => p.id === job.assignedPartnerId);
+        if (partner) {
+          if (!partner.reviews) partner.reviews = [];
+          partner.reviews.unshift({
+            id: `rev-${Date.now().toString().slice(-4)}`,
+            customerName: job.customerName,
+            rating: feedback.rating,
+            comment: feedback.comment,
+            serviceTitle: job.serviceTitle,
+            createdAt: new Date().toISOString().split('T')[0]
+          });
+          partner.reviewsCount = (partner.reviewsCount || 0) + 1;
+          const sum = partner.reviews.reduce((acc, r) => acc + r.rating, 0);
+          partner.rating = Number((sum / partner.reviews.length).toFixed(2));
+          if (partner.rating >= 4.9 && partner.jobsCompleted >= 50) {
+            partner.isTopRated = true;
+            partner.hourlyRateMultiplier = 1.25;
+          }
+        }
+      }
+    }
+    return job || localJobs[0];
   },
 
   async acceptJob(jobId: string, partnerId: string): Promise<BookingJob> {

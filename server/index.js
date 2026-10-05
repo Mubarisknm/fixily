@@ -152,6 +152,10 @@ app.post('/api/jobs', (req, res) => {
     microMarket,
     address,
     scheduledTime,
+    targetDate,
+    targetTimeSlot,
+    preferredPartnerId,
+    preferredPartnerName,
     vehicleDetails,
     paymentMethod
   } = req.body;
@@ -187,10 +191,14 @@ app.post('/api/jobs', (req, res) => {
       lat: 10.0159 + (Math.random() - 0.5) * 0.02,
       lng: 76.3419 + (Math.random() - 0.5) * 0.02
     },
-    scheduledTime: scheduledTime || 'Immediate Dispatch',
-    status: 'PENDING',
-    assignedPartnerId: null,
-    assignedPartnerName: null,
+    scheduledTime: scheduledTime || (targetDate && targetTimeSlot ? `${targetDate} (${targetTimeSlot})` : 'Immediate Dispatch'),
+    targetDate: targetDate || new Date().toISOString().split('T')[0],
+    targetTimeSlot: targetTimeSlot || 'Immediate Dispatch',
+    preferredPartnerId: preferredPartnerId || null,
+    preferredPartnerName: preferredPartnerName || null,
+    status: preferredPartnerId ? 'ASSIGNED' : 'PENDING',
+    assignedPartnerId: preferredPartnerId || null,
+    assignedPartnerName: preferredPartnerName || null,
     pricing: {
       baseFare,
       platformCommission,
@@ -207,6 +215,51 @@ app.post('/api/jobs', (req, res) => {
 
   jobs.unshift(newJob);
   res.status(201).json({ success: true, data: newJob });
+});
+
+// Customer Submit Rating & Review for Completed Job
+app.post('/api/jobs/:id/feedback', (req, res) => {
+  const { id } = req.params;
+  const { rating, comment, serviceQualityRating, punctualityRating, zeroDamageConfirmed } = req.body;
+
+  const job = jobs.find(j => j.id === id);
+  if (!job) {
+    return res.status(404).json({ success: false, message: 'Job not found' });
+  }
+
+  job.customerFeedback = {
+    rating: Number(rating) || 5,
+    comment: comment || 'Service completed satisfactorily.',
+    serviceQualityRating: Number(serviceQualityRating) || 5,
+    punctualityRating: Number(punctualityRating) || 5,
+    zeroDamageConfirmed: Boolean(zeroDamageConfirmed),
+    createdAt: new Date().toISOString()
+  };
+
+  // Dynamically update assigned partner trust score, rating and reviews
+  if (job.assignedPartnerId) {
+    const partner = partners.find(p => p.id === job.assignedPartnerId);
+    if (partner) {
+      if (!partner.reviews) partner.reviews = [];
+      partner.reviews.unshift({
+        id: `rev-${Date.now().toString().slice(-4)}`,
+        customerName: job.customerName,
+        rating: Number(rating) || 5,
+        comment: comment || 'Service completed satisfactorily.',
+        serviceTitle: job.serviceTitle,
+        createdAt: new Date().toISOString().split('T')[0]
+      });
+      partner.reviewsCount = (partner.reviewsCount || 0) + 1;
+      const sum = partner.reviews.reduce((acc, r) => acc + r.rating, 0);
+      partner.rating = Number((sum / partner.reviews.length).toFixed(2));
+      if (partner.rating >= 4.9 && partner.jobsCompleted >= 50) {
+        partner.isTopRated = true;
+        partner.hourlyRateMultiplier = 1.25;
+      }
+    }
+  }
+
+  res.json({ success: true, data: job });
 });
 
 // Partner Accept Job
@@ -270,6 +323,15 @@ app.post('/api/jobs/:id/complete', (req, res) => {
       partner.walletBalance += job.pricing.partnerEarnings;
       partner.todaysEarnings += job.pricing.partnerEarnings;
       partner.jobsCompleted += 1;
+      // Increment weekly target progress
+      if (partner.targetAchievement) {
+        partner.targetAchievement.completedJobsThisWeek += 1;
+        if (partner.targetAchievement.completedJobsThisWeek >= partner.targetAchievement.weeklyTarget) {
+          partner.targetAchievement.isBonusUnlocked = true;
+          partner.walletBalance += partner.targetAchievement.bonusAmount;
+          partner.todaysEarnings += partner.targetAchievement.bonusAmount;
+        }
+      }
     }
   }
 

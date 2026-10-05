@@ -98,6 +98,7 @@ export function App() {
                 services={services}
                 selectedLocation={selectedLocation}
                 jobs={jobs}
+                partners={partners}
                 onRefreshJobs={loadAllData}
                 theme={theme}
                 isEmergencyModalOpen={isEmergencyModalOpen}

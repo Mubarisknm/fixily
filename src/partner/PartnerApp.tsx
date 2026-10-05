@@ -17,7 +17,11 @@ import {
   X,
   Wallet,
   TrendingUp,
-  Award
+  Award,
+  Star,
+  Calendar,
+  Sparkles,
+  Check
 } from 'lucide-react';
 import { GigPartner, BookingJob, ThemeMode } from '../types';
 import { api } from '../services/api';
@@ -225,11 +229,18 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
               className="w-16 h-16 rounded-2xl object-cover border-2 border-amber-400/80 shadow-lg shadow-amber-500/10"
             />
             <div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 flex-wrap gap-y-1">
                 <h2 className="text-xl font-black">{currentPartner.name}</h2>
-                <span className="bg-amber-400/20 text-amber-500 border border-amber-400/40 text-xs px-2.5 py-0.5 rounded-full font-bold">
-                  ★ {currentPartner.rating} ({currentPartner.jobsCompleted} Jobs)
+                <span className="bg-amber-400/20 text-amber-500 border border-amber-400/40 text-xs px-2.5 py-0.5 rounded-full font-bold flex items-center space-x-1">
+                  <Star className="w-3 h-3 fill-amber-400" />
+                  <span>{currentPartner.rating} ({currentPartner.reviewsCount || currentPartner.reviews?.length || 0} Reviews)</span>
                 </span>
+                {currentPartner.isTopRated && (
+                  <span className="bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full shadow flex items-center space-x-1">
+                    <Sparkles className="w-2.5 h-2.5" />
+                    <span>Top Rated Pro ({currentPartner.hourlyRateMultiplier || 1.25}x Rate)</span>
+                  </span>
+                )}
               </div>
               <p className="text-xs font-semibold text-teal-500 mt-0.5">{currentPartner.role}</p>
               
@@ -239,7 +250,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
                   isDark ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                 }`}>
                   <ShieldCheck className="w-3 h-3 text-emerald-500" />
-                  <span>Aadhaar Verified</span>
+                  <span>Govt ID Verified</span>
                 </span>
 
                 <span className={`inline-flex items-center space-x-1 text-[10px] px-2 py-0.5 rounded-md font-bold ${
@@ -249,6 +260,13 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
                 }`}>
                   <ShieldCheck className="w-3 h-3" />
                   <span>Kerala Police Thuna PCC: {currentPartner.kyc.pccStatus}</span>
+                </span>
+
+                <span className={`inline-flex items-center space-x-1 text-[10px] px-2 py-0.5 rounded-md font-bold ${
+                  isDark ? 'bg-blue-950 text-blue-300 border border-blue-800' : 'bg-blue-50 text-blue-700 border border-blue-200'
+                }`}>
+                  <CheckCircle2 className="w-3 h-3 text-blue-400" />
+                  <span>100% Damage Responsibility Agreed</span>
                 </span>
 
                 {currentPartner.kyc.pccRefNo && (
@@ -330,6 +348,169 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
         </div>
       </div>
 
+      {/* 🎯 Weekly Target Achievement & Retention Program */}
+      <div className={`rounded-3xl border p-6 sm:p-7 shadow-2xl space-y-5 transition-all ${
+        isDark
+          ? 'bg-gradient-to-br from-slate-900 via-purple-950/30 to-slate-950 border-purple-800/40 text-white'
+          : 'bg-gradient-to-br from-purple-50 via-white to-amber-50 border-purple-200 text-slate-900 shadow-lg'
+      }`}>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-purple-600 text-white flex items-center justify-center font-black shadow-lg">
+              <Award className="w-6 h-6" />
+            </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="text-[10px] font-black uppercase tracking-wider bg-purple-500/20 text-purple-400 px-2.5 py-0.5 rounded-full border border-purple-500/30">
+                  Target Achievement & Retention Hub
+                </span>
+                <span className="text-[10px] font-black uppercase bg-amber-500 text-slate-950 px-2 py-0.5 rounded-full">
+                  Tier: {currentPartner.targetAchievement?.tierLevel || 'STANDARD'}
+                </span>
+              </div>
+              <h3 className="text-lg font-black mt-0.5">
+                Weekly Platform Target: Complete {currentPartner.targetAchievement?.weeklyTarget || 15} Jobs
+              </h3>
+            </div>
+          </div>
+
+          <div className="text-right">
+            <div className="text-xs font-bold text-slate-400">Milestone Incentive</div>
+            <div className="text-2xl font-black text-amber-400">
+              ₹{currentPartner.targetAchievement?.bonusAmount || 1500} Bonus
+            </div>
+          </div>
+        </div>
+
+        {/* Milestone Progress Bar */}
+        {(() => {
+          const target = currentPartner.targetAchievement?.weeklyTarget || 15;
+          const completed = currentPartner.targetAchievement?.completedJobsThisWeek || currentPartner.jobsCompleted || 0;
+          const pct = Math.min(100, Math.round((completed / target) * 100));
+          const isUnlocked = currentPartner.targetAchievement?.isBonusUnlocked || completed >= target;
+
+          return (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs font-bold">
+                <span className="text-slate-300">
+                  Progress: <strong className="text-white">{completed} / {target} Jobs</strong> completed this week
+                </span>
+                <span className={isUnlocked ? 'text-emerald-400 font-black' : 'text-amber-400'}>
+                  {isUnlocked ? '🎉 ₹1,500 Bonus Unlocked!' : `${target - completed} More to unlock bonus (${pct}%)`}
+                </span>
+              </div>
+
+              {/* Progress bar container */}
+              <div className="w-full h-3.5 bg-slate-950 rounded-full overflow-hidden border border-slate-800 p-0.5">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-purple-600 transition-all duration-1000 shadow-md"
+                  style={{ width: `${pct}%` }}
+                />
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* Anti-Leakage / Work For Fixily Policy Notice */}
+        <div className={`p-4 rounded-2xl border text-xs space-y-2 ${
+          isDark ? 'bg-slate-950/80 border-slate-800 text-slate-300' : 'bg-white border-slate-200 text-slate-700'
+        }`}>
+          <div className="flex items-center space-x-2 font-black text-amber-400">
+            <ShieldCheck className="w-4 h-4 text-amber-400" />
+            <span className="uppercase tracking-wider text-[11px]">
+              Why Freelancers Work On-Platform (Zero Client Poaching Policy)
+            </span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-[11px] leading-relaxed pt-1">
+            <div className="space-y-1">
+              <strong className="text-white block">1. ₹1,500 Weekly Milestone:</strong>
+              <p className="text-slate-400">
+                Hit 15 platform jobs weekly to earn cash bonuses and upgrade to our lowest platform fee tier.
+              </p>
+            </div>
+            <div className="space-y-1">
+              <strong className="text-white block">2. High Trust = Higher Rates:</strong>
+              <p className="text-slate-400">
+                Top-rated pros earn up to <strong>1.25x hourly rates</strong> and are listed at the top for customers.
+              </p>
+            </div>
+            <div className="space-y-1">
+              <strong className="text-white block">3. Strict Protection Rules:</strong>
+              <p className="text-slate-400">
+                Working offline forfeits customer transit insurance, removes Kerala Police Thuna badge, and voids damage mediation.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Customer Feedback & Reputation Ratings Card */}
+      <div className={`rounded-3xl border p-6 sm:p-7 shadow-2xl space-y-4 transition-all ${
+        isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900 shadow-md'
+      }`}>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <div className="flex items-center space-x-2">
+              <Star className="w-5 h-5 text-amber-400 fill-amber-400" />
+              <h3 className="text-lg font-black">Customer Reviews & Trust Reputation</h3>
+            </div>
+            <p className={`text-xs mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+              Real verified client feedback from completed bookings in your service zone.
+            </p>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <span className="text-2xl font-black text-amber-400">{currentPartner.rating} ★</span>
+            <span className="text-xs text-slate-400">
+              ({currentPartner.reviewsCount || currentPartner.reviews?.length || 0} reviews)
+            </span>
+          </div>
+        </div>
+
+        {/* Reviews List */}
+        {currentPartner.reviews && currentPartner.reviews.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-1">
+            {currentPartner.reviews.map((rev) => (
+              <div
+                key={rev.id}
+                className={`p-3.5 rounded-2xl border space-y-2 ${
+                  isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs font-bold text-white">{rev.customerName}</span>
+                    <span className="text-[10px] text-slate-400">• {rev.serviceTitle}</span>
+                  </div>
+                  <div className="flex items-center text-amber-400 text-xs font-black space-x-0.5">
+                    <Star className="w-3.5 h-3.5 fill-amber-400" />
+                    <span>{rev.rating}.0</span>
+                  </div>
+                </div>
+
+                <p className={`text-xs italic ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                  "{rev.comment}"
+                </p>
+
+                <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1 border-t border-slate-800/60">
+                  <span>{rev.createdAt}</span>
+                  <span className="text-emerald-400 font-bold flex items-center space-x-1">
+                    <Check className="w-3 h-3" />
+                    <span>Verified Job • Zero Damage</span>
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className={`p-6 text-center rounded-2xl border text-xs ${
+            isDark ? 'bg-slate-950 border-slate-800 text-slate-400' : 'bg-slate-50 border-slate-200 text-slate-600'
+          }`}>
+            No reviews recorded yet. Complete upcoming orders to build your 5-star reputation!
+          </div>
+        )}
+      </div>
+
       {/* Active Work In Progress Orders Widget */}
       {myActiveJobs.length > 0 && (
         <div className="space-y-4">
@@ -403,9 +584,9 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
           <div>
             <h3 className="text-lg font-extrabold text-white flex items-center space-x-2">
               <Zap className="w-5 h-5 text-teal-400" />
-              <span>Incoming Job Radar ({currentPartner.currentLocation.name || 'Active Zone'})</span>
+              <span>Incoming Job Radar ({currentPartner.currentLocation?.name || 'Active Zone'})</span>
             </h3>
-            <p className="text-xs text-slate-400">Live requests ready for immediate dispatch</p>
+            <p className="text-xs text-slate-400">Live requests ready for immediate dispatch or scheduled time slots</p>
           </div>
           <button
             onClick={onRefreshData}
@@ -436,9 +617,16 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
             {pendingJobs.map(job => (
               <div key={job.id} className="bg-slate-900 border border-teal-800/60 hover:border-teal-400/80 rounded-3xl p-6 shadow-xl transition-all space-y-4">
                 <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                  <span className="bg-teal-950 text-teal-300 border border-teal-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full">
-                    {job.location.microMarket} • 2.4 km away
-                  </span>
+                  <div className="flex items-center space-x-2">
+                    <span className="bg-teal-950 text-teal-300 border border-teal-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full">
+                      {job.location.microMarket} • 2.4 km away
+                    </span>
+                    {job.preferredPartnerId === currentPartner.id && (
+                      <span className="bg-amber-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full shadow">
+                        ⭐ Direct Request for You
+                      </span>
+                    )}
+                  </div>
                   <span className="text-xs text-slate-400 font-semibold">{job.scheduledTime}</span>
                 </div>
 
@@ -446,6 +634,22 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
                   <h4 className="text-base font-bold text-white">{job.serviceTitle}</h4>
                   <p className="text-xs text-slate-400">{job.tierName}</p>
                 </div>
+
+                {/* Scheduling Details Card */}
+                {(job.targetDate || job.targetTimeSlot) && (
+                  <div className="p-3 rounded-2xl bg-slate-950/90 border border-purple-500/30 text-xs space-y-1">
+                    <div className="text-[10px] font-black uppercase text-purple-400 flex items-center space-x-1">
+                      <Calendar className="w-3.5 h-3.5" />
+                      <span>Customer Scheduled Time Slot:</span>
+                    </div>
+                    <div className="font-bold text-white">
+                      📅 Date: {job.targetDate || 'Today'} • ⏰ Slot: {job.targetTimeSlot || job.scheduledTime}
+                    </div>
+                    <div className="text-[10px] text-slate-400">
+                      Check your calendar and confirm availability before accepting.
+                    </div>
+                  </div>
+                )}
 
                 <div className="bg-slate-950 p-3.5 rounded-2xl border border-slate-800 space-y-1 text-xs">
                   <div className="flex justify-between text-slate-300">
@@ -469,9 +673,10 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
                 <div className="flex items-center space-x-3">
                   <button
                     onClick={() => handleAcceptJob(job.id)}
-                    className="flex-1 bg-gradient-to-r from-teal-400 to-emerald-400 text-slate-950 py-2.5 rounded-xl text-xs font-black transition-all shadow-lg hover:brightness-110"
+                    className="flex-1 bg-gradient-to-r from-teal-400 to-emerald-400 text-slate-950 py-2.5 rounded-xl text-xs font-black transition-all shadow-lg hover:brightness-110 flex items-center justify-center space-x-1.5"
                   >
-                    Accept Job Now
+                    <Check className="w-4 h-4" />
+                    <span>Confirm Availability & Accept Job</span>
                   </button>
                 </div>
               </div>
