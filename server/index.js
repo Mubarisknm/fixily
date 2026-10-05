@@ -18,6 +18,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // State holders
+let services = [...SERVICES];
 let partners = [...MOCK_PARTNERS];
 let jobs = [...MOCK_JOBS];
 
@@ -28,12 +29,101 @@ app.get('/api/locations', (req, res) => {
 
 // GET Services
 app.get('/api/services', (req, res) => {
-  res.json({ success: true, data: SERVICES });
+  res.json({ success: true, data: services });
+});
+
+// POST Add New Custom Service / Trade by Worker (Comes under Other Works)
+app.post('/api/services', (req, res) => {
+  const {
+    title,
+    tagline,
+    category,
+    priceType,
+    diagnosticFee,
+    basePrice,
+    eta,
+    features,
+    equipment,
+    partnerId,
+    partnerName
+  } = req.body;
+
+  const newService = {
+    id: `service-custom-${Date.now().toString().slice(-4)}`,
+    phase: 1,
+    category: category || 'Other Works',
+    title: title || 'Custom Freelance Work',
+    tagline: tagline || 'Specialized doorstep work by verified freelancer.',
+    badge: 'Custom Trade',
+    icon: 'Sparkles',
+    imageUrl: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&auto=format&fit=crop&q=80',
+    eta: eta || '30 mins',
+    isInstant: true,
+    priceType: priceType || 'flat_diagnostic',
+    diagnosticFee: diagnosticFee || 299,
+    basePrice: basePrice || diagnosticFee || 299,
+    features: features && features.length > 0 ? features : ['Doorstep inspection & diagnosis', 'Equipped with required tools', '100% damage responsibility agreed'],
+    rating: 5.0,
+    reviewsCount: 1,
+    createdByPartnerId: partnerId,
+    createdByPartnerName: partnerName
+  };
+
+  services.unshift(newService);
+
+  // If partnerId provided, also update the partner's customProfessions and active role
+  if (partnerId) {
+    const partner = partners.find(p => p.id === partnerId);
+    if (partner) {
+      if (!partner.customProfessions) partner.customProfessions = [];
+      partner.customProfessions.push({
+        id: `cp-${Date.now().toString().slice(-4)}`,
+        title: newService.title,
+        category: 'Other Works',
+        tagline: newService.tagline,
+        priceType: newService.priceType,
+        price: newService.diagnosticFee || 299,
+        eta: newService.eta,
+        features: newService.features,
+        equipment: equipment || 'Standard professional tools',
+        isActive: true,
+        createdAt: new Date().toISOString()
+      });
+      if (!partner.secondaryRoles) partner.secondaryRoles = [];
+      if (!partner.secondaryRoles.includes(newService.title)) {
+        partner.secondaryRoles.push(newService.title);
+      }
+    }
+  }
+
+  res.status(201).json({ success: true, data: newService });
 });
 
 // GET Partners
 app.get('/api/partners', (req, res) => {
   res.json({ success: true, data: partners });
+});
+
+// POST Switch / Activate Worker Profession
+app.post('/api/partners/:id/use-profession', (req, res) => {
+  const { id } = req.params;
+  const { professionTitle } = req.body;
+
+  const partner = partners.find(p => p.id === id);
+  if (!partner) {
+    return res.status(404).json({ success: false, message: 'Partner not found' });
+  }
+
+  if (professionTitle) {
+    partner.role = professionTitle;
+    if (partner.customProfessions) {
+      partner.customProfessions.forEach(cp => {
+        cp.isActive = cp.title === professionTitle;
+      });
+    }
+  }
+
+  res.json({ success: true, data: partner });
 });
 
 // POST Register New Partner / Onboarding with KYC
@@ -76,8 +166,54 @@ app.post('/api/partners', (req, res) => {
     vehicle: vehicle || 'Standard Service Kit',
     walletBalance: 250, // Welcome joining bonus
     todaysEarnings: 0,
-    photoUrl: photoUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'
+    photoUrl: photoUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
+    customProfessions: []
   };
+
+  // If custom role, automatically list under Other Works
+  const standardRoles = [
+    'Freelance Acting Driver ("Drive My Car")',
+    'Doorstep Car & Bike Mechanic',
+    'Electrician & Inverter/Wiring Technician',
+    'Licensed Plumber & Pipeline Specialist',
+    'At-Home Salon, Hair Stylist & Beautician',
+    'AC, Washing Machine & Appliance Care Technician'
+  ];
+  if (!standardRoles.includes(role)) {
+    const customService = {
+      id: `service-custom-${Date.now().toString().slice(-4)}`,
+      phase: 1,
+      category: 'Other Works',
+      title: role,
+      tagline: `Specialized ${role} services at doorstep by verified professional.`,
+      badge: 'Custom Trade',
+      icon: 'Sparkles',
+      imageUrl: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&auto=format&fit=crop&q=80',
+      eta: '30 mins',
+      isInstant: true,
+      priceType: 'flat_diagnostic',
+      diagnosticFee: 299,
+      features: ['Doorstep arrival with tools', 'Upfront pricing and clear diagnosis', '100% damage responsibility guaranteed'],
+      rating: 5.0,
+      reviewsCount: 0,
+      createdByPartnerId: newPartner.id,
+      createdByPartnerName: newPartner.name
+    };
+    services.unshift(customService);
+    newPartner.customProfessions = [{
+      id: `cp-${Date.now().toString().slice(-4)}`,
+      title: role,
+      category: 'Other Works',
+      tagline: customService.tagline,
+      priceType: 'flat_diagnostic',
+      price: 299,
+      eta: '30 mins',
+      features: customService.features,
+      equipment: vehicle || 'Professional tools',
+      isActive: true,
+      createdAt: new Date().toISOString()
+    }];
+  }
 
   partners.unshift(newPartner);
   res.status(201).json({ success: true, data: newPartner });

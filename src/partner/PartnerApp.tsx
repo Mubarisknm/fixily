@@ -21,7 +21,10 @@ import {
   Star,
   Calendar,
   Sparkles,
-  Check
+  Check,
+  Briefcase,
+  Plus,
+  Wrench
 } from 'lucide-react';
 import { GigPartner, BookingJob, ThemeMode } from '../types';
 import { api } from '../services/api';
@@ -47,6 +50,17 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
   const [withdrawalAmount, setWithdrawalAmount] = useState<string>('');
   const [upiId, setUpiId] = useState<string>('anand.driver@okicici');
   const [isProcessingWithdrawal, setIsProcessingWithdrawal] = useState<boolean>(false);
+
+  // Custom Profession & Services Management state
+  const [showAddProfessionModal, setShowAddProfessionModal] = useState<boolean>(false);
+  const [customTitle, setCustomTitle] = useState<string>('');
+  const [customTagline, setCustomTagline] = useState<string>('');
+  const [customPriceType, setCustomPriceType] = useState<'flat_diagnostic' | 'tiered' | 'base_plus_hourly'>('flat_diagnostic');
+  const [customPrice, setCustomPrice] = useState<string>('299');
+  const [customEta, setCustomEta] = useState<string>('30 mins');
+  const [customEquipment, setCustomEquipment] = useState<string>('');
+  const [customFeatures, setCustomFeatures] = useState<string>('Doorstep diagnosis, Professional tools, 100% damage guarantee');
+  const [isPublishingProfession, setIsPublishingProfession] = useState<boolean>(false);
 
   const currentPartner = partners.find(p => p.id === selectedPartnerId) || partners[0];
 
@@ -120,6 +134,55 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
     } catch (err) {
       setIsProcessingWithdrawal(false);
       alert('Withdrawal failed');
+    }
+  };
+
+  const handleAddCustomProfession = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentPartner) return;
+    if (!customTitle.trim()) {
+      alert('Please enter your custom profession / service title');
+      return;
+    }
+    const priceNum = parseFloat(customPrice) || 299;
+
+    setIsPublishingProfession(true);
+    try {
+      const featArray = customFeatures.split(',').map(f => f.trim()).filter(Boolean);
+      await api.addCustomService({
+        title: customTitle.trim(),
+        tagline: customTagline.trim() || `Doorstep ${customTitle.trim()} services by verified freelancer`,
+        category: 'Other Works',
+        priceType: customPriceType,
+        diagnosticFee: priceNum,
+        basePrice: priceNum,
+        eta: customEta.trim() || '35 mins',
+        features: featArray.length > 0 ? featArray : ['Doorstep diagnosis', 'Professional equipment', '100% damage responsibility agreed'],
+        equipment: customEquipment.trim() || 'Standard professional tools',
+        partnerId: currentPartner.id,
+        partnerName: currentPartner.name
+      });
+      setIsPublishingProfession(false);
+      setShowAddProfessionModal(false);
+      setCustomTitle('');
+      setCustomTagline('');
+      setCustomEquipment('');
+      onRefreshData();
+      alert(`🎉 Custom Profession Published! "${customTitle}" is now live under "Other Works" in the main customer grid! Customers can now book this work directly from you.`);
+    } catch (err) {
+      setIsPublishingProfession(false);
+      alert('Failed to publish custom profession. Please try again.');
+    }
+  };
+
+  const handleUseProfession = async (professionTitle: string) => {
+    if (!currentPartner) return;
+    try {
+      await api.useProfession(currentPartner.id, professionTitle);
+      onRefreshData();
+      alert(`✅ Active Profession switched to "${professionTitle}"! You are now receiving orders under this trade.`);
+    } catch (err) {
+      alert('Failed to switch active profession.');
     }
   };
 
@@ -511,6 +574,147 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
         )}
       </div>
 
+      {/* 🛠️ Worker Custom Professions & Trades (Published to Other Works Grid) */}
+      <div className={`rounded-3xl border p-6 sm:p-7 shadow-xl space-y-5 transition-all ${
+        isDark
+          ? 'bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/20 border-slate-800 text-white'
+          : 'bg-white border-slate-200 text-slate-900 shadow-sm'
+      }`}>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div className="flex items-center space-x-2.5">
+              <div className="w-9 h-9 rounded-xl bg-purple-600/20 text-purple-400 flex items-center justify-center font-bold">
+                <Briefcase className="w-5 h-5 text-purple-400" />
+              </div>
+              <h3 className="text-lg font-black tracking-tight">
+                My Custom Professions & Services
+              </h3>
+              <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow">
+                Live in "Other Works" Grid
+              </span>
+            </div>
+            <p className={`text-xs mt-1 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+              Add any freelance trade, craft, or specialty you offer. All your custom works are automatically published under the <strong>"Other Works"</strong> category in the customer main grid!
+            </p>
+          </div>
+
+          <button
+            onClick={() => setShowAddProfessionModal(true)}
+            className="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-black text-xs transition-all flex items-center justify-center space-x-1.5 shadow-md shrink-0 cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add New Custom Profession</span>
+          </button>
+        </div>
+
+        {/* Current Active Profession Badge */}
+        <div className={`p-4 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+          isDark ? 'bg-slate-950/90 border-slate-800' : 'bg-purple-50/60 border-purple-200'
+        }`}>
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold">
+              <Check className="w-5 h-5 text-emerald-400" />
+            </div>
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block">
+                Primary Active Trade (Receiving Bookings)
+              </span>
+              <div className="text-sm font-black text-white flex items-center space-x-2">
+                <span>{currentPartner.role}</span>
+                <span className="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.2 rounded-full font-bold">
+                  Active
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-xs text-slate-400">
+            Assigned in customer search & radar dispatch
+          </div>
+        </div>
+
+        {/* List of Custom Professions offered by this partner */}
+        {currentPartner.customProfessions && currentPartner.customProfessions.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+            {currentPartner.customProfessions.map((cp) => {
+              const isCurrentlyUsed = currentPartner.role.toLowerCase() === cp.title.toLowerCase();
+              return (
+                <div
+                  key={cp.id}
+                  className={`p-4 rounded-2xl border flex flex-col justify-between transition-all ${
+                    isCurrentlyUsed
+                      ? 'border-purple-500 bg-purple-950/20 ring-1 ring-purple-500/40'
+                      : isDark
+                      ? 'bg-slate-950 border-slate-800 hover:border-slate-700'
+                      : 'bg-slate-50 border-slate-200'
+                  }`}
+                >
+                  <div className="space-y-2.5">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-purple-400 block">
+                          Other Works • Custom Trade
+                        </span>
+                        <h4 className="font-black text-sm text-white truncate mt-0.5">{cp.title}</h4>
+                      </div>
+                      {isCurrentlyUsed ? (
+                        <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-500 text-slate-950 shrink-0">
+                          In Use
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 shrink-0">
+                          Published
+                        </span>
+                      )}
+                    </div>
+
+                    <p className="text-xs text-slate-300 line-clamp-2">
+                      {cp.tagline}
+                    </p>
+
+                    <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-800">
+                      <span className="text-slate-400">Upfront Price:</span>
+                      <span className="font-black text-purple-400">₹{cp.price} (Flat Diagnostic)</span>
+                    </div>
+
+                    {cp.equipment && (
+                      <div className="text-[11px] text-slate-400 truncate">
+                        🧰 {cp.equipment}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="pt-3">
+                    {isCurrentlyUsed ? (
+                      <div className="w-full py-2 rounded-xl text-center text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20">
+                        ✓ Primary Active Profession
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => handleUseProfession(cp.title)}
+                        className="w-full py-2 rounded-xl text-xs font-black bg-purple-600 hover:bg-purple-500 text-white transition-all shadow cursor-pointer"
+                      >
+                        Use This Profession
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className={`p-6 text-center rounded-2xl border text-xs ${
+            isDark ? 'bg-slate-950 border-slate-800 text-slate-400' : 'bg-slate-50 border-slate-200 text-slate-600'
+          }`}>
+            <p>You haven't published any extra custom professions yet.</p>
+            <p className="text-[11px] mt-1 text-slate-500">
+              Click <strong>"Add New Custom Profession"</strong> above to add specialized services like Solar Technician, Gardening, Furniture Restoration, Smart Home IoT, or Tailoring!
+            </p>
+          </div>
+        )}
+      </div>
+
       {/* Active Work In Progress Orders Widget */}
       {myActiveJobs.length > 0 && (
         <div className="space-y-4">
@@ -804,6 +1008,165 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
         onSuccess={handleKYCSuccess}
         theme={theme}
       />
+
+      {/* Modal: Add New Custom Profession / Service */}
+      {showAddProfessionModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className={`rounded-3xl max-w-lg w-full border shadow-2xl overflow-hidden my-auto ${
+            isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+          }`}>
+            <div className={`p-5 flex items-center justify-between border-b ${
+              isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
+            }`}>
+              <div className="flex items-center space-x-2.5">
+                <div className="w-8 h-8 rounded-xl bg-purple-600/20 text-purple-400 flex items-center justify-center font-bold">
+                  <Briefcase className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-base font-black">Add Your Custom Profession</h3>
+                  <p className="text-[11px] text-slate-400">Publishes automatically under "Other Works" in customer main grid</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowAddProfessionModal(false)}
+                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddCustomProfession} className="p-5 space-y-4 max-h-[75vh] overflow-y-auto">
+              <div>
+                <label className="block text-xs font-black uppercase tracking-wider mb-1 text-slate-400">
+                  Profession Title / Trade Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={customTitle}
+                  onChange={(e) => setCustomTitle(e.target.value)}
+                  placeholder="e.g. Solar Inverter Specialist, Gardener, Furniture Polisher..."
+                  className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-purple-500 font-bold ${
+                    isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+                  }`}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-black uppercase tracking-wider mb-1 text-slate-400">
+                  Service Description / What You Do *
+                </label>
+                <textarea
+                  rows={2}
+                  required
+                  value={customTagline}
+                  onChange={(e) => setCustomTagline(e.target.value)}
+                  placeholder="e.g. Doorstep solar inverter diagnostics, battery desulfation & pure sine wave testing."
+                  className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-purple-500 ${
+                    isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+                  }`}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1 text-slate-400">
+                    Base Diagnostic Fee (₹) *
+                  </label>
+                  <input
+                    type="number"
+                    required
+                    min={99}
+                    max={5000}
+                    value={customPrice}
+                    onChange={(e) => setCustomPrice(e.target.value)}
+                    className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-purple-500 font-bold ${
+                      isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+                    }`}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1 text-slate-400">
+                    Estimated Arrival ETA
+                  </label>
+                  <input
+                    type="text"
+                    value={customEta}
+                    onChange={(e) => setCustomEta(e.target.value)}
+                    placeholder="e.g. 30 mins"
+                    className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-purple-500 font-bold ${
+                      isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+                    }`}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-black uppercase tracking-wider mb-1 text-slate-400">
+                  Tools & Equipment Carried
+                </label>
+                <input
+                  type="text"
+                  value={customEquipment}
+                  onChange={(e) => setCustomEquipment(e.target.value)}
+                  placeholder="e.g. Digital multimeter, crimping kit, safety gloves, power drill"
+                  className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-purple-500 ${
+                    isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+                  }`}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-black uppercase tracking-wider mb-1 text-slate-400">
+                  Key Features / Highlights (Comma-separated)
+                </label>
+                <input
+                  type="text"
+                  value={customFeatures}
+                  onChange={(e) => setCustomFeatures(e.target.value)}
+                  placeholder="e.g. Doorstep diagnosis, Genuine parts, 100% damage guarantee"
+                  className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-purple-500 ${
+                    isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+                  }`}
+                />
+              </div>
+
+              <div className={`p-3 rounded-xl border text-[11px] space-y-1 ${
+                isDark ? 'bg-slate-950 border-slate-800 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'
+              }`}>
+                <div className="font-bold flex items-center space-x-1.5 text-emerald-400">
+                  <ShieldCheck className="w-4 h-4 shrink-0" />
+                  <span>Kerala Police Thuna PCC & Damage Responsibility Covered</span>
+                </div>
+                <p className="text-[10px] text-slate-400">
+                  This work will immediately appear in the customer <strong>"Other Works"</strong> category under your profile with 100% damage liability guarantee.
+                </p>
+              </div>
+
+              <div className="flex items-center space-x-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAddProfessionModal(false)}
+                  className={`flex-1 py-3 rounded-xl text-xs font-bold border ${
+                    isDark ? 'border-slate-800 hover:bg-slate-800 text-slate-300' : 'border-slate-300 hover:bg-slate-100 text-slate-700'
+                  }`}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isPublishingProfession}
+                  className="flex-1 py-3 rounded-xl text-xs font-black bg-gradient-to-r from-purple-600 to-indigo-600 hover:brightness-110 text-white shadow-lg flex items-center justify-center space-x-1.5 cursor-pointer"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  <span>{isPublishingProfession ? 'Publishing...' : 'Save & Publish to Other Works'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
     </div>
   );

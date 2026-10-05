@@ -460,7 +460,7 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
                       autoFocus
                     />
                     <p className={`text-[10px] ${isDark ? 'text-amber-300/80' : 'text-amber-800'}`}>
-                      Your custom title will be shown to customers and printed on your certified Fixily Partner profile.
+                      ✨ Your custom profession will immediately be published under the <strong>"Other Works"</strong> category in the customer main grid for direct client booking!
                     </p>
                   </div>
                 )}

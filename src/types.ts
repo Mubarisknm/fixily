@@ -18,6 +18,20 @@ export interface ServiceTier {
   duration: string;
 }
 
+export interface CustomProfession {
+  id: string;
+  title: string;
+  category: string;
+  tagline: string;
+  priceType: 'tiered' | 'base_plus_hourly' | 'flat_diagnostic' | 'quote' | 'subscription';
+  price: number;
+  eta?: string;
+  features: string[];
+  equipment?: string;
+  isActive: boolean;
+  createdAt?: string;
+}
+
 export interface ServiceItem {
   id: string;
   phase: number;
@@ -41,6 +55,8 @@ export interface ServiceItem {
   rating: number;
   reviewsCount: number;
   isInstant?: boolean;
+  createdByPartnerId?: string;
+  createdByPartnerName?: string;
 }
 
 export interface PartnerReview {
@@ -82,6 +98,8 @@ export interface GigPartner {
   name: string;
   phone: string;
   role: string;
+  secondaryRoles?: string[];
+  customProfessions?: CustomProfession[];
   rating: number;
   jobsCompleted: number;
   reviewsCount?: number;

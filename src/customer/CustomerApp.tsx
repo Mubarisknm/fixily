@@ -245,6 +245,21 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       if (selectedCategoryTab === 'CCTV & Smart Security') {
         return role.includes('cctv') || role.includes('security') || role.includes('lock');
       }
+      if (selectedCategoryTab === 'Other Works' || q.includes('other') || q.includes('custom') || q.includes('solar') || q.includes('garden') || q.includes('iot')) {
+        return (
+          role.includes('solar') ||
+          role.includes('iot') ||
+          role.includes('smart') ||
+          role.includes('garden') ||
+          role.includes('landscap') ||
+          role.includes('paint') ||
+          role.includes('waterproof') ||
+          role.includes('cctv') ||
+          role.includes('freelance') ||
+          role.includes('custom') ||
+          Boolean(partner.customProfessions && partner.customProfessions.length > 0)
+        );
+      }
       return false;
     });
   }, [sortedPartners, selectedCategoryTab, searchQuery]);
@@ -300,6 +315,14 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
         desc: 'Certified salon artists and therapists bringing sanitized luxury grooming and wellness to your home.'
       };
     }
+    if (q.includes('other') || q.includes('custom') || q.includes('solar') || q.includes('garden') || q.includes('iot') || selectedCategoryTab === 'Other Works') {
+      return {
+        title: 'Verified Custom Trade Pros & Freelancers',
+        icon: '🛠️',
+        badge: 'Custom Trades & Specialties',
+        desc: 'Certified independent freelancers offering custom trades, specialized repairs, and unique skills with 100% damage liability guarantee.'
+      };
+    }
     return {
       title: 'Verified Trade Specialists & Pros',
       icon: '⭐',
@@ -316,6 +339,19 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
 
     return sortedPartners.filter(p => {
       const role = p.role.toLowerCase();
+      if (selectedService.createdByPartnerId && p.id === selectedService.createdByPartnerId) {
+        return true;
+      }
+      if (sCat === 'other works' || sCat.includes('other') || sTitle.includes('solar') || sTitle.includes('garden') || sTitle.includes('iot') || sTitle.includes('custom')) {
+        return (
+          role.includes('solar') ||
+          role.includes('iot') ||
+          role.includes('smart') ||
+          role.includes('garden') ||
+          role.includes('custom') ||
+          Boolean(p.customProfessions && p.customProfessions.length > 0)
+        );
+      }
       if (sCat.includes('mechanic') || sTitle.includes('mechanic') || sCat.includes('vehicle') || sTitle.includes('car')) {
         return role.includes('mechanic') || role.includes('breakdown') || role.includes('car');
       }
@@ -353,7 +389,8 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
     { id: 'NRI / Absentee Property Stewardship', label: 'NRI Property Care', icon: '🏡' },
     { id: 'Personal Grooming & At-Home Wellness', label: 'Salon & Spa', icon: '✂️' },
     { id: 'Rental Cars & Taxi Services', label: 'Rental & Taxi', icon: '🚕' },
-    { id: 'Water Supply', label: 'Water Tanker', icon: '🚚' }
+    { id: 'Water Supply', label: 'Water Tanker', icon: '🚚' },
+    { id: 'Other Works', label: 'Other Works', icon: '🛠️', tag: 'Custom Trades' }
   ];
 
   // Filter Services by Category and Search Query
@@ -1034,6 +1071,10 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                       <span className="bg-blue-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow flex items-center space-x-1">
                         <ShieldCheck className="w-3 h-3" />
                         <span>Thuna PCC</span>
+                      </span>
+                    ) : service.category === 'Other Works' ? (
+                      <span className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow flex items-center space-x-1">
+                        <span>🛠️ Other Works</span>
                       </span>
                     ) : (
                       <span className="bg-slate-950/70 backdrop-blur text-purple-300 text-[10px] font-bold px-2 py-0.5 rounded-full">

@@ -344,6 +344,59 @@ export const SERVICES = [
     features: ['Lab-tested purified drinking water', 'High-flow pump hose connection', '24/7 emergency dispatch'],
     rating: 4.90,
     reviewsCount: 410
+  },
+
+  // 17. Other Works (Custom Partner Trades & Specialized Freelancers)
+  {
+    id: 'solar-inverter-ups-care',
+    phase: 1,
+    category: 'Other Works',
+    title: 'Solar Inverter & Rooftop UPS Technician',
+    tagline: 'Solar inverter installation, battery acid checks & circuit diagnostics.',
+    badge: 'Custom Trade',
+    icon: 'Sun',
+    imageUrl: 'https://images.unsplash.com/photo-1509391365360-2e959784a276?w=600&auto=format&fit=crop&q=80',
+    eta: '35 mins',
+    isInstant: true,
+    priceType: 'flat_diagnostic',
+    diagnosticFee: 299,
+    features: ['Rooftop solar DC/AC cabling check', 'Battery specific gravity testing', 'Pure sine wave inverter diagnostics'],
+    rating: 4.95,
+    reviewsCount: 140
+  },
+  {
+    id: 'gardening-lawn-care',
+    phase: 1,
+    category: 'Other Works',
+    title: 'Garden Landscaping & Plant Caretaker',
+    tagline: 'Lawn mowing, organic de-weeding, hedge trimming & plant potting.',
+    badge: 'Custom Trade',
+    icon: 'Sparkles',
+    imageUrl: 'https://images.unsplash.com/photo-1558904541-efa8c4a08931?w=600&auto=format&fit=crop&q=80',
+    eta: '45 mins',
+    isInstant: true,
+    priceType: 'flat_diagnostic',
+    diagnosticFee: 349,
+    features: ['Motorized hedge & bush trimming', 'Organic pest repellent spray', 'Lawn edging and garden cleanup'],
+    rating: 4.90,
+    reviewsCount: 92
+  },
+  {
+    id: 'smart-iot-automation',
+    phase: 1,
+    category: 'Other Works',
+    title: 'Smart Home IoT & Sensor Automation Specialist',
+    tagline: 'Smart switchboards, WiFi curtain motors & digital smart lock setup.',
+    badge: 'Custom Trade',
+    icon: 'Cpu',
+    imageUrl: 'https://images.unsplash.com/photo-1558002038-1055907df827?w=600&auto=format&fit=crop&q=80',
+    eta: '30 mins',
+    isInstant: true,
+    priceType: 'flat_diagnostic',
+    diagnosticFee: 399,
+    features: ['WiFi smart switchboard retrofit', 'Google Home / Alexa voice configuration', 'Smart lock door calibration'],
+    rating: 4.96,
+    reviewsCount: 118
   }
 ];
 
@@ -622,6 +675,74 @@ export const MOCK_PARTNERS = [
     walletBalance: 3450,
     todaysEarnings: 1600,
     photoUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&auto=format&fit=crop&q=80'
+  },
+  {
+    id: 'p-106',
+    name: 'Sunil Prasad',
+    phone: '+91 98475 66778',
+    role: 'Solar Inverter & Smart Home IoT Specialist',
+    rating: 4.95,
+    jobsCompleted: 176,
+    reviewsCount: 92,
+    isOnline: true,
+    isTopRated: true,
+    hourlyRateMultiplier: 1.25,
+    damageLiabilityAgreed: true,
+    currentLocation: { name: 'Kalamassery Startup Village', lat: 10.0450, lng: 76.3250 },
+    availableSlots: [
+      'Today, 02:00 PM - 04:30 PM',
+      'Today, 05:00 PM - 07:30 PM',
+      'Tomorrow, 09:30 AM - 12:30 PM',
+      'Tomorrow, 02:30 PM - 05:30 PM'
+    ],
+    targetAchievement: {
+      weeklyTarget: 15,
+      completedJobsThisWeek: 11,
+      bonusAmount: 1500,
+      isBonusUnlocked: false,
+      tierLevel: 'GOLD_TOP_RATED',
+      commissionDiscountPercent: 5
+    },
+    reviews: [
+      {
+        id: 'rev-7',
+        customerName: 'George Joseph',
+        rating: 5,
+        comment: 'Sunil installed our solar rooftop backup and automated WiFi lights perfectly. Highly recommended freelancer!',
+        serviceTitle: 'Solar Inverter & Rooftop UPS Technician',
+        createdAt: '2026-10-03'
+      }
+    ],
+    kyc: {
+      aadhaarVerified: true,
+      govtIdType: 'AADHAAR',
+      govtIdNumber: '8833 2291 0044',
+      govtIdFileAttached: true,
+      pccStatus: 'VERIFIED',
+      pccRefNo: 'THUNA-PCC-2024-66381',
+      pccExpiry: '2027-11-20',
+      bankVerified: true,
+      damageLiabilityAgreed: true,
+      liabilityAgreementTimestamp: '2026-05-15T10:00:00Z'
+    },
+    vehicle: 'Solar & Smart Home Toolkit with Multimeter',
+    walletBalance: 2900,
+    todaysEarnings: 1100,
+    photoUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80',
+    customProfessions: [
+      {
+        id: 'cp-1',
+        title: 'Solar Inverter & Rooftop UPS Technician',
+        category: 'Other Works',
+        tagline: 'Solar rooftop inverter setup, battery desulfation, UPS backup troubleshooting.',
+        priceType: 'flat_diagnostic',
+        price: 299,
+        eta: '35 mins',
+        features: ['Rooftop solar DC/AC cabling check', 'Battery specific gravity testing', 'Pure sine wave inverter diagnostics'],
+        equipment: 'Carrying digital multimeter, solar crimping pliers & tester',
+        isActive: true
+      }
+    ]
   }
 ];
 

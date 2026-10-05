@@ -17,6 +17,7 @@ async function fetchJson(url: string, options?: RequestInit) {
 }
 
 // Local fallback state in case server is not running
+let localServices: ServiceItem[] = [...SERVICES] as ServiceItem[];
 let localPartners: GigPartner[] = [...MOCK_PARTNERS];
 let localJobs: BookingJob[] = [...MOCK_JOBS];
 
@@ -28,7 +29,7 @@ export const api = {
 
   async getServices(): Promise<ServiceItem[]> {
     const data = await fetchJson(`${API_BASE}/services`);
-    return data || (SERVICES as ServiceItem[]);
+    return data || localServices;
   },
 
   async getPartners(): Promise<GigPartner[]> {
@@ -101,8 +102,54 @@ export const api = {
       vehicle: payload.vehicle || 'Standard Service Kit',
       walletBalance: 250, // Welcome joining bonus
       todaysEarnings: 0,
-      photoUrl: payload.photoUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'
+      photoUrl: payload.photoUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
+      customProfessions: []
     };
+
+    const standardRoles = [
+      'Freelance Acting Driver ("Drive My Car")',
+      'Doorstep Car & Bike Mechanic',
+      'Electrician & Inverter/Wiring Technician',
+      'Licensed Plumber & Pipeline Specialist',
+      'At-Home Salon, Hair Stylist & Beautician',
+      'AC, Washing Machine & Appliance Care Technician'
+    ];
+    if (!standardRoles.includes(payload.role)) {
+      const customService: ServiceItem = {
+        id: `service-custom-${Date.now().toString().slice(-4)}`,
+        phase: 1,
+        category: 'Other Works',
+        title: payload.role,
+        tagline: `Specialized ${payload.role} services at doorstep by verified professional.`,
+        badge: 'Custom Trade',
+        icon: 'Sparkles',
+        imageUrl: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&auto=format&fit=crop&q=80',
+        eta: '30 mins',
+        isInstant: true,
+        priceType: 'flat_diagnostic',
+        diagnosticFee: 299,
+        basePrice: 299,
+        features: ['Doorstep arrival with tools', 'Upfront pricing and clear diagnosis', '100% damage responsibility guaranteed'],
+        rating: 5.0,
+        reviewsCount: 0,
+        createdByPartnerId: newPartner.id,
+        createdByPartnerName: newPartner.name
+      };
+      localServices.unshift(customService);
+      newPartner.customProfessions = [{
+        id: `cp-${Date.now().toString().slice(-4)}`,
+        title: payload.role,
+        category: 'Other Works',
+        tagline: customService.tagline,
+        priceType: 'flat_diagnostic',
+        price: 299,
+        eta: '30 mins',
+        features: customService.features,
+        equipment: payload.vehicle || 'Professional tools',
+        isActive: true,
+        createdAt: new Date().toISOString()
+      }];
+    }
 
     localPartners.unshift(newPartner);
     return newPartner;
@@ -331,5 +378,96 @@ export const api = {
       verifiedPccCount: localPartners.filter((p: GigPartner) => p.kyc.pccStatus === 'VERIFIED').length,
       averageTakeRate: '15.8%'
     };
+  },
+
+  async addCustomService(payload: {
+    title: string;
+    tagline: string;
+    category?: string;
+    priceType?: 'tiered' | 'base_plus_hourly' | 'flat_diagnostic' | 'quote' | 'subscription';
+    diagnosticFee?: number;
+    basePrice?: number;
+    eta?: string;
+    features?: string[];
+    equipment?: string;
+    partnerId?: string;
+    partnerName?: string;
+  }): Promise<ServiceItem> {
+    const data = await fetchJson(`${API_BASE}/services`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (data) return data;
+
+    const newService: ServiceItem = {
+      id: `service-custom-${Date.now().toString().slice(-4)}`,
+      phase: 1,
+      category: payload.category || 'Other Works',
+      title: payload.title || 'Custom Freelance Work',
+      tagline: payload.tagline || 'Specialized doorstep work by verified freelancer.',
+      badge: 'Custom Trade',
+      icon: 'Sparkles',
+      imageUrl: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&auto=format&fit=crop&q=80',
+      eta: payload.eta || '30 mins',
+      isInstant: true,
+      priceType: payload.priceType || 'flat_diagnostic',
+      diagnosticFee: payload.diagnosticFee || 299,
+      basePrice: payload.basePrice || payload.diagnosticFee || 299,
+      features: payload.features && payload.features.length > 0 ? payload.features : ['Doorstep inspection & diagnosis', 'Equipped with required tools', '100% damage responsibility agreed'],
+      rating: 5.0,
+      reviewsCount: 1,
+      createdByPartnerId: payload.partnerId,
+      createdByPartnerName: payload.partnerName
+    };
+
+    localServices.unshift(newService);
+
+    if (payload.partnerId) {
+      const partner = localPartners.find(p => p.id === payload.partnerId);
+      if (partner) {
+        if (!partner.customProfessions) partner.customProfessions = [];
+        partner.customProfessions.push({
+          id: `cp-${Date.now().toString().slice(-4)}`,
+          title: newService.title,
+          category: 'Other Works',
+          tagline: newService.tagline,
+          priceType: newService.priceType,
+          price: newService.diagnosticFee || 299,
+          eta: newService.eta,
+          features: newService.features,
+          equipment: payload.equipment || 'Standard professional tools',
+          isActive: true,
+          createdAt: new Date().toISOString()
+        });
+        if (!partner.secondaryRoles) partner.secondaryRoles = [];
+        if (!partner.secondaryRoles.includes(newService.title)) {
+          partner.secondaryRoles.push(newService.title);
+        }
+      }
+    }
+
+    return newService;
+  },
+
+  async useProfession(partnerId: string, professionTitle: string): Promise<GigPartner | null> {
+    const data = await fetchJson(`${API_BASE}/partners/${partnerId}/use-profession`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ professionTitle })
+    });
+    if (data) return data;
+
+    const partner = localPartners.find(p => p.id === partnerId);
+    if (partner) {
+      partner.role = professionTitle;
+      if (partner.customProfessions) {
+        partner.customProfessions.forEach(cp => {
+          cp.isActive = cp.title === professionTitle;
+        });
+      }
+      return partner;
+    }
+    return null;
   }
 };
