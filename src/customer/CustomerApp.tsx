@@ -146,6 +146,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
 
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategoryTab, setSelectedCategoryTab] = useState<string>('all');
+  const [otherServicesSubFilter, setOtherServicesSubFilter] = useState<string>('all');
 
   // Scheduling Search State
   const [targetDate, setTargetDate] = useState<string>(() => new Date().toISOString().split('T')[0]);
@@ -197,7 +198,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
     if (!sortedPartners || sortedPartners.length === 0) return [];
     const q = searchQuery.toLowerCase().trim();
 
-    // REMOVE from main grid: if 'all' and no search query, return empty
+    // REMOVE from main grid: if 'all' and no search query, return empty to keep home page minimal
     if (selectedCategoryTab === 'all' && !q) {
       return [];
     }
@@ -217,7 +218,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
         if (q.includes('clean') && role.includes('clean')) return true;
       }
 
-      // If a specific category tab is selected:
+      // If a specific core category tab is selected:
       if (selectedCategoryTab === 'Mechanic & Roadside Assistance' || selectedCategoryTab === 'Vehicle Care') {
         return role.includes('mechanic') || role.includes('breakdown') || role.includes('car');
       }
@@ -245,8 +246,43 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       if (selectedCategoryTab === 'CCTV & Smart Security') {
         return role.includes('cctv') || role.includes('security') || role.includes('lock');
       }
-      if (selectedCategoryTab === 'Other Works' || q.includes('other') || q.includes('custom') || q.includes('solar') || q.includes('garden') || q.includes('iot')) {
+      if (
+        selectedCategoryTab === 'Other Services' ||
+        selectedCategoryTab === 'Other Works' ||
+        q.includes('other') ||
+        q.includes('custom') ||
+        q.includes('solar') ||
+        q.includes('garden') ||
+        q.includes('iot')
+      ) {
+        const hasCustom = Boolean(partner.customProfessions && partner.customProfessions.length > 0);
+        if (otherServicesSubFilter === 'worker-custom') {
+          return hasCustom || role.includes('solar') || role.includes('garden') || role.includes('iot') || role.includes('custom') || role.includes('freelance');
+        }
+        if (otherServicesSubFilter === 'cleaning') {
+          return role.includes('clean') || role.includes('housekeep') || role.includes('sanitiz');
+        }
+        if (otherServicesSubFilter === 'carpentry') {
+          return role.includes('carpenter') || role.includes('paint') || role.includes('wood') || role.includes('lock') || role.includes('waterproof');
+        }
+        if (otherServicesSubFilter === 'security') {
+          return role.includes('cctv') || role.includes('security');
+        }
+        if (otherServicesSubFilter === 'salon') {
+          return role.includes('salon') || role.includes('beautician') || role.includes('stylist') || role.includes('wellness');
+        }
+        if (otherServicesSubFilter === 'mobility') {
+          return role.includes('driver') || role.includes('taxi') || role.includes('chauffeur');
+        }
+        if (otherServicesSubFilter === 'tech') {
+          return role.includes('mobile') || role.includes('laptop') || role.includes('repair') || role.includes('tech');
+        }
+        if (otherServicesSubFilter === 'water') {
+          return role.includes('water') || role.includes('tanker');
+        }
+
         return (
+          hasCustom ||
           role.includes('solar') ||
           role.includes('iot') ||
           role.includes('smart') ||
@@ -255,14 +291,18 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
           role.includes('paint') ||
           role.includes('waterproof') ||
           role.includes('cctv') ||
+          role.includes('carpenter') ||
+          role.includes('clean') ||
+          role.includes('housekeep') ||
+          role.includes('salon') ||
+          role.includes('stylist') ||
           role.includes('freelance') ||
-          role.includes('custom') ||
-          Boolean(partner.customProfessions && partner.customProfessions.length > 0)
+          role.includes('custom')
         );
       }
       return false;
     });
-  }, [sortedPartners, selectedCategoryTab, searchQuery]);
+  }, [sortedPartners, selectedCategoryTab, searchQuery, otherServicesSubFilter]);
 
   // Dynamic title, icon and info for trade-specific experts section
   const categoryExpertInfo = useMemo(() => {
@@ -315,12 +355,28 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
         desc: 'Certified salon artists and therapists bringing sanitized luxury grooming and wellness to your home.'
       };
     }
-    if (q.includes('other') || q.includes('custom') || q.includes('solar') || q.includes('garden') || q.includes('iot') || selectedCategoryTab === 'Other Works') {
+    if (
+      q.includes('other') ||
+      q.includes('custom') ||
+      q.includes('solar') ||
+      q.includes('garden') ||
+      q.includes('iot') ||
+      selectedCategoryTab === 'Other Services' ||
+      selectedCategoryTab === 'Other Works'
+    ) {
+      if (otherServicesSubFilter === 'worker-custom') {
+        return {
+          title: 'Verified Worker Custom Trades & Freelancers',
+          icon: '👤',
+          badge: 'Worker-Added Trades',
+          desc: 'Unique trades and customized services published directly by certified freelance partners with full damage liability guarantee.'
+        };
+      }
       return {
-        title: 'Verified Custom Trade Pros & Freelancers',
+        title: 'Verified Trade Specialists & Custom Freelancers',
         icon: '🛠️',
-        badge: 'Custom Trades & Specialties',
-        desc: 'Certified independent freelancers offering custom trades, specialized repairs, and unique skills with 100% damage liability guarantee.'
+        badge: 'Specialized & Custom Works',
+        desc: 'Certified independent freelancers and specialized trade pros offering carpentry, deep cleaning, security, and custom trades with 100% damage liability guarantee.'
       };
     }
     return {
@@ -329,7 +385,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       badge: 'Verified Freelancers',
       desc: 'Top-rated freelance professionals in this trade with verified credentials and damage liability guarantee.'
     };
-  }, [selectedCategoryTab, searchQuery]);
+  }, [selectedCategoryTab, searchQuery, otherServicesSubFilter]);
 
   // Partners matching the currently selected service (used in Checkout Modal)
   const matchingPartnersForSelectedService = useMemo(() => {
@@ -342,13 +398,23 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       if (selectedService.createdByPartnerId && p.id === selectedService.createdByPartnerId) {
         return true;
       }
-      if (sCat === 'other works' || sCat.includes('other') || sTitle.includes('solar') || sTitle.includes('garden') || sTitle.includes('iot') || sTitle.includes('custom')) {
+      if (
+        sCat === 'other works' ||
+        sCat === 'other services' ||
+        sCat.includes('other') ||
+        sTitle.includes('solar') ||
+        sTitle.includes('garden') ||
+        sTitle.includes('iot') ||
+        sTitle.includes('custom') ||
+        Boolean(selectedService.createdByPartnerId)
+      ) {
         return (
           role.includes('solar') ||
           role.includes('iot') ||
           role.includes('smart') ||
           role.includes('garden') ||
           role.includes('custom') ||
+          role.includes('freelance') ||
           Boolean(p.customProfessions && p.customProfessions.length > 0)
         );
       }
@@ -374,39 +440,105 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
     });
   }, [selectedService, sortedPartners]);
 
-  // Friendly Category Clusters
+  // Core Doorstep Category IDs shown on Minimal Home View
+  const CORE_CATEGORY_IDS = [
+    'Mechanic & Roadside Assistance',
+    'Driver',
+    'Electrical Services',
+    'Plumbing & Water Management',
+    'Appliance Care & Servicing',
+    'Vehicle Care'
+  ];
+
+  // Minimal Category Clusters - 7 Core Doorstep Essentials + 1 Prominent 'Other Services' Gateway
   const categoryClusters = [
-    { id: 'all', label: 'All Services', icon: '🌟' },
+    { id: 'all', label: 'Essential Services', icon: '🌟' },
     { id: 'Mechanic & Roadside Assistance', label: 'Roadside Rescue', icon: '🚨', tag: '20m ETA' },
-    { id: 'Vehicle Care', label: 'Vehicle Care', icon: '🚗' },
     { id: 'Driver', label: 'Acting Drivers', icon: '👨‍✈️', tag: 'Thuna PCC' },
     { id: 'Electrical Services', label: 'Electrician', icon: '⚡' },
     { id: 'Plumbing & Water Management', label: 'Plumbing', icon: '💧' },
     { id: 'Appliance Care & Servicing', label: 'Appliance & AC', icon: '❄️' },
-    { id: 'Deep Cleaning & Housekeeping', label: 'Cleaning', icon: '✨' },
-    { id: 'Carpenter & Locksmith', label: 'Carpenter', icon: '🔨' },
-    { id: 'CCTV & Smart Security', label: 'CCTV Security', icon: '📹' },
-    { id: 'NRI / Absentee Property Stewardship', label: 'NRI Property Care', icon: '🏡' },
-    { id: 'Personal Grooming & At-Home Wellness', label: 'Salon & Spa', icon: '✂️' },
-    { id: 'Rental Cars & Taxi Services', label: 'Rental & Taxi', icon: '🚕' },
-    { id: 'Water Supply', label: 'Water Tanker', icon: '🚚' },
-    { id: 'Other Works', label: 'Other Works', icon: '🛠️', tag: 'Custom Trades' }
+    { id: 'Vehicle Care', label: 'Vehicle Care', icon: '🚗' },
+    { id: 'Other Services', label: 'Other Services', icon: '🛠️', tag: 'Custom Trades & More', isHighlight: true }
   ];
 
-  // Filter Services by Category and Search Query
-  const filteredServices = useMemo(() => {
-    return services.filter(service => {
-      const matchesCategory = selectedCategoryTab === 'all' || service.category === selectedCategoryTab;
-      const q = searchQuery.toLowerCase().trim();
-      const matchesSearch = !q ||
-        service.title.toLowerCase().includes(q) ||
-        service.category.toLowerCase().includes(q) ||
-        (service.tagline && service.tagline.toLowerCase().includes(q)) ||
-        (service.features && service.features.some(f => f.toLowerCase().includes(q)));
+  // Helper to determine if a service is in the core doorstep category
+  const isCoreService = (s: ServiceItem) => {
+    return CORE_CATEGORY_IDS.includes(s.category) && !s.createdByPartnerId;
+  };
 
-      return matchesCategory && matchesSearch;
-    });
-  }, [services, selectedCategoryTab, searchQuery]);
+  // Helper to determine if a service belongs to "Other Services"
+  const isOtherService = (s: ServiceItem) => {
+    return !CORE_CATEGORY_IDS.includes(s.category) || Boolean(s.createdByPartnerId) || s.category === 'Other Works' || s.category === 'Other Services';
+  };
+
+  // Filter Services by Category, Sub-Filter and Search Query
+  const filteredServices = useMemo(() => {
+    const q = searchQuery.toLowerCase().trim();
+
+    // 1. Search Query: searches all services across the entire platform
+    if (q) {
+      return services.filter(service => {
+        const matchesSearch =
+          service.title.toLowerCase().includes(q) ||
+          service.category.toLowerCase().includes(q) ||
+          (service.tagline && service.tagline.toLowerCase().includes(q)) ||
+          (service.features && service.features.some(f => f.toLowerCase().includes(q))) ||
+          (service.createdByPartnerName && service.createdByPartnerName.toLowerCase().includes(q));
+
+        if (selectedCategoryTab === 'all') return matchesSearch;
+        if (selectedCategoryTab === 'Other Services') {
+          return matchesSearch && isOtherService(service);
+        }
+        return matchesSearch && service.category === selectedCategoryTab;
+      });
+    }
+
+    // 2. Home Page ('all'): minimalize! Show ONLY the core essential doorstep services
+    if (selectedCategoryTab === 'all') {
+      return services.filter(service => isCoreService(service));
+    }
+
+    // 3. Other Services Tab: all non-core works and all worker-added custom works
+    if (selectedCategoryTab === 'Other Services') {
+      return services.filter(service => {
+        if (!isOtherService(service)) return false;
+
+        if (otherServicesSubFilter === 'all') return true;
+        if (otherServicesSubFilter === 'worker-custom') {
+          return Boolean(service.createdByPartnerId) || service.category === 'Other Works' || service.category === 'Other Services';
+        }
+        if (otherServicesSubFilter === 'cleaning') {
+          return service.category === 'Deep Cleaning & Housekeeping' || service.category === 'Outdoor & Property Maintenance';
+        }
+        if (otherServicesSubFilter === 'carpentry') {
+          return service.category === 'Carpenter & Locksmith' || service.category === 'Painter & Waterproofing';
+        }
+        if (otherServicesSubFilter === 'security') {
+          return service.category === 'CCTV & Smart Security';
+        }
+        if (otherServicesSubFilter === 'nri') {
+          return service.category === 'NRI / Absentee Property Stewardship';
+        }
+        if (otherServicesSubFilter === 'salon') {
+          return service.category === 'Personal Grooming & At-Home Wellness';
+        }
+        if (otherServicesSubFilter === 'mobility') {
+          return service.category === 'Rental Cars & Taxi Services';
+        }
+        if (otherServicesSubFilter === 'tech') {
+          return service.category === 'Laptop and Mobile Phone Repair';
+        }
+        if (otherServicesSubFilter === 'water') {
+          return service.category === 'Water Supply';
+        }
+        return true;
+      });
+    }
+
+    // 4. Specific Core Category Tab (Roadside Rescue, Electrician, Plumber, etc.)
+    return services.filter(service => service.category === selectedCategoryTab);
+  }, [services, selectedCategoryTab, searchQuery, otherServicesSubFilter]);
 
   const handleStartBooking = (service: ServiceItem) => {
     setPreferredPartner(null);
@@ -423,8 +555,11 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
     setPreferredPartner(partner);
     let matchedService = explicitService;
     if (!matchedService) {
-      if (selectedCategoryTab !== 'all') {
+      if (selectedCategoryTab !== 'all' && selectedCategoryTab !== 'Other Services') {
         matchedService = services.find(s => s.category === selectedCategoryTab);
+      }
+      if (!matchedService && partner.customProfessions && partner.customProfessions.length > 0) {
+        matchedService = services.find(s => s.createdByPartnerId === partner.id);
       }
       if (!matchedService) {
         matchedService = services.find(s =>
@@ -787,13 +922,25 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
         <div className="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none">
           {categoryClusters.map((cluster) => {
             const isSelected = selectedCategoryTab === cluster.id;
+            const isOther = cluster.id === 'Other Services';
             return (
               <button
                 key={cluster.id}
-                onClick={() => setSelectedCategoryTab(cluster.id)}
+                onClick={() => {
+                  setSelectedCategoryTab(cluster.id);
+                  if (cluster.id !== 'Other Services') {
+                    setOtherServicesSubFilter('all');
+                  }
+                }}
                 className={`flex items-center space-x-2 px-3.5 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition-all border shrink-0 ${
                   isSelected
-                    ? 'bg-purple-600 text-white border-purple-600 shadow-md ring-2 ring-purple-600/30'
+                    ? isOther
+                      ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white border-purple-500 shadow-md ring-2 ring-purple-600/40'
+                      : 'bg-purple-600 text-white border-purple-600 shadow-md ring-2 ring-purple-600/30'
+                    : isOther
+                    ? isDark
+                      ? 'bg-purple-950/40 border-purple-800/60 text-purple-300 hover:bg-purple-900/50 hover:border-purple-600 font-extrabold'
+                      : 'bg-purple-50 border-purple-200 text-purple-800 hover:bg-purple-100 hover:border-purple-300 font-extrabold'
                     : isDark
                     ? 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700 hover:bg-slate-800'
                     : 'bg-white border-slate-200 text-slate-700 hover:border-purple-200 hover:bg-purple-50/50'
@@ -803,7 +950,11 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                 <span>{cluster.label}</span>
                 {cluster.tag && (
                   <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-black ${
-                    isSelected ? 'bg-white/20 text-white' : 'bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300'
+                    isSelected
+                      ? 'bg-white/20 text-white'
+                      : isOther
+                      ? 'bg-purple-200 text-purple-900 dark:bg-purple-900 dark:text-purple-200'
+                      : 'bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300'
                   }`}>
                     {cluster.tag}
                   </span>
@@ -819,26 +970,97 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <h3 className={`text-base font-extrabold ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-              {selectedCategoryTab === 'all' ? 'All Verified Services' : selectedCategoryTab}
+              {selectedCategoryTab === 'all'
+                ? 'Core Doorstep Essentials'
+                : selectedCategoryTab === 'Other Services'
+                ? 'Other Services & Worker Custom Trades'
+                : selectedCategoryTab}
             </h3>
             {selectedCategoryTab !== 'all' && (
               <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-purple-600 text-white">
-                Selected Category
+                {selectedCategoryTab === 'Other Services' ? 'Expanded Hub' : 'Selected Category'}
               </span>
             )}
           </div>
-          {(selectedCategoryTab !== 'all' || searchQuery) && (
+          {(selectedCategoryTab !== 'all' || searchQuery || otherServicesSubFilter !== 'all') && (
             <button
               onClick={() => {
                 setSelectedCategoryTab('all');
                 setSearchQuery('');
+                setOtherServicesSubFilter('all');
               }}
               className="text-xs font-bold text-purple-600 hover:underline"
             >
-              Reset Filters
+              Reset to Core Services
             </button>
           )}
         </div>
+
+        {/* Sub-filter Bar for 'Other Services' */}
+        {selectedCategoryTab === 'Other Services' && (
+          <div className={`p-4 rounded-3xl border space-y-3 ${
+            isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-purple-50/50 border-purple-200'
+          }`}>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <h4 className={`text-sm font-black flex items-center space-x-1.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                  <span>🛠️</span>
+                  <span>Explore Other Works &amp; Worker Custom Trades</span>
+                </h4>
+                <p className={`text-xs mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                  Specialized trade services, installations, and custom freelance professions added directly by verified partners.
+                </p>
+              </div>
+              <span className="text-xs font-bold px-2.5 py-1 rounded-xl bg-purple-600 text-white shrink-0 self-start sm:self-auto shadow-sm">
+                {filteredServices.length} Works Available
+              </span>
+            </div>
+
+            {/* Sub-filter chips */}
+            <div className="flex items-center space-x-2 overflow-x-auto pb-1 scrollbar-none">
+              {[
+                { id: 'all', label: 'All Other Works', icon: '🌐' },
+                { id: 'worker-custom', label: 'Worker Custom Trades', icon: '👤', tag: 'Partner Added' },
+                { id: 'cleaning', label: 'Cleaning & Property', icon: '✨' },
+                { id: 'carpentry', label: 'Carpentry & Paint', icon: '🔨' },
+                { id: 'security', label: 'CCTV & Security', icon: '📹' },
+                { id: 'nri', label: 'NRI Property Care', icon: '🏡' },
+                { id: 'salon', label: 'Salon & Spa', icon: '✂️' },
+                { id: 'mobility', label: 'Taxi & Rentals', icon: '🚕' },
+                { id: 'tech', label: 'Mobile & Laptop', icon: '📱' },
+                { id: 'water', label: 'Water Tanker', icon: '🚚' },
+              ].map((sub) => {
+                const isActive = otherServicesSubFilter === sub.id;
+                return (
+                  <button
+                    key={sub.id}
+                    type="button"
+                    onClick={() => setOtherServicesSubFilter(sub.id)}
+                    className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all border shrink-0 ${
+                      isActive
+                        ? 'bg-purple-600 text-white border-purple-600 shadow-sm ring-2 ring-purple-600/20'
+                        : isDark
+                        ? 'bg-slate-950 border-slate-800 text-slate-300 hover:bg-slate-800 hover:border-slate-700'
+                        : 'bg-white border-slate-200 text-slate-700 hover:bg-purple-50 hover:border-purple-300'
+                    }`}
+                  >
+                    <span>{sub.icon}</span>
+                    <span>{sub.label}</span>
+                    {sub.tag && (
+                      <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-black ${
+                        isActive
+                          ? 'bg-white/20 text-white'
+                          : 'bg-purple-100 text-purple-700 dark:bg-purple-900/60 dark:text-purple-300'
+                      }`}>
+                        {sub.tag}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* 🔧 Trade-Specific Verified Experts (Displayed when a specific category or trade is selected, e.g. Mechanic) */}
         {categoryMatchedPartners.length > 0 && (
@@ -1063,7 +1285,11 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
 
                   {/* Right Badges */}
                   <div className="absolute top-2.5 right-2.5">
-                    {service.category === 'Mechanic & Roadside Assistance' ? (
+                    {service.createdByPartnerName ? (
+                      <span className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow flex items-center space-x-1">
+                        <span>👤 {service.createdByPartnerName.split(' ')[0]}'s Custom Work</span>
+                      </span>
+                    ) : service.category === 'Mechanic & Roadside Assistance' ? (
                       <span className="bg-amber-500 text-slate-950 text-[10px] font-black px-2.5 py-0.5 rounded-full shadow">
                         ⚡ 20m Rescue
                       </span>
@@ -1072,9 +1298,9 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                         <ShieldCheck className="w-3 h-3" />
                         <span>Thuna PCC</span>
                       </span>
-                    ) : service.category === 'Other Works' ? (
+                    ) : service.category === 'Other Works' || service.category === 'Other Services' ? (
                       <span className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow flex items-center space-x-1">
-                        <span>🛠️ Other Works</span>
+                        <span>🛠️ Custom Trade</span>
                       </span>
                     ) : (
                       <span className="bg-slate-950/70 backdrop-blur text-purple-300 text-[10px] font-bold px-2 py-0.5 rounded-full">
@@ -1097,6 +1323,14 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                     <h4 className={`font-black text-sm leading-snug line-clamp-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>
                       {service.title}
                     </h4>
+
+                    {service.createdByPartnerName && (
+                      <div className="mt-1 flex items-center space-x-1">
+                        <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 inline-flex items-center space-x-1">
+                          <span>👤 Added by Pro: {service.createdByPartnerName}</span>
+                        </span>
+                      </div>
+                    )}
 
                     <p className={`text-xs mt-1 line-clamp-2 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
                       {service.tagline}
@@ -1124,6 +1358,48 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Gateway Banner to Other Services & Worker Custom Trades when on Home / Core View */}
+        {selectedCategoryTab === 'all' && !searchQuery && (
+          <div className={`mt-8 rounded-3xl p-6 sm:p-8 border shadow-lg relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 ${
+            isDark
+              ? 'bg-gradient-to-r from-purple-950/70 via-slate-900 to-indigo-950/70 border-purple-500/30'
+              : 'bg-gradient-to-r from-purple-100 via-white to-indigo-100 border-purple-200'
+          }`}>
+            <div className="flex items-start space-x-4">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 text-white flex items-center justify-center shrink-0 shadow-lg text-2xl">
+                🛠️
+              </div>
+              <div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-[10px] uppercase font-black px-2.5 py-0.5 rounded-full bg-purple-600 text-white shadow-sm">
+                    Other Services &amp; Custom Trades Hub
+                  </span>
+                  <span className="text-xs font-bold text-purple-600 dark:text-purple-400">
+                    {services.filter(s => isOtherService(s)).length}+ Specialized Works
+                  </span>
+                </div>
+                <h4 className={`text-lg sm:text-xl font-black mt-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                  Need Deep Cleaning, Carpentry, Painting, or Worker-Added Trades?
+                </h4>
+                <p className={`text-xs sm:text-sm mt-1 max-w-xl ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                  We keep the home page uncluttered with core essentials. Click below to browse all other works including CCTV setup, water tankers, NRI property care, and custom freelance trades (Solar, Gardening, IoT) added by our verified partners.
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => {
+                setSelectedCategoryTab('Other Services');
+                setOtherServicesSubFilter('all');
+              }}
+              className="w-full md:w-auto bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-black px-6 py-3.5 rounded-2xl text-xs sm:text-sm shadow-xl transition-all duration-200 flex items-center justify-center space-x-2 shrink-0 hover:scale-105 cursor-pointer"
+            >
+              <span>Explore Other Services ({services.filter(s => isOtherService(s)).length}+)</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
           </div>
         )}
       </div>
