@@ -567,6 +567,61 @@ export const MOCK_PARTNERS = [
     walletBalance: 3200,
     todaysEarnings: 1400,
     photoUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80'
+  },
+  {
+    id: 'p-105',
+    name: 'Sanjay R.',
+    phone: '+91 98474 55667',
+    role: 'Automobile Master Mechanic & Breakdown Specialist',
+    rating: 4.97,
+    jobsCompleted: 280,
+    reviewsCount: 142,
+    isOnline: true,
+    isTopRated: true,
+    hourlyRateMultiplier: 1.25,
+    damageLiabilityAgreed: true,
+    currentLocation: { name: 'Kakkanad Infopark Express', lat: 10.0125, lng: 76.3530 },
+    availableSlots: [
+      'Today, 01:30 PM - 03:30 PM',
+      'Today, 04:30 PM - 07:00 PM',
+      'Tomorrow, 08:30 AM - 11:30 AM',
+      'Tomorrow, 02:00 PM - 05:00 PM'
+    ],
+    targetAchievement: {
+      weeklyTarget: 15,
+      completedJobsThisWeek: 13,
+      bonusAmount: 1500,
+      isBonusUnlocked: false,
+      tierLevel: 'GOLD_TOP_RATED' as const,
+      commissionDiscountPercent: 5
+    },
+    reviews: [
+      {
+        id: 'rev-6',
+        customerName: 'Kiran Kurian',
+        rating: 5,
+        comment: 'My car stalled near InfoPark at 8 PM. Sanjay arrived in 18 minutes, resolved the alternator fuse issue on the spot with zero hassle!',
+        serviceTitle: 'Doorstep Car & Bike Mechanic',
+        createdAt: '2026-10-04'
+      }
+    ],
+    kyc: {
+      aadhaarVerified: true,
+      govtIdType: 'DRIVING_LICENSE' as const,
+      govtIdNumber: 'KL-07-2016-0038190',
+      govtIdFileAttached: true,
+      dlNumber: 'KL-07-2016-0038190',
+      pccStatus: 'VERIFIED' as const,
+      pccRefNo: 'THUNA-PCC-2024-77192',
+      pccExpiry: '2027-09-12',
+      bankVerified: true,
+      damageLiabilityAgreed: true,
+      liabilityAgreementTimestamp: '2026-05-10T08:00:00Z'
+    },
+    vehicle: 'Emergency Mobile Mechanic Van & OBD Scanner',
+    walletBalance: 3450,
+    todaysEarnings: 1600,
+    photoUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&auto=format&fit=crop&q=80'
   }
 ];
 

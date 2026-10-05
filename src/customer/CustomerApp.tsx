@@ -191,6 +191,153 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
     });
   }, [partners]);
 
+  // Filter Trade-Specific Experts for the selected category or active search query
+  // NOTE: When on 'all' with no search query, returns [] so the main grid does NOT show top workers
+  const categoryMatchedPartners = useMemo(() => {
+    if (!sortedPartners || sortedPartners.length === 0) return [];
+    const q = searchQuery.toLowerCase().trim();
+
+    // REMOVE from main grid: if 'all' and no search query, return empty
+    if (selectedCategoryTab === 'all' && !q) {
+      return [];
+    }
+
+    return sortedPartners.filter((partner) => {
+      const role = (partner.role || '').toLowerCase();
+      const name = (partner.name || '').toLowerCase();
+
+      // If user searched for something:
+      if (q) {
+        if (name.includes(q) || role.includes(q)) return true;
+        if (q.includes('mechanic') && (role.includes('mechanic') || role.includes('breakdown'))) return true;
+        if (q.includes('driver') && role.includes('driver')) return true;
+        if (q.includes('electric') && role.includes('electrician')) return true;
+        if (q.includes('plumb') && role.includes('plumber')) return true;
+        if (q.includes('salon') && (role.includes('salon') || role.includes('beautician') || role.includes('stylist'))) return true;
+        if (q.includes('clean') && role.includes('clean')) return true;
+      }
+
+      // If a specific category tab is selected:
+      if (selectedCategoryTab === 'Mechanic & Roadside Assistance' || selectedCategoryTab === 'Vehicle Care') {
+        return role.includes('mechanic') || role.includes('breakdown') || role.includes('car');
+      }
+      if (selectedCategoryTab === 'Driver' || selectedCategoryTab === 'Rental Cars & Taxi Services') {
+        return role.includes('driver') || role.includes('chauffeur');
+      }
+      if (selectedCategoryTab === 'Electrical Services') {
+        return role.includes('electrician') || role.includes('wiring') || role.includes('electrical');
+      }
+      if (selectedCategoryTab === 'Plumbing & Water Management' || selectedCategoryTab === 'Water Supply') {
+        return role.includes('plumber') || role.includes('pipeline') || role.includes('plumbing');
+      }
+      if (selectedCategoryTab === 'Appliance Care & Servicing') {
+        return role.includes('ac') || role.includes('appliance') || role.includes('technician') || role.includes('electrician');
+      }
+      if (selectedCategoryTab === 'Personal Grooming & At-Home Wellness') {
+        return role.includes('salon') || role.includes('beautician') || role.includes('stylist') || role.includes('wellness');
+      }
+      if (selectedCategoryTab === 'Deep Cleaning & Housekeeping' || selectedCategoryTab === 'Outdoor & Property Maintenance') {
+        return role.includes('clean') || role.includes('housekeep') || role.includes('sanitiz');
+      }
+      if (selectedCategoryTab === 'Carpenter & Locksmith') {
+        return role.includes('carpenter') || role.includes('lock') || role.includes('wood');
+      }
+      if (selectedCategoryTab === 'CCTV & Smart Security') {
+        return role.includes('cctv') || role.includes('security') || role.includes('lock');
+      }
+      return false;
+    });
+  }, [sortedPartners, selectedCategoryTab, searchQuery]);
+
+  // Dynamic title, icon and info for trade-specific experts section
+  const categoryExpertInfo = useMemo(() => {
+    const q = searchQuery.toLowerCase().trim();
+    if (q.includes('mechanic') || selectedCategoryTab === 'Mechanic & Roadside Assistance' || selectedCategoryTab === 'Vehicle Care') {
+      return {
+        title: 'Verified Mechanics & Breakdown Specialists',
+        icon: '🔧',
+        badge: 'Mechanic Rescue Hub',
+        desc: 'Certified breakdown mechanics & vehicle technicians ready with Thuna PCC verification and 100% damage liability guarantee.'
+      };
+    }
+    if (q.includes('driver') || selectedCategoryTab === 'Driver' || selectedCategoryTab === 'Rental Cars & Taxi Services') {
+      return {
+        title: 'Verified Acting Drivers & Chauffeurs',
+        icon: '👨‍✈️',
+        badge: 'Thuna PCC Verified',
+        desc: 'Professional drivers with minimum 3+ years experience and clear Kerala Police background verification.'
+      };
+    }
+    if (q.includes('electric') || selectedCategoryTab === 'Electrical Services') {
+      return {
+        title: 'Verified Electricians & Wiring Specialists',
+        icon: '⚡',
+        badge: 'Short-Circuit & Fuse Care',
+        desc: 'Licensed electrical pros for rapid emergency troubleshooting, inverter diagnostics, and safe home wiring.'
+      };
+    }
+    if (q.includes('plumb') || selectedCategoryTab === 'Plumbing & Water Management' || selectedCategoryTab === 'Water Supply') {
+      return {
+        title: 'Verified Plumbers & Pipeline Specialists',
+        icon: '💧',
+        badge: 'Leakage & Pump Care',
+        desc: 'Equipped with pressure pumps and diagnostic tools for concealed leakage, motor repairs, and sanitaryware.'
+      };
+    }
+    if (q.includes('appliance') || selectedCategoryTab === 'Appliance Care & Servicing') {
+      return {
+        title: 'Verified AC & Appliance Technicians',
+        icon: '❄️',
+        badge: 'Cooling & Machine Care',
+        desc: 'Trained specialists for high-pressure foam jet AC service, washing machine repairs, and kitchen appliances.'
+      };
+    }
+    if (q.includes('salon') || selectedCategoryTab === 'Personal Grooming & At-Home Wellness') {
+      return {
+        title: 'Verified At-Home Stylists & Beauticians',
+        icon: '✂️',
+        badge: 'Hygienic Single-Use Kits',
+        desc: 'Certified salon artists and therapists bringing sanitized luxury grooming and wellness to your home.'
+      };
+    }
+    return {
+      title: 'Verified Trade Specialists & Pros',
+      icon: '⭐',
+      badge: 'Verified Freelancers',
+      desc: 'Top-rated freelance professionals in this trade with verified credentials and damage liability guarantee.'
+    };
+  }, [selectedCategoryTab, searchQuery]);
+
+  // Partners matching the currently selected service (used in Checkout Modal)
+  const matchingPartnersForSelectedService = useMemo(() => {
+    if (!selectedService || !sortedPartners) return [];
+    const sTitle = selectedService.title.toLowerCase();
+    const sCat = selectedService.category.toLowerCase();
+
+    return sortedPartners.filter(p => {
+      const role = p.role.toLowerCase();
+      if (sCat.includes('mechanic') || sTitle.includes('mechanic') || sCat.includes('vehicle') || sTitle.includes('car')) {
+        return role.includes('mechanic') || role.includes('breakdown') || role.includes('car');
+      }
+      if (sCat.includes('driver') || sTitle.includes('driver')) {
+        return role.includes('driver') || role.includes('chauffeur');
+      }
+      if (sCat.includes('electrical') || sTitle.includes('electrician')) {
+        return role.includes('electrician') || role.includes('wiring') || role.includes('electrical');
+      }
+      if (sCat.includes('plumbing') || sTitle.includes('plumber')) {
+        return role.includes('plumber') || role.includes('pipeline') || role.includes('plumbing');
+      }
+      if (sCat.includes('appliance') || sTitle.includes('ac')) {
+        return role.includes('ac') || role.includes('appliance') || role.includes('technician') || role.includes('electrician');
+      }
+      if (sCat.includes('grooming') || sCat.includes('salon') || sTitle.includes('salon')) {
+        return role.includes('salon') || role.includes('beautician') || role.includes('stylist');
+      }
+      return false;
+    });
+  }, [selectedService, sortedPartners]);
+
   // Friendly Category Clusters
   const categoryClusters = [
     { id: 'all', label: 'All Services', icon: '🌟' },
@@ -235,13 +382,24 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
     setBookingStep(1);
   };
 
-  const handleStartDirectBooking = (partner: GigPartner) => {
+  const handleStartDirectBooking = (partner: GigPartner, explicitService?: ServiceItem) => {
     setPreferredPartner(partner);
-    const matchedService = services.find(s =>
-      partner.role.toLowerCase().includes(s.title.toLowerCase()) ||
-      s.title.toLowerCase().includes(partner.role.toLowerCase()) ||
-      partner.role.toLowerCase().includes(s.category.toLowerCase())
-    ) || services[0];
+    let matchedService = explicitService;
+    if (!matchedService) {
+      if (selectedCategoryTab !== 'all') {
+        matchedService = services.find(s => s.category === selectedCategoryTab);
+      }
+      if (!matchedService) {
+        matchedService = services.find(s =>
+          partner.role.toLowerCase().includes(s.title.toLowerCase()) ||
+          s.title.toLowerCase().includes(partner.role.toLowerCase()) ||
+          partner.role.toLowerCase().includes(s.category.toLowerCase())
+        );
+      }
+      if (!matchedService) {
+        matchedService = services[0];
+      }
+    }
 
     setSelectedService(matchedService);
     if (matchedService.tiers && matchedService.tiers.length > 0) {
@@ -577,168 +735,6 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
         </div>
       )}
 
-      {/* 🌟 Top Verified Freelancers & Specialists (Ranked by Trust & Experience) */}
-      {sortedPartners.length > 0 && (
-        <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-            <div>
-              <div className="flex items-center space-x-2">
-                <h2 className={`text-lg sm:text-xl font-black tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                  🌟 Top Verified Freelancers & Pros
-                </h2>
-                <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-purple-600 text-white">
-                  Ranked by Trust & Experience
-                </span>
-              </div>
-              <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                Top performers earn higher hourly rates. Available pros listed first with verified Kerala Police Thuna PCC and damage liability.
-              </p>
-            </div>
-            <span className="text-xs font-semibold text-slate-400">
-              {sortedPartners.filter(p => p.isOnline).length} Available Online Now
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {sortedPartners.map((partner) => (
-              <div
-                key={partner.id}
-                className={`rounded-2xl border p-4 flex flex-col justify-between transition-all duration-300 ${
-                  partner.isTopRated
-                    ? isDark
-                      ? 'bg-gradient-to-b from-slate-900 via-slate-900 to-purple-950/30 border-amber-500/40 shadow-lg shadow-purple-950/20'
-                      : 'bg-white border-amber-300 shadow-md ring-1 ring-amber-400/20'
-                    : isDark
-                    ? 'bg-slate-900/90 border-slate-800 hover:border-purple-500/50'
-                    : 'bg-white border-slate-200 hover:border-purple-300 shadow-sm'
-                }`}
-              >
-                <div className="space-y-3">
-                  {/* Partner Header */}
-                  <div className="flex items-start space-x-3">
-                    <div className="relative shrink-0">
-                      <img
-                        src={partner.photoUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'}
-                        alt={partner.name}
-                        className="w-14 h-14 rounded-2xl object-cover border-2 border-purple-500/40 shadow"
-                      />
-                      <span
-                        className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 ${
-                          isDark ? 'border-slate-900' : 'border-white'
-                        } ${partner.isOnline ? 'bg-emerald-500' : 'bg-slate-400'}`}
-                        title={partner.isOnline ? 'Online & Available' : 'Offline'}
-                      />
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center space-x-1.5 flex-wrap gap-y-1">
-                        <h4 className="font-black text-sm truncate">{partner.name}</h4>
-                        {partner.isTopRated && (
-                          <span className="inline-flex items-center space-x-0.5 text-[9px] font-black uppercase bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 px-1.5 py-0.2 rounded-md shadow">
-                            <Star className="w-2.5 h-2.5 fill-slate-950" />
-                            <span>Top Pro</span>
-                          </span>
-                        )}
-                      </div>
-
-                      <p className={`text-[11px] font-medium line-clamp-1 mt-0.5 ${isDark ? 'text-purple-300' : 'text-purple-700'}`}>
-                        {partner.role}
-                      </p>
-
-                      <div className="flex items-center space-x-2 mt-1">
-                        <span className="flex items-center space-x-1 text-xs font-black text-amber-500">
-                          <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                          <span>{partner.rating}</span>
-                        </span>
-                        <span className="text-[10px] text-slate-400">
-                          ({partner.reviewsCount || partner.reviews?.length || 0} reviews • {partner.jobsCompleted} jobs)
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Hourly Rate & Multiplier Tag */}
-                  <div className={`p-2.5 rounded-xl text-xs flex items-center justify-between border ${
-                    partner.isTopRated
-                      ? isDark ? 'bg-amber-500/10 border-amber-500/20 text-amber-300' : 'bg-amber-50 border-amber-200 text-amber-900'
-                      : isDark ? 'bg-slate-950 border-slate-800 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'
-                  }`}>
-                    <span className="text-[11px] font-bold">Earnings Rate:</span>
-                    <span className="font-black">
-                      ₹{Math.round(350 * (partner.hourlyRateMultiplier || 1.0))}/hr
-                      <span className="text-[10px] font-normal ml-1 text-slate-400">
-                        ({(partner.hourlyRateMultiplier || 1.0).toFixed(2)}x tier)
-                      </span>
-                    </span>
-                  </div>
-
-                  {/* Trust & Damage Liability Badges */}
-                  <div className="space-y-1.5 pt-1">
-                    <div className="flex items-center space-x-1.5 text-[10.5px] text-emerald-500 font-bold">
-                      <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
-                      <span className="truncate">Kerala Police Thuna PCC Verified</span>
-                    </div>
-                    <div className="flex items-center space-x-1.5 text-[10.5px] text-blue-500 dark:text-blue-400 font-bold">
-                      <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
-                      <span className="truncate">100% Damage Responsibility Agreed</span>
-                    </div>
-                  </div>
-
-                  {/* Available Time Slots */}
-                  {partner.availableSlots && partner.availableSlots.length > 0 && (
-                    <div className="space-y-1 pt-1">
-                      <span className="text-[10px] font-black uppercase text-slate-400 block">
-                        Open Slots:
-                      </span>
-                      <div className="flex flex-wrap gap-1">
-                        {partner.availableSlots.slice(0, 2).map((slot, idx) => (
-                          <span
-                            key={idx}
-                            className={`text-[10px] font-semibold px-2 py-0.5 rounded-lg border ${
-                              isDark ? 'bg-slate-950 border-slate-800 text-slate-300' : 'bg-slate-100 border-slate-200 text-slate-700'
-                            }`}
-                          >
-                            {slot}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Recent Customer Review Snippet */}
-                  {partner.reviews && partner.reviews.length > 0 && (
-                    <div className={`p-2 rounded-xl text-[10.5px] italic border ${
-                      isDark ? 'bg-slate-950/70 border-slate-800 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-600'
-                    }`}>
-                      "{partner.reviews[0].comment.slice(0, 65)}..."
-                      <span className="block not-italic font-bold text-[9px] mt-0.5 text-slate-400">
-                        — {partner.reviews[0].customerName}
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Direct Booking Button */}
-                <button
-                  type="button"
-                  onClick={() => handleStartDirectBooking(partner)}
-                  className={`mt-4 w-full py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center space-x-1.5 cursor-pointer shadow-md ${
-                    partner.isOnline
-                      ? 'bg-purple-600 hover:bg-purple-500 text-white hover:scale-[1.02]'
-                      : isDark
-                      ? 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                  }`}
-                >
-                  <Calendar className="w-3.5 h-3.5" />
-                  <span>{partner.isOnline ? 'Book This Worker Directly' : 'Schedule with Worker'}</span>
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* 4. Curated Category Cluster Tabs */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
@@ -782,11 +778,18 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       </div>
 
       {/* 5. Service Cards Grid */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className={`text-base font-extrabold ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-            {selectedCategoryTab === 'all' ? 'All Verified Services' : selectedCategoryTab}
-          </h3>
+          <div className="flex items-center space-x-2">
+            <h3 className={`text-base font-extrabold ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+              {selectedCategoryTab === 'all' ? 'All Verified Services' : selectedCategoryTab}
+            </h3>
+            {selectedCategoryTab !== 'all' && (
+              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-purple-600 text-white">
+                Selected Category
+              </span>
+            )}
+          </div>
           {(selectedCategoryTab !== 'all' || searchQuery) && (
             <button
               onClick={() => {
@@ -799,6 +802,173 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             </button>
           )}
         </div>
+
+        {/* 🔧 Trade-Specific Verified Experts (Displayed when a specific category or trade is selected, e.g. Mechanic) */}
+        {categoryMatchedPartners.length > 0 && (
+          <div className={`p-4 sm:p-5 rounded-3xl border transition-all ${
+            isDark
+              ? 'bg-gradient-to-br from-slate-900 via-slate-900 to-purple-950/20 border-purple-900/40'
+              : 'bg-gradient-to-br from-purple-50/50 via-white to-amber-50/40 border-purple-200 shadow-sm'
+          }`}>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-4">
+              <div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-xl">{categoryExpertInfo.icon}</span>
+                  <h4 className={`text-base sm:text-lg font-black tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                    {categoryExpertInfo.title}
+                  </h4>
+                  <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-500 text-slate-950">
+                    {categoryExpertInfo.badge}
+                  </span>
+                </div>
+                <p className={`text-xs mt-1 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                  {categoryExpertInfo.desc}
+                </p>
+              </div>
+              <span className="text-xs font-semibold text-slate-400 shrink-0">
+                {categoryMatchedPartners.filter(p => p.isOnline).length} Available for Direct Booking
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {categoryMatchedPartners.map((partner) => (
+                <div
+                  key={partner.id}
+                  className={`rounded-2xl border p-4 flex flex-col justify-between transition-all duration-300 ${
+                    partner.isTopRated
+                      ? isDark
+                        ? 'bg-slate-900 border-amber-500/40 shadow-lg shadow-purple-950/20 ring-1 ring-amber-500/20'
+                        : 'bg-white border-amber-300 shadow-md ring-1 ring-amber-400/20'
+                      : isDark
+                      ? 'bg-slate-900/90 border-slate-800 hover:border-purple-500/50'
+                      : 'bg-white border-slate-200 hover:border-purple-300 shadow-sm'
+                  }`}
+                >
+                  <div className="space-y-3">
+                    {/* Partner Header */}
+                    <div className="flex items-start space-x-3">
+                      <div className="relative shrink-0">
+                        <img
+                          src={partner.photoUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'}
+                          alt={partner.name}
+                          className="w-14 h-14 rounded-2xl object-cover border-2 border-purple-500/40 shadow"
+                        />
+                        <span
+                          className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 ${
+                            isDark ? 'border-slate-900' : 'border-white'
+                          } ${partner.isOnline ? 'bg-emerald-500' : 'bg-slate-400'}`}
+                          title={partner.isOnline ? 'Online & Available' : 'Offline'}
+                        />
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center space-x-1.5 flex-wrap gap-y-1">
+                          <h5 className="font-black text-sm truncate">{partner.name}</h5>
+                          {partner.isTopRated && (
+                            <span className="inline-flex items-center space-x-0.5 text-[9px] font-black uppercase bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 px-1.5 py-0.2 rounded-md shadow">
+                              <Star className="w-2.5 h-2.5 fill-slate-950" />
+                              <span>Top Pro</span>
+                            </span>
+                          )}
+                        </div>
+
+                        <p className={`text-[11px] font-medium line-clamp-1 mt-0.5 ${isDark ? 'text-purple-300' : 'text-purple-700'}`}>
+                          {partner.role}
+                        </p>
+
+                        <div className="flex items-center space-x-2 mt-1">
+                          <span className="flex items-center space-x-1 text-xs font-black text-amber-500">
+                            <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                            <span>{partner.rating}</span>
+                          </span>
+                          <span className="text-[10px] text-slate-400">
+                            ({partner.reviewsCount || partner.reviews?.length || 0} reviews • {partner.jobsCompleted} jobs)
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Earnings / Rate Tag */}
+                    <div className={`p-2.5 rounded-xl text-xs flex items-center justify-between border ${
+                      partner.isTopRated
+                        ? isDark ? 'bg-amber-500/10 border-amber-500/20 text-amber-300' : 'bg-amber-50 border-amber-200 text-amber-900'
+                        : isDark ? 'bg-slate-950 border-slate-800 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'
+                    }`}>
+                      <span className="text-[11px] font-bold">Earnings Rate:</span>
+                      <span className="font-black">
+                        ₹{Math.round(350 * (partner.hourlyRateMultiplier || 1.0))}/hr
+                        <span className="text-[10px] font-normal ml-1 text-slate-400">
+                          ({(partner.hourlyRateMultiplier || 1.0).toFixed(2)}x tier)
+                        </span>
+                      </span>
+                    </div>
+
+                    {/* Trust & Damage Liability Badges */}
+                    <div className="space-y-1.5 pt-0.5">
+                      <div className="flex items-center space-x-1.5 text-[10.5px] text-emerald-500 font-bold">
+                        <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
+                        <span className="truncate">Kerala Police Thuna PCC Verified</span>
+                      </div>
+                      <div className="flex items-center space-x-1.5 text-[10.5px] text-blue-500 dark:text-blue-400 font-bold">
+                        <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                        <span className="truncate">100% Damage Responsibility Agreed</span>
+                      </div>
+                    </div>
+
+                    {/* Available Time Slots */}
+                    {partner.availableSlots && partner.availableSlots.length > 0 && (
+                      <div className="space-y-1 pt-0.5">
+                        <span className="text-[10px] font-black uppercase text-slate-400 block">
+                          Open Slots:
+                        </span>
+                        <div className="flex flex-wrap gap-1">
+                          {partner.availableSlots.slice(0, 2).map((slot, idx) => (
+                            <span
+                              key={idx}
+                              className={`text-[10px] font-semibold px-2 py-0.5 rounded-lg border ${
+                                isDark ? 'bg-slate-950 border-slate-800 text-slate-300' : 'bg-slate-100 border-slate-200 text-slate-700'
+                              }`}
+                            >
+                              {slot}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Recent Customer Review Snippet */}
+                    {partner.reviews && partner.reviews.length > 0 && (
+                      <div className={`p-2 rounded-xl text-[10.5px] italic border ${
+                        isDark ? 'bg-slate-950/70 border-slate-800 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-600'
+                      }`}>
+                        "{partner.reviews[0].comment.slice(0, 70)}..."
+                        <span className="block not-italic font-bold text-[9px] mt-0.5 text-slate-400">
+                          — {partner.reviews[0].customerName}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Direct Booking Button */}
+                  <button
+                    type="button"
+                    onClick={() => handleStartDirectBooking(partner)}
+                    className={`mt-4 w-full py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center space-x-1.5 cursor-pointer shadow-md ${
+                      partner.isOnline
+                        ? 'bg-purple-600 hover:bg-purple-500 text-white hover:scale-[1.02]'
+                        : isDark
+                        ? 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                    }`}
+                  >
+                    <Calendar className="w-3.5 h-3.5" />
+                    <span>{partner.isOnline ? `Book ${partner.name.split(' ')[0]} Directly` : `Schedule with ${partner.name.split(' ')[0]}`}</span>
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {filteredServices.length === 0 ? (
           <div className={`p-12 text-center rounded-3xl border ${
@@ -1072,6 +1242,85 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
               {/* Step 2: Time & Address with Freelancer Availability */}
               {bookingStep === 2 && (
                 <div className="space-y-4">
+                  {/* Matching Trade Specialists Selector for this Service */}
+                  {matchingPartnersForSelectedService.length > 0 && (
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs font-black uppercase tracking-wider text-slate-400">
+                          Specialist Selection
+                        </label>
+                        <span className="text-[10px] text-purple-500 font-bold">
+                          {preferredPartner ? `Direct: ${preferredPartner.name.split(' ')[0]}` : 'Auto-Dispatch (Instant)'}
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {/* Auto-Dispatch button */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setPreferredPartner(null);
+                            setTargetTimeSlot('Immediate Emergency Dispatch (15-20 Mins)');
+                            setIsCustomSlot(false);
+                          }}
+                          className={`p-2.5 rounded-xl border text-left transition-all flex items-center space-x-2.5 cursor-pointer ${
+                            !preferredPartner
+                              ? 'border-purple-600 bg-purple-500/15 ring-2 ring-purple-500/30 font-bold'
+                              : isDark
+                              ? 'border-slate-800 bg-slate-950 text-slate-300 hover:border-slate-700'
+                              : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-purple-200'
+                          }`}
+                        >
+                          <div className="w-8 h-8 rounded-lg bg-purple-600/20 text-purple-500 flex items-center justify-center shrink-0">
+                            <Zap className="w-4 h-4" />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="text-xs font-black">⚡ Auto-Assign Nearest</div>
+                            <div className="text-[10px] text-slate-400">Instant 15-20 min arrival</div>
+                          </div>
+                        </button>
+
+                        {/* Trade Partners (e.g. Anand Kumar, Sanjay R.) */}
+                        {matchingPartnersForSelectedService.map((p) => {
+                          const isSelected = preferredPartner?.id === p.id;
+                          return (
+                            <button
+                              key={p.id}
+                              type="button"
+                              onClick={() => {
+                                setPreferredPartner(p);
+                                if (p.availableSlots && p.availableSlots.length > 0) {
+                                  setTargetTimeSlot(p.availableSlots[0]);
+                                  setIsCustomSlot(false);
+                                }
+                              }}
+                              className={`p-2.5 rounded-xl border text-left transition-all flex items-center space-x-2.5 cursor-pointer ${
+                                isSelected
+                                  ? 'border-purple-600 bg-purple-500/15 ring-2 ring-purple-500/30 font-bold'
+                                  : isDark
+                                  ? 'border-slate-800 bg-slate-950 text-slate-300 hover:border-slate-700'
+                                  : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-purple-200'
+                              }`}
+                            >
+                              <img
+                                src={p.photoUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'}
+                                alt={p.name}
+                                className="w-8 h-8 rounded-lg object-cover border border-purple-500/50 shrink-0"
+                              />
+                              <div className="min-w-0">
+                                <div className="flex items-center space-x-1">
+                                  <span className="text-xs font-black truncate">{p.name}</span>
+                                  <span className="text-[10px] text-amber-500 font-bold shrink-0">{p.rating}★</span>
+                                </div>
+                                <div className="text-[10px] text-slate-400 truncate">{p.role}</div>
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Direct Worker Booking Banner if selected */}
                   {preferredPartner && (
                     <div className="p-3.5 rounded-2xl bg-gradient-to-r from-purple-500/15 via-amber-500/10 to-purple-500/10 border border-purple-500/30 flex items-center space-x-3">
