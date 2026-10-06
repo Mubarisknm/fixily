@@ -207,24 +207,24 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
       }`}>
         
         {/* Header */}
-        <div className="bg-gradient-to-r from-amber-500 via-orange-500 to-blue-600 text-slate-950 p-5 sm:p-6 flex items-start justify-between">
+        <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-emerald-600 text-white p-5 sm:p-6 flex items-start justify-between">
           <div className="flex items-center space-x-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-slate-950 text-amber-400 flex items-center justify-center shrink-0 shadow-lg">
+            <div className="w-12 h-12 rounded-2xl bg-slate-900 text-emerald-400 flex items-center justify-center shrink-0 shadow-lg border border-slate-700">
               <UserCheck className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <span className="text-[10px] font-black uppercase tracking-wider bg-slate-950/20 px-2.5 py-0.5 rounded-full text-slate-950">
+                <span className="text-[10px] font-black uppercase tracking-wider bg-white/20 px-2.5 py-0.5 rounded-full text-white">
                   Gig Partner Onboarding
                 </span>
-                <span className="text-[10px] bg-slate-950 text-amber-400 px-2 py-0.5 rounded-full font-black">
+                <span className="text-[10px] bg-slate-900 text-emerald-400 px-2 py-0.5 rounded-full font-black">
                   Step {step} of 3
                 </span>
               </div>
-              <h2 className="text-xl sm:text-2xl font-black mt-0.5 text-slate-950">
+              <h2 className="text-xl sm:text-2xl font-black mt-0.5 text-white">
                 Partner KYC & Profile Setup
               </h2>
-              <p className="text-xs text-slate-900 font-medium">
+              <p className="text-xs text-blue-100 font-medium">
                 Register as a certified Fykso service partner with instant photo upload, custom trade, & Kerala Police Thuna PCC.
               </p>
             </div>
@@ -232,7 +232,7 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
 
           <button
             onClick={onClose}
-            className="text-slate-950/80 hover:text-slate-950 p-1.5 rounded-full hover:bg-slate-950/10 transition-colors"
+            className="text-white/80 hover:text-white p-1.5 rounded-full hover:bg-white/10 transition-colors"
           >
             <X className="w-6 h-6" />
           </button>

@@ -127,12 +127,12 @@ export const AdminConsole: React.FC<AdminConsoleProps> = ({
       </div>
 
       {/* Sub-Navigation Tabs */}
-      <div className="flex space-x-2 border-b border-slate-800 pb-2">
+      <div className="flex space-x-2 border-b border-slate-800 pb-2 overflow-x-auto no-scrollbar">
         <button
           onClick={() => setActiveTab('overview')}
-          className={`px-4 py-2 rounded-xl text-xs font-black transition-all ${
+          className={`px-4 py-2 rounded-xl text-xs font-black transition-all shrink-0 ${
             activeTab === 'overview'
-              ? 'bg-amber-400 text-slate-950 shadow-lg'
+              ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
               : 'text-slate-400 hover:text-white'
           }`}
         >
@@ -140,9 +140,9 @@ export const AdminConsole: React.FC<AdminConsoleProps> = ({
         </button>
         <button
           onClick={() => setActiveTab('kyc')}
-          className={`px-4 py-2 rounded-xl text-xs font-black transition-all ${
+          className={`px-4 py-2 rounded-xl text-xs font-black transition-all shrink-0 ${
             activeTab === 'kyc'
-              ? 'bg-amber-400 text-slate-950 shadow-lg'
+              ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
               : 'text-slate-400 hover:text-white'
           }`}
         >
@@ -150,9 +150,9 @@ export const AdminConsole: React.FC<AdminConsoleProps> = ({
         </button>
         <button
           onClick={() => setActiveTab('disputes')}
-          className={`px-4 py-2 rounded-xl text-xs font-black transition-all ${
+          className={`px-4 py-2 rounded-xl text-xs font-black transition-all shrink-0 ${
             activeTab === 'disputes'
-              ? 'bg-amber-400 text-slate-950 shadow-lg'
+              ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
               : 'text-slate-400 hover:text-white'
           }`}
         >
@@ -160,9 +160,9 @@ export const AdminConsole: React.FC<AdminConsoleProps> = ({
         </button>
         <button
           onClick={() => setActiveTab('jobs')}
-          className={`px-4 py-2 rounded-xl text-xs font-black transition-all ${
+          className={`px-4 py-2 rounded-xl text-xs font-black transition-all shrink-0 ${
             activeTab === 'jobs'
-              ? 'bg-amber-400 text-slate-950 shadow-lg'
+              ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
               : 'text-slate-400 hover:text-white'
           }`}
         >

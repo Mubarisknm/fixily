@@ -812,11 +812,11 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       <div className={`relative overflow-hidden rounded-3xl p-6 sm:p-8 border shadow-lg transition-all duration-300 ${
         isDark
           ? 'bg-gradient-to-br from-slate-900 via-slate-900 to-blue-950/40 border-slate-800 text-white'
-          : 'bg-gradient-to-br from-white via-blue-50/40 to-amber-50/30 border-blue-100 text-slate-900 shadow-sm'
+          : 'bg-gradient-to-br from-white via-blue-50/40 to-emerald-50/20 border-blue-100 text-slate-900 shadow-sm'
       }`}>
         <div className="relative z-10 max-w-3xl space-y-4">
           
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-bold bg-blue-600/10 text-blue-600 dark:text-blue-400 border border-blue-600/20">
             <span>⚡ {t('hero_badge')} • {selectedLocation.name}</span>
           </div>
 
@@ -894,7 +894,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                 <Calendar className="w-3.5 h-3.5" />
                 <span>Search with Scheduling & Custom Time Slots</span>
               </span>
-              <span className="text-[10px] text-amber-500 font-bold bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+              <span className="text-[10px] text-emerald-500 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
                 Worker Confirms Availability
               </span>
             </div>
@@ -984,7 +984,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
         </div>
 
         {/* Decorative background glow */}
-        <div className="absolute -right-10 -bottom-10 w-72 h-72 bg-gradient-to-tr from-blue-600/20 to-amber-500/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -right-10 -bottom-10 w-72 h-72 bg-gradient-to-tr from-blue-600/20 to-emerald-500/20 rounded-full blur-3xl pointer-events-none" />
       </div>
 
       {/* Rate & Review Freelancer Prompt (Customer Feedback) */}

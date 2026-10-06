@@ -144,8 +144,8 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header className={`sticky top-0 z-50 transition-colors duration-200 border-b backdrop-blur-md ${
       isDark
-        ? 'bg-slate-950/90 text-white border-slate-800/80 shadow-md'
-        : 'bg-white/95 text-slate-900 border-slate-200/90 shadow-sm'
+        ? 'bg-[#0F172A]/95 text-white border-slate-800/80 shadow-md'
+        : 'bg-[#F8FAFC]/95 text-slate-900 border-slate-200/90 shadow-sm'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-2 sm:gap-4">
@@ -156,9 +156,9 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={() => setActiveTab('customer')}
               className="flex items-center space-x-1.5 sm:space-x-2.5 cursor-pointer group shrink-0"
             >
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-amber-500 via-orange-500 to-blue-600 p-0.5 shadow-md group-hover:scale-105 transition-transform duration-200 shrink-0">
-                <div className="w-full h-full bg-slate-950 rounded-[10px] sm:rounded-[14px] flex items-center justify-center">
-                  <Wrench className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400 group-hover:rotate-12 transition-transform" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-blue-600 via-blue-500 to-green-500 p-0.5 shadow-md group-hover:scale-105 transition-transform duration-200 shrink-0">
+                <div className="w-full h-full bg-[#0F172A] rounded-[10px] sm:rounded-[14px] flex items-center justify-center">
+                  <Wrench className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400 group-hover:rotate-12 transition-transform" />
                 </div>
               </div>
               <div>
@@ -280,8 +280,8 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={onToggleTheme}
               className={`hidden sm:flex items-center space-x-1 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-extrabold transition-all shadow-sm ${
                 isDark
-                  ? 'bg-slate-900 border-amber-500/30 text-amber-300 hover:bg-slate-800 hover:border-amber-400'
-                  : 'bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200'
+                  ? 'bg-slate-800 border-slate-700 text-amber-300 hover:bg-slate-700 hover:border-amber-400'
+                  : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'
               }`}
               title={isDark ? "Switch to Day Light Mode" : "Switch to Night Dark Mode"}
             >

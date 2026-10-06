@@ -251,7 +251,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
               onClick={() => setSelectedPartnerId(p.id)}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all ${
                 selectedPartnerId === p.id
-                  ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 shadow-lg font-black'
+                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 font-black'
                   : isDark
                   ? 'bg-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white'
                   : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
@@ -263,7 +263,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
 
           <button
             onClick={() => setShowKYCModal(true)}
-            className="px-4 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-emerald-500 to-teal-400 hover:brightness-110 text-slate-950 shadow-md hover:scale-105 transition-all flex items-center space-x-1.5"
+            className="px-4 py-1.5 rounded-xl text-xs font-black bg-emerald-600 hover:bg-emerald-500 text-white shadow-md hover:scale-105 transition-all flex items-center space-x-1.5 cursor-pointer"
           >
             <UserCheck className="w-3.5 h-3.5" />
             <span>+ Register New Partner</span>
@@ -299,7 +299,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
 
         <button
           onClick={() => setShowKYCModal(true)}
-          className="w-full md:w-auto px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:brightness-110 text-slate-950 font-black text-xs transition-all shadow-xl hover:scale-105 shrink-0 flex items-center justify-center space-x-1.5"
+          className="w-full md:w-auto px-5 py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs transition-all shadow-xl hover:scale-105 shrink-0 flex items-center justify-center space-x-1.5 cursor-pointer"
         >
           <UserCheck className="w-4 h-4" />
           <span>Complete Partner KYC</span>

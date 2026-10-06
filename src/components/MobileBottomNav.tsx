@@ -94,8 +94,8 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         aria-label="Mobile Bottom Navigation"
         className={`fixed bottom-0 left-0 right-0 z-40 transition-colors duration-200 border-t backdrop-blur-xl ${
           isDark
-            ? 'bg-slate-950/95 border-slate-800/90 text-slate-400'
-            : 'bg-white/95 border-slate-200/90 text-slate-600'
+            ? 'bg-[#0F172A]/95 border-slate-800/90 text-slate-400'
+            : 'bg-[#F8FAFC]/95 border-slate-200/90 text-slate-600'
         } shadow-[0_-8px_30px_rgba(0,0,0,0.12)]`}
       >
         <div className="max-w-md mx-auto px-3 py-1.5 flex items-center justify-around">
