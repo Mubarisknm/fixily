@@ -30,6 +30,9 @@ export interface KochiLocation {
   name: string;
   city?: string;
   district?: string;
+  taluk?: string;
+  panchayat?: string;
+  regionType?: 'URBAN' | 'RURAL_VILLAGE' | 'HIGH_RANGE' | 'COASTAL';
   state?: string;
   pin: string;
   lat: number;

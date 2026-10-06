@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { KochiLocation, ThemeMode, AppLanguage, UserSession, UserRole } from '../types';
 import { useTranslation } from '../utils/translations';
+import { KeralaMapLocationModal } from './KeralaMapLocationModal';
 
 interface HeaderProps {
   activeTab: 'customer' | 'partner' | 'admin';
@@ -41,6 +42,7 @@ interface HeaderProps {
   onLogout: () => void;
   isMobileView?: boolean;
   onToggleMobileView?: () => void;
+  onOpenLocationModal?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -58,7 +60,8 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenAuthModal,
   onLogout,
   isMobileView,
-  onToggleMobileView
+  onToggleMobileView,
+  onOpenLocationModal
 }) => {
   const { t } = useTranslation(language);
   const isDark = theme === 'dark';
@@ -171,7 +174,13 @@ export const Header: React.FC<HeaderProps> = ({
 
             {/* Active District / Location Selector */}
             <button
-              onClick={() => setShowLocationModal(true)}
+              onClick={() => {
+                if (onOpenLocationModal) {
+                  onOpenLocationModal();
+                } else {
+                  setShowLocationModal(true);
+                }
+              }}
               className={`flex items-center space-x-1 sm:space-x-2 px-2 py-1.5 sm:px-3 sm:py-1.5 rounded-xl border text-xs font-bold transition-all shadow-sm ${
                 isDark
                   ? 'bg-slate-900/90 border-purple-500/30 text-purple-200 hover:border-purple-400 hover:bg-slate-800'
@@ -386,103 +395,16 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       )}
 
-      {/* Kerala District & Location Modal */}
-      {showLocationModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in">
-          <div className={`relative w-full max-w-lg rounded-3xl border shadow-2xl p-6 sm:p-7 overflow-hidden transition-all ${
-            isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
-          }`}>
-            <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
-              <div className="flex items-center space-x-2">
-                <MapPin className="w-5 h-5 text-purple-600" />
-                <h3 className="font-black text-base">Select Your District or Town</h3>
-              </div>
-              <button
-                onClick={() => setShowLocationModal(false)}
-                className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* GPS Match Button */}
-            <div className="pt-4">
-              <button
-                onClick={handleDetectGPS}
-                disabled={isDetectingGps}
-                className="w-full py-2.5 px-3 rounded-2xl border border-purple-500/30 bg-purple-500/10 text-purple-600 dark:text-purple-300 font-extrabold text-xs flex items-center justify-center space-x-2 hover:bg-purple-500/20 transition-all cursor-pointer"
-              >
-                <Crosshair className={`w-4 h-4 ${isDetectingGps ? 'animate-spin' : ''}`} />
-                <span>{isDetectingGps ? 'Locating Nearest Kerala Hub...' : 'Detect Exact Location via GPS'}</span>
-              </button>
-            </div>
-
-            {/* Search Input */}
-            <div className="pt-3">
-              <div className="relative">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
-                <input
-                  type="text"
-                  value={searchLocationQuery}
-                  onChange={(e) => setSearchLocationQuery(e.target.value)}
-                  placeholder="Search district, town or pin (e.g. Ernakulam, Kozhikode, 682030)..."
-                  className={`w-full pl-9 pr-3 py-2 rounded-xl border text-xs font-bold focus:outline-none focus:ring-2 focus:ring-purple-500 ${
-                    isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-slate-50 border-slate-200 text-slate-900'
-                  }`}
-                />
-              </div>
-            </div>
-
-            {/* Locations List */}
-            <div className="mt-4 max-h-64 overflow-y-auto space-y-2 pr-1">
-              {filteredLocations.map(loc => {
-                const isSelected = selectedLocation.id === loc.id;
-                const isServiced = loc.isServiced !== false;
-                return (
-                  <button
-                    key={loc.id}
-                    onClick={() => {
-                      onSelectLocation(loc);
-                      setShowLocationModal(false);
-                    }}
-                    className={`w-full p-3 rounded-2xl border text-left text-xs font-bold transition-all flex items-center justify-between ${
-                      isSelected
-                        ? 'border-purple-600 bg-purple-600/10 text-purple-600 dark:text-purple-300'
-                        : isDark
-                        ? 'border-slate-800 hover:border-slate-700 hover:bg-slate-800'
-                        : 'border-slate-100 hover:border-slate-200 hover:bg-slate-50'
-                    }`}
-                  >
-                    <div>
-                      <div className="flex items-center space-x-1.5">
-                        <span className="font-extrabold">{loc.name}</span>
-                        {loc.district && (
-                          <span className="text-[10px] text-slate-400">({loc.district})</span>
-                        )}
-                      </div>
-                      <div className="text-[10px] text-slate-400 mt-0.5">PIN: {loc.pin}</div>
-                    </div>
-
-                    <div className="flex items-center space-x-1.5">
-                      {isServiced ? (
-                        <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
-                          Active Hub
-                        </span>
-                      ) : (
-                        <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20">
-                          Launching Soon
-                        </span>
-                      )}
-                      {isSelected && <Check className="w-4 h-4 text-purple-600 shrink-0" />}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-
-          </div>
-        </div>
-      )}
+      {/* Interactive Kerala Map & Rural Village Selector Modal */}
+      <KeralaMapLocationModal
+        isOpen={showLocationModal}
+        onClose={() => setShowLocationModal(false)}
+        selectedLocation={selectedLocation}
+        locations={locations}
+        onSelectLocation={onSelectLocation}
+        theme={theme}
+        language={language}
+      />
     </header>
   );
 };

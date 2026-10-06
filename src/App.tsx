@@ -9,6 +9,7 @@ import { CancellationPolicyModal } from './components/CancellationPolicyModal';
 import { LegalFooter } from './components/LegalFooter';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import { MobilePhoneSimulator } from './components/MobilePhoneSimulator';
+import { KeralaMapLocationModal } from './components/KeralaMapLocationModal';
 import {
   KochiLocation,
   ServiceItem,
@@ -64,18 +65,37 @@ export function App() {
   const [cancellationPolicyOpen, setCancellationPolicyOpen] = useState<boolean>(false);
 
   const [locations, setLocations] = useState<KochiLocation[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState<KochiLocation>({
-    id: 'kakkanad',
-    name: 'Kakkanad (InfoPark & Seaport)',
-    pin: '682030',
-    lat: 10.0159,
-    lng: 76.3419
+  const [selectedLocation, setSelectedLocation] = useState<KochiLocation>(() => {
+    try {
+      const saved = localStorage.getItem('fixily_selected_location');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.name) return parsed;
+      }
+    } catch (e) {}
+    return {
+      id: 'kakkanad',
+      name: 'Kakkanad (InfoPark & Seaport)',
+      district: 'Ernakulam',
+      pin: '682030',
+      lat: 10.0159,
+      lng: 76.3419,
+      regionType: 'URBAN'
+    };
   });
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState<boolean>(false);
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [partners, setPartners] = useState<GigPartner[]>([]);
   const [jobs, setJobs] = useState<BookingJob[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isEmergencyModalOpen, setIsEmergencyModalOpen] = useState<boolean>(false);
+
+  const handleSelectLocation = (loc: KochiLocation) => {
+    setSelectedLocation(loc);
+    try {
+      localStorage.setItem('fixily_selected_location', JSON.stringify(loc));
+    } catch (e) {}
+  };
 
   useEffect(() => {
     loadAllData();
@@ -89,8 +109,19 @@ export function App() {
         api.getPartners(),
         api.getJobs()
       ]);
-      setLocations(locs);
-      if (locs.length > 0 && !selectedLocation) setSelectedLocation(locs[0]);
+      // Merge custom added locations from localStorage if any
+      let finalLocs = locs;
+      try {
+        const customLocsStr = localStorage.getItem('fixily_custom_locations');
+        if (customLocsStr) {
+          const customLocs: KochiLocation[] = JSON.parse(customLocsStr);
+          if (Array.isArray(customLocs) && customLocs.length > 0) {
+            finalLocs = [...customLocs, ...locs.filter(l => !customLocs.some(c => c.id === l.id))];
+          }
+        }
+      } catch (e) {}
+      setLocations(finalLocs);
+      if (finalLocs.length > 0 && !selectedLocation) setSelectedLocation(finalLocs[0]);
       setServices(servs);
       setPartners(parts);
       setJobs(jobsData);
@@ -209,7 +240,7 @@ export function App() {
           setActiveTab={handleTabChange}
           selectedLocation={selectedLocation}
           locations={locations}
-          onSelectLocation={setSelectedLocation}
+          onSelectLocation={handleSelectLocation}
           theme={theme}
           onToggleTheme={handleToggleTheme}
           onOpenEmergency={() => setIsEmergencyModalOpen(true)}
@@ -220,6 +251,7 @@ export function App() {
           onLogout={handleLogout}
           isMobileView={isMobilePhoneView}
           onToggleMobileView={handleToggleMobilePhoneView}
+          onOpenLocationModal={() => setIsLocationModalOpen(true)}
         />
 
         <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 pb-28 w-full max-w-full overflow-x-hidden">
@@ -313,6 +345,22 @@ export function App() {
           onLogout={handleLogout}
           selectedLocation={selectedLocation}
           onOpenCancellationPolicy={() => setCancellationPolicyOpen(true)}
+          onOpenLocationModal={() => setIsLocationModalOpen(true)}
+        />
+
+        {/* Interactive Kerala Map & Rural Village Selector Modal */}
+        <KeralaMapLocationModal
+          isOpen={isLocationModalOpen}
+          onClose={() => setIsLocationModalOpen(false)}
+          selectedLocation={selectedLocation}
+          locations={locations}
+          onSelectLocation={handleSelectLocation}
+          theme={theme}
+          language={language}
+          onAddNewLocation={(newLoc) => {
+            setLocations(prev => [newLoc, ...prev]);
+            api.addLocation(newLoc).catch(() => {});
+          }}
         />
       </div>
     </MobilePhoneSimulator>

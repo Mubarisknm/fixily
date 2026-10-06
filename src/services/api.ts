@@ -27,6 +27,15 @@ export const api = {
     return data || KOCHI_LOCATIONS;
   },
 
+  async addLocation(loc: Partial<KochiLocation>): Promise<KochiLocation> {
+    const data = await fetchJson(`${API_BASE}/locations`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(loc)
+    });
+    return data || (loc as KochiLocation);
+  },
+
   async getServices(): Promise<ServiceItem[]> {
     const data = await fetchJson(`${API_BASE}/services`);
     return data || localServices;

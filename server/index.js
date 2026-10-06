@@ -18,13 +18,37 @@ app.get('/api/health', (req, res) => {
 });
 
 // State holders
+let locations = [...KOCHI_LOCATIONS];
 let services = [...SERVICES];
 let partners = [...MOCK_PARTNERS];
 let jobs = [...MOCK_JOBS];
 
 // GET Locations
 app.get('/api/locations', (req, res) => {
-  res.json({ success: true, data: KOCHI_LOCATIONS });
+  res.json({ success: true, data: locations });
+});
+
+// POST Add Custom Village / Remote Location
+app.post('/api/locations', (req, res) => {
+  const newLoc = req.body;
+  if (!newLoc || !newLoc.name) {
+    return res.status(400).json({ success: false, error: 'Location name is required' });
+  }
+  const loc = {
+    id: newLoc.id || `loc-custom-${Date.now()}`,
+    name: newLoc.name,
+    district: newLoc.district || 'Kerala',
+    taluk: newLoc.taluk || '',
+    panchayat: newLoc.panchayat || '',
+    regionType: newLoc.regionType || 'RURAL_VILLAGE',
+    state: 'Kerala',
+    pin: newLoc.pin || '682001',
+    lat: Number(newLoc.lat) || 10.0,
+    lng: Number(newLoc.lng) || 76.3,
+    isServiced: newLoc.isServiced !== undefined ? newLoc.isServiced : true
+  };
+  locations.unshift(loc);
+  res.json({ success: true, data: loc });
 });
 
 // GET Services

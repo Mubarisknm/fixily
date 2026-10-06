@@ -66,7 +66,18 @@ export const translations: Record<AppLanguage, Record<string, string>> = {
     reschedule_btn: 'Reschedule',
     cancel_btn: 'Cancel',
     receipt_btn: 'Tax Invoice',
-    dispute_btn: 'Dispute / Help'
+    dispute_btn: 'Dispute / Help',
+    location_modal_title: 'Choose Your Kerala Location',
+    tab_map_pin: 'Kerala Map Pin',
+    tab_directory: 'Village Directory',
+    tap_map_hint: 'Tap anywhere on the Kerala map to pin your doorstep',
+    set_active_location: 'Set as Active Location',
+    detect_gps_btn: 'Detect My GPS Location',
+    add_remote_village: '+ Add Remote Village',
+    rural_villages: 'Rural Villages',
+    high_range_hills: 'High-Range Hills',
+    coastal_areas: 'Coastal Areas',
+    towns_urban: 'Towns & Cities'
   },
   ml: {
     brand_tagline: 'കേരളത്തിലെ വിശ്വസനീയ ഡോർസ്റ്റെപ്പ് സർവീസുകളും റോഡ്‌സൈഡ് സഹായവും',
@@ -132,7 +143,18 @@ export const translations: Record<AppLanguage, Record<string, string>> = {
     reschedule_btn: 'സമയം മാറ്റുക',
     cancel_btn: 'റദ്ദാക്കുക',
     receipt_btn: 'ഇൻവോയ്സ്',
-    dispute_btn: 'പരാതി / സഹായം'
+    dispute_btn: 'പരാതി / സഹായം',
+    location_modal_title: 'കേരള ലൊക്കേഷൻ തിരഞ്ഞെടുക്കുക',
+    tab_map_pin: 'മാപ്പിൽ പിൻ ചെയ്യുക',
+    tab_directory: 'ഗ്രാമ ഡയറക്ടറി',
+    tap_map_hint: 'നിങ്ങളുടെ ഗ്രാമത്തിലോ വീടിനടുത്തോ മാപ്പിൽ തൊടുക',
+    set_active_location: 'ഈ ലൊക്കേഷൻ ഉറപ്പാക്കുക',
+    detect_gps_btn: 'എൻ്റെ ലൊക്കേഷൻ കണ്ടെത്തുക',
+    add_remote_village: '+ പുതിയ ഗ്രാമം ചേർക്കുക',
+    rural_villages: 'ഗ്രാമങ്ങൾ',
+    high_range_hills: 'ഹൈറേഞ്ച് & മലയോരം',
+    coastal_areas: 'തീരദേശം & കായലോരം',
+    towns_urban: 'നഗരങ്ങൾ'
   }
 };
 

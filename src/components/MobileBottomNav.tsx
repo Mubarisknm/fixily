@@ -35,6 +35,7 @@ interface MobileBottomNavProps {
   onLogout: () => void;
   selectedLocation: KochiLocation;
   onOpenCancellationPolicy?: () => void;
+  onOpenLocationModal?: () => void;
 }
 
 export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
@@ -50,7 +51,8 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   onOpenAuthModal,
   onLogout,
   selectedLocation,
-  onOpenCancellationPolicy
+  onOpenCancellationPolicy,
+  onOpenLocationModal
 }) => {
   const { t } = useTranslation(language);
   const isDark = theme === 'dark';
@@ -213,23 +215,42 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
               </button>
             </div>
 
-            {/* Location Pill */}
-            <div className="my-4 p-3 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-between">
-              <div className="flex items-center space-x-2 text-xs">
-                <MapPin className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
+            {/* Interactive Location Card (Opens Kerala Map Pinpoint Modal) */}
+            <button
+              onClick={() => {
+                setShowAccountDrawer(false);
+                onOpenLocationModal?.();
+              }}
+              className="w-full my-3 p-3.5 rounded-2xl bg-purple-500/10 border border-purple-500/20 hover:border-purple-500/40 hover:bg-purple-500/15 transition-all flex items-center justify-between text-left cursor-pointer group"
+            >
+              <div className="flex items-center space-x-2.5 text-xs">
+                <div className="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center shrink-0 shadow-md">
+                  <MapPin className="w-4 h-4" />
+                </div>
                 <div>
-                  <span className="font-bold text-slate-800 dark:text-slate-200">
-                    {selectedLocation.name}
-                  </span>
-                  <div className="text-[10px] text-slate-400">
-                    PIN: {selectedLocation.pin} • Kerala
+                  <div className="flex items-center space-x-1.5 flex-wrap">
+                    <span className="font-extrabold text-slate-900 dark:text-white text-xs">
+                      {selectedLocation.name}
+                    </span>
+                    {selectedLocation.district && (
+                      <span className="text-[10px] text-purple-600 dark:text-purple-300 font-bold">
+                        ({selectedLocation.district})
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-[10px] text-slate-400 mt-0.5">
+                    PIN: {selectedLocation.pin} • Tap to view map
                   </div>
                 </div>
               </div>
-              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-purple-600 text-white">
-                Active Hub
-              </span>
-            </div>
+
+              <div className="flex items-center space-x-1 shrink-0">
+                <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-purple-600 text-white shadow-sm">
+                  Map Pin
+                </span>
+                <ChevronRight className="w-4 h-4 text-purple-400 group-hover:translate-x-0.5 transition-transform" />
+              </div>
+            </button>
 
             {/* Portal Switcher Buttons */}
             <div className="space-y-2 py-2">
