@@ -43,6 +43,8 @@ interface HeaderProps {
   isMobileView?: boolean;
   onToggleMobileView?: () => void;
   onOpenLocationModal?: () => void;
+  onDetectLiveGps?: () => void;
+  isDetectingLiveGps?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -61,7 +63,9 @@ export const Header: React.FC<HeaderProps> = ({
   onLogout,
   isMobileView,
   onToggleMobileView,
-  onOpenLocationModal
+  onOpenLocationModal,
+  onDetectLiveGps,
+  isDetectingLiveGps
 }) => {
   const { t } = useTranslation(language);
   const isDark = theme === 'dark';
@@ -173,32 +177,72 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
 
             {/* Active District / Location Selector */}
-            <button
-              onClick={() => {
-                if (onOpenLocationModal) {
-                  onOpenLocationModal();
-                } else {
-                  setShowLocationModal(true);
-                }
-              }}
-              className={`flex items-center space-x-1 sm:space-x-2 px-2 py-1.5 sm:px-3 sm:py-1.5 rounded-xl border text-xs font-bold transition-all shadow-sm ${
-                isDark
-                  ? 'bg-slate-900/90 border-purple-500/30 text-purple-200 hover:border-purple-400 hover:bg-slate-800'
-                  : 'bg-purple-50/80 border-purple-200 text-purple-900 hover:bg-purple-100'
-              }`}
-              title="Click to view or change your active service location"
-            >
-              <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full shrink-0 ${
-                selectedLocation.isServiced !== false ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'
-              }`} />
-              <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-purple-500 shrink-0" />
-              <div className="text-left flex items-center truncate">
-                <span className="truncate max-w-[60px] sm:max-w-[140px] font-black text-[11px] sm:text-xs">
-                  {selectedLocation.name.split('(')[0]}
-                </span>
-              </div>
-              <ChevronDown className="w-3 h-3 opacity-60 shrink-0" />
-            </button>
+            <div className="flex items-center space-x-1 sm:space-x-1.5">
+              <button
+                onClick={() => {
+                  if (onOpenLocationModal) {
+                    onOpenLocationModal();
+                  } else {
+                    setShowLocationModal(true);
+                  }
+                }}
+                className={`flex items-center space-x-1.5 sm:space-x-2 px-2 py-1.5 sm:px-3 sm:py-1.5 rounded-xl border text-xs font-bold transition-all shadow-sm cursor-pointer ${
+                  selectedLocation.isLiveGps
+                    ? isDark
+                      ? 'bg-emerald-950/40 border-emerald-500/50 text-emerald-200 hover:border-emerald-400'
+                      : 'bg-emerald-50/90 border-emerald-300 text-emerald-950 hover:bg-emerald-100'
+                    : isDark
+                    ? 'bg-slate-900/90 border-purple-500/30 text-purple-200 hover:border-purple-400 hover:bg-slate-800'
+                    : 'bg-purple-50/80 border-purple-200 text-purple-900 hover:bg-purple-100'
+                }`}
+                title="Click to change your location or view the Kerala map"
+              >
+                {selectedLocation.isLiveGps ? (
+                  <span className="relative flex h-2 w-2 shrink-0">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                  </span>
+                ) : (
+                  <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full shrink-0 ${
+                    selectedLocation.isServiced !== false ? 'bg-purple-500' : 'bg-amber-500'
+                  }`} />
+                )}
+
+                <MapPin className={`w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0 ${
+                  selectedLocation.isLiveGps ? 'text-emerald-500' : 'text-purple-500'
+                }`} />
+
+                <div className="text-left flex flex-col justify-center leading-tight">
+                  <div className="flex items-center space-x-1">
+                    <span className="truncate max-w-[65px] sm:max-w-[125px] font-black text-[11px] sm:text-xs">
+                      {selectedLocation.name.split('(')[0]}
+                    </span>
+                    {selectedLocation.isLiveGps && (
+                      <span className="text-[9px] font-black uppercase px-1 py-0.2 rounded bg-emerald-500/20 text-emerald-600 dark:text-emerald-300">
+                        Live
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <ChevronDown className="w-3 h-3 opacity-60 shrink-0" />
+              </button>
+
+              {/* Quick "Use Live GPS" shortcut button when custom location is active */}
+              {!selectedLocation.isLiveGps && onDetectLiveGps && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDetectLiveGps();
+                  }}
+                  disabled={isDetectingLiveGps}
+                  className="flex items-center space-x-1 px-2 py-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-black transition-all cursor-pointer shadow-sm active:scale-95"
+                  title="Detect and switch to your live GPS location"
+                >
+                  <Crosshair className={`w-3 h-3 ${isDetectingLiveGps ? 'animate-spin' : ''}`} />
+                  <span className="hidden md:inline">Use Live GPS</span>
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Right Controls */}

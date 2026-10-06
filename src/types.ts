@@ -38,6 +38,7 @@ export interface KochiLocation {
   lat: number;
   lng: number;
   isServiced?: boolean;
+  isLiveGps?: boolean;
 }
 
 export type ServiceLocation = KochiLocation;

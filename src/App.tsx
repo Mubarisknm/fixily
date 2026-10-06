@@ -9,7 +9,9 @@ import { CancellationPolicyModal } from './components/CancellationPolicyModal';
 import { LegalFooter } from './components/LegalFooter';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import { MobilePhoneSimulator } from './components/MobilePhoneSimulator';
-import { KeralaMapLocationModal } from './components/KeralaMapLocationModal';
+import { KeralaMapLocationModal, getHaversineDistanceKm } from './components/KeralaMapLocationModal';
+import { KOCHI_LOCATIONS } from './data/db';
+import { Crosshair, MapPin } from 'lucide-react';
 import {
   KochiLocation,
   ServiceItem,
@@ -80,21 +82,103 @@ export function App() {
       pin: '682030',
       lat: 10.0159,
       lng: 76.3419,
-      regionType: 'URBAN'
+      regionType: 'URBAN',
+      isLiveGps: false
     };
   });
   const [isLocationModalOpen, setIsLocationModalOpen] = useState<boolean>(false);
+  const [isDetectingLiveGps, setIsDetectingLiveGps] = useState<boolean>(false);
+  const [liveGpsToast, setLiveGpsToast] = useState<{ message: string; isLive: boolean } | null>(null);
+
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [partners, setPartners] = useState<GigPartner[]>([]);
   const [jobs, setJobs] = useState<BookingJob[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isEmergencyModalOpen, setIsEmergencyModalOpen] = useState<boolean>(false);
 
+  // Auto-detect Live Geolocation whenever the user opens the app
+  const detectLiveLocation = (showToast = true) => {
+    if (!navigator.geolocation) {
+      console.warn('Geolocation is not supported by your browser.');
+      return;
+    }
+
+    setIsDetectingLiveGps(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setIsDetectingLiveGps(false);
+        const { latitude, longitude } = position.coords;
+
+        // Match against known Kerala locations
+        const pool = locations.length > 0 ? locations : KOCHI_LOCATIONS;
+        let closest = pool[0];
+        let minDist = Infinity;
+        pool.forEach((loc) => {
+          const dist = getHaversineDistanceKm(latitude, longitude, loc.lat, loc.lng);
+          if (dist < minDist) {
+            minDist = dist;
+            closest = loc;
+          }
+        });
+
+        let resolvedName = closest ? closest.name : 'Kerala Live Location';
+        if (minDist > 1.8 && closest) {
+          resolvedName = `Live: ${closest.name.split('(')[0].trim()} Area`;
+        }
+
+        const liveLoc: KochiLocation = {
+          id: `loc-live-gps-${Date.now()}`,
+          name: resolvedName,
+          district: closest?.district || 'Kerala',
+          taluk: closest?.taluk,
+          panchayat: closest?.panchayat,
+          regionType: closest?.regionType || 'URBAN',
+          pin: closest?.pin || '682001',
+          lat: latitude,
+          lng: longitude,
+          isServiced: true,
+          isLiveGps: true
+        };
+
+        setSelectedLocation(liveLoc);
+        try {
+          localStorage.setItem('fixily_selected_location', JSON.stringify(liveLoc));
+        } catch (e) {}
+
+        if (showToast) {
+          setLiveGpsToast({
+            message: `🛰️ Live Location Active: ${closest ? closest.name.split('(')[0].trim() : 'Kerala'}`,
+            isLive: true
+          });
+          setTimeout(() => setLiveGpsToast(null), 4000);
+        }
+      },
+      (err) => {
+        setIsDetectingLiveGps(false);
+        console.warn('Live location auto-detection prompt skipped or unavailable:', err.message);
+      },
+      { timeout: 10000, enableHighAccuracy: true, maximumAge: 60000 }
+    );
+  };
+
+  // Run live geolocation detection immediately whenever the app opens
+  useEffect(() => {
+    detectLiveLocation(true);
+  }, []);
+
   const handleSelectLocation = (loc: KochiLocation) => {
-    setSelectedLocation(loc);
+    const updated = { ...loc };
+    setSelectedLocation(updated);
     try {
-      localStorage.setItem('fixily_selected_location', JSON.stringify(loc));
+      localStorage.setItem('fixily_selected_location', JSON.stringify(updated));
     } catch (e) {}
+    setLiveGpsToast({
+      message: updated.isLiveGps
+        ? `🛰️ Live Location Active: ${updated.name.split('(')[0]}`
+        : `📍 Changed Location to: ${updated.name.split('(')[0]}`,
+      isLive: !!updated.isLiveGps
+    });
+    setTimeout(() => setLiveGpsToast(null), 3500);
   };
 
   useEffect(() => {
@@ -252,7 +336,28 @@ export function App() {
           isMobileView={isMobilePhoneView}
           onToggleMobileView={handleToggleMobilePhoneView}
           onOpenLocationModal={() => setIsLocationModalOpen(true)}
+          onDetectLiveGps={() => detectLiveLocation(true)}
+          isDetectingLiveGps={isDetectingLiveGps}
         />
+
+        {/* Live GPS & Location Change Floating Notification Toast */}
+        {liveGpsToast && (
+          <div className={`fixed top-16 sm:top-20 left-1/2 -translate-x-1/2 z-[100] px-4 py-2.5 rounded-2xl shadow-2xl flex items-center space-x-2.5 animate-bounce transition-all backdrop-blur-md ${
+            liveGpsToast.isLive
+              ? 'bg-emerald-950/90 text-emerald-200 border border-emerald-500/40 shadow-emerald-900/30'
+              : 'bg-slate-900/90 text-white border border-purple-500/40 shadow-purple-900/30'
+          }`}>
+            {liveGpsToast.isLive ? (
+              <span className="relative flex h-2.5 w-2.5 shrink-0">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+              </span>
+            ) : (
+              <MapPin className="w-4 h-4 text-purple-400 shrink-0" />
+            )}
+            <span className="text-xs font-black">{liveGpsToast.message}</span>
+          </div>
+        )}
 
         <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 pb-28 w-full max-w-full overflow-x-hidden">
           {isLoading ? (
@@ -346,6 +451,7 @@ export function App() {
           selectedLocation={selectedLocation}
           onOpenCancellationPolicy={() => setCancellationPolicyOpen(true)}
           onOpenLocationModal={() => setIsLocationModalOpen(true)}
+          onDetectLiveGps={() => detectLiveLocation(true)}
         />
 
         {/* Interactive Kerala Map & Rural Village Selector Modal */}

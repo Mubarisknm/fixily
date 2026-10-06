@@ -223,7 +223,7 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
       marker.bindPopup(popupHtml);
 
       marker.on('click', () => {
-        setPinnedLocation(loc);
+        setPinnedLocation({ ...loc, isLiveGps: false });
         setCustomLandmark('');
         setPinDistanceToNearest(0);
         placeActivePinMarker(map, loc.lat, loc.lng, loc.name);
@@ -264,7 +264,7 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
   };
 
   // Handle map click anywhere to resolve nearest remote village
-  const handleMapPinDrop = (lat: number, lng: number, map: L.Map) => {
+  const handleMapPinDrop = (lat: number, lng: number, map: L.Map, isLive = false) => {
     // Find closest location from known database
     let closestLoc = locations[0];
     let minDistance = Infinity;
@@ -287,7 +287,7 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
     }
 
     const newResolvedLocation: KochiLocation = {
-      id: `loc-pin-${Date.now()}`,
+      id: isLive ? `loc-live-gps` : `loc-pin-${Date.now()}`,
       name: locationTitle,
       district: closestLoc?.district || 'Kerala',
       taluk: closestLoc?.taluk || '',
@@ -296,7 +296,8 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
       pin: closestLoc?.pin || '682001',
       lat,
       lng,
-      isServiced: true
+      isServiced: true,
+      isLiveGps: isLive
     };
 
     setPinnedLocation(newResolvedLocation);
@@ -318,10 +319,10 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
 
         if (leafletMapRef.current) {
           leafletMapRef.current.flyTo([latitude, longitude], 14, { duration: 1.5 });
-          handleMapPinDrop(latitude, longitude, leafletMapRef.current);
+          handleMapPinDrop(latitude, longitude, leafletMapRef.current, true);
         }
 
-        setToastMessage(`🎯 GPS Pin dropped at ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
+        setToastMessage(`🛰️ Live GPS Pin dropped at ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
         setTimeout(() => setToastMessage(null), 3500);
       },
       (err) => {
@@ -991,7 +992,7 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
                         {/* Select Button */}
                         <button
                           onClick={() => {
-                            onSelectLocation(loc);
+                            onSelectLocation({ ...loc, isLiveGps: false });
                             setToastMessage(`📍 Selected: ${loc.name}`);
                             setTimeout(() => {
                               setToastMessage(null);

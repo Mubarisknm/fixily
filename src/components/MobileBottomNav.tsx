@@ -16,7 +16,8 @@ import {
   MessageSquare,
   FileText,
   MapPin,
-  Sparkles
+  Sparkles,
+  Crosshair
 } from 'lucide-react';
 import { ThemeMode, AppLanguage, UserSession, UserRole, KochiLocation } from '../types';
 import { useTranslation } from '../utils/translations';
@@ -36,6 +37,7 @@ interface MobileBottomNavProps {
   selectedLocation: KochiLocation;
   onOpenCancellationPolicy?: () => void;
   onOpenLocationModal?: () => void;
+  onDetectLiveGps?: () => void;
 }
 
 export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
@@ -52,7 +54,8 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   onLogout,
   selectedLocation,
   onOpenCancellationPolicy,
-  onOpenLocationModal
+  onOpenLocationModal,
+  onDetectLiveGps
 }) => {
   const { t } = useTranslation(language);
   const isDark = theme === 'dark';
@@ -215,42 +218,80 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
               </button>
             </div>
 
-            {/* Interactive Location Card (Opens Kerala Map Pinpoint Modal) */}
-            <button
-              onClick={() => {
-                setShowAccountDrawer(false);
-                onOpenLocationModal?.();
-              }}
-              className="w-full my-3 p-3.5 rounded-2xl bg-purple-500/10 border border-purple-500/20 hover:border-purple-500/40 hover:bg-purple-500/15 transition-all flex items-center justify-between text-left cursor-pointer group"
-            >
-              <div className="flex items-center space-x-2.5 text-xs">
-                <div className="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center shrink-0 shadow-md">
-                  <MapPin className="w-4 h-4" />
-                </div>
-                <div>
-                  <div className="flex items-center space-x-1.5 flex-wrap">
-                    <span className="font-extrabold text-slate-900 dark:text-white text-xs">
-                      {selectedLocation.name}
-                    </span>
-                    {selectedLocation.district && (
-                      <span className="text-[10px] text-purple-600 dark:text-purple-300 font-bold">
-                        ({selectedLocation.district})
-                      </span>
+            {/* Interactive Location Card with Live GPS Status & Changer */}
+            <div className={`w-full my-3 p-3.5 rounded-2xl border transition-all flex flex-col space-y-2.5 ${
+              selectedLocation.isLiveGps
+                ? 'bg-emerald-500/10 border-emerald-500/30'
+                : 'bg-purple-500/10 border-purple-500/20'
+            }`}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2.5 text-xs">
+                  <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 shadow-md ${
+                    selectedLocation.isLiveGps ? 'bg-emerald-600 text-white' : 'bg-purple-600 text-white'
+                  }`}>
+                    {selectedLocation.isLiveGps ? (
+                      <Crosshair className="w-4 h-4 animate-spin-slow" />
+                    ) : (
+                      <MapPin className="w-4 h-4" />
                     )}
                   </div>
-                  <div className="text-[10px] text-slate-400 mt-0.5">
-                    PIN: {selectedLocation.pin} • Tap to view map
+                  <div>
+                    <div className="flex items-center space-x-1.5 flex-wrap">
+                      <span className="font-extrabold text-slate-900 dark:text-white text-xs">
+                        {selectedLocation.name}
+                      </span>
+                      {selectedLocation.district && (
+                        <span className={`text-[10px] font-bold ${
+                          selectedLocation.isLiveGps
+                            ? 'text-emerald-600 dark:text-emerald-300'
+                            : 'text-purple-600 dark:text-purple-300'
+                        }`}>
+                          ({selectedLocation.district})
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-[10px] text-slate-400 mt-0.5">
+                      PIN: {selectedLocation.pin} • {selectedLocation.isLiveGps ? '🛰️ Live GPS Active' : '📍 Custom Area'}
+                    </div>
                   </div>
                 </div>
+
+                <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full text-white shadow-sm shrink-0 ${
+                  selectedLocation.isLiveGps ? 'bg-emerald-600' : 'bg-purple-600'
+                }`}>
+                  {selectedLocation.isLiveGps ? 'Live GPS' : 'Custom'}
+                </span>
               </div>
 
-              <div className="flex items-center space-x-1 shrink-0">
-                <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-purple-600 text-white shadow-sm">
-                  Map Pin
-                </span>
-                <ChevronRight className="w-4 h-4 text-purple-400 group-hover:translate-x-0.5 transition-transform" />
+              {/* Action Buttons: Change on Map or Switch to Live GPS */}
+              <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-200/50 dark:border-slate-800/80">
+                <button
+                  onClick={() => {
+                    setShowAccountDrawer(false);
+                    onOpenLocationModal?.();
+                  }}
+                  className="py-1.5 px-2 rounded-xl bg-purple-600 text-white text-[11px] font-black flex items-center justify-center space-x-1 hover:bg-purple-700 active:scale-95 transition-all cursor-pointer shadow-sm"
+                >
+                  <MapPin className="w-3 h-3" />
+                  <span>Change on Map</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setShowAccountDrawer(false);
+                    onDetectLiveGps?.();
+                  }}
+                  className={`py-1.5 px-2 rounded-xl text-[11px] font-black flex items-center justify-center space-x-1 active:scale-95 transition-all cursor-pointer shadow-sm ${
+                    selectedLocation.isLiveGps
+                      ? 'bg-emerald-600 text-white'
+                      : 'border border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 hover:bg-emerald-500/20'
+                  }`}
+                >
+                  <Crosshair className="w-3 h-3" />
+                  <span>{selectedLocation.isLiveGps ? 'Refresh GPS' : 'Use Live GPS'}</span>
+                </button>
               </div>
-            </button>
+            </div>
 
             {/* Portal Switcher Buttons */}
             <div className="space-y-2 py-2">
