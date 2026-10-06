@@ -53,7 +53,20 @@ export const translations: Record<AppLanguage, Record<string, string>> = {
     partner_portal: 'Partner Portal',
     admin_console: 'Admin Console',
     terms_privacy: 'Terms & Privacy Policy',
-    contact_us: 'Contact Helpline'
+    contact_us: 'Contact Helpline',
+    hero_badge: 'Verified Doorstep Pros',
+    hero_title: 'Trusted Kerala On-Demand Services',
+    hero_sub: 'Book background-checked mechanics, electricians, plumbers, AC pros, and home cleaners across Kerala with ₹0 hidden markups.',
+    active_orders: 'Active Orders',
+    step_booked: 'Booked',
+    step_assigned: 'Assigned',
+    step_on_way: 'On The Way',
+    step_in_progress: 'In Progress',
+    step_completed: 'Completed',
+    reschedule_btn: 'Reschedule',
+    cancel_btn: 'Cancel',
+    receipt_btn: 'Tax Invoice',
+    dispute_btn: 'Dispute / Help'
   },
   ml: {
     brand_tagline: 'കേരളത്തിലെ വിശ്വസനീയ ഡോർസ്റ്റെപ്പ് സർവീസുകളും റോഡ്‌സൈഡ് സഹായവും',
@@ -106,7 +119,20 @@ export const translations: Record<AppLanguage, Record<string, string>> = {
     partner_portal: 'തൊഴിലാളി പോർട്ടൽ',
     admin_console: 'അഡ്മിൻ പാനൽ',
     terms_privacy: 'ഉപാധികളും സ്വകാര്യതാ നയവും',
-    contact_us: 'ഹെൽപ്പ്‌ലൈൻ ബന്ധപ്പെടുക'
+    contact_us: 'ഹെൽപ്പ്‌ലൈൻ ബന്ധപ്പെടുക',
+    hero_badge: 'പരിശോധിച്ചുറപ്പിച്ച തൊഴിലാളികൾ',
+    hero_title: 'കേരളത്തിലെ വിശ്വസനീയ ഡോർസ്റ്റെപ്പ് സർവീസുകൾ',
+    hero_sub: 'മെക്കാനിക്ക്, ഇലക്ട്രീഷ്യൻ, പ്ലംബർ, എസി റിപ്പയർ, ക്ലീനിംഗ് എന്നിവ ഒരു ക്ലിക്കിൽ മുൻകൂർ നിശ്ചയിച്ച നിരക്കുകളിൽ.',
+    active_orders: 'നിലവിലെ ഓർഡറുകൾ',
+    step_booked: 'ബുക്ക് ചെയ്തു',
+    step_assigned: 'നിയോഗിച്ചു',
+    step_on_way: 'വരുന്നു',
+    step_in_progress: 'നടക്കുന്നു',
+    step_completed: 'പൂർത്തിയായി',
+    reschedule_btn: 'സമയം മാറ്റുക',
+    cancel_btn: 'റദ്ദാക്കുക',
+    receipt_btn: 'ഇൻവോയ്സ്',
+    dispute_btn: 'പരാതി / സഹായം'
   }
 };
 

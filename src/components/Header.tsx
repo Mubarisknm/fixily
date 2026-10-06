@@ -144,22 +144,22 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center justify-between h-16 gap-2 sm:gap-4">
           
           {/* Brand Logo & Prominent Active Location Display */}
-          <div className="flex items-center space-x-2 sm:space-x-4 shrink-0">
+          <div className="flex items-center space-x-1.5 sm:space-x-4 min-w-0">
             <div
               onClick={() => setActiveTab('customer')}
-              className="flex items-center space-x-2.5 cursor-pointer group"
+              className="flex items-center space-x-1.5 sm:space-x-2.5 cursor-pointer group shrink-0"
             >
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 via-orange-500 to-purple-600 p-0.5 shadow-md group-hover:scale-105 transition-transform duration-200">
-                <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
-                  <Wrench className="w-5 h-5 text-amber-400 group-hover:rotate-12 transition-transform" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-amber-500 via-orange-500 to-purple-600 p-0.5 shadow-md group-hover:scale-105 transition-transform duration-200 shrink-0">
+                <div className="w-full h-full bg-slate-950 rounded-[10px] sm:rounded-[14px] flex items-center justify-center">
+                  <Wrench className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400 group-hover:rotate-12 transition-transform" />
                 </div>
               </div>
               <div>
-                <div className="flex items-center space-x-1.5">
-                  <span className={`text-xl font-black tracking-tight ${isDark ? 'text-white' : 'text-slate-950'}`}>
+                <div className="flex items-center space-x-1 sm:space-x-1.5">
+                  <span className={`text-base sm:text-xl font-black tracking-tight ${isDark ? 'text-white' : 'text-slate-950'}`}>
                     Fixily
                   </span>
-                  <span className="text-[10px] font-black uppercase tracking-wider bg-purple-500/10 text-purple-600 dark:text-purple-400 px-2 py-0.5 rounded-full border border-purple-500/20">
+                  <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-wider bg-purple-500/10 text-purple-600 dark:text-purple-400 px-1.5 py-0.5 rounded-full border border-purple-500/20">
                     Kerala
                   </span>
                 </div>
@@ -172,57 +172,49 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Active District / Location Selector */}
             <button
               onClick={() => setShowLocationModal(true)}
-              className={`flex items-center space-x-1.5 sm:space-x-2 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-sm ${
+              className={`flex items-center space-x-1 sm:space-x-2 px-2 py-1.5 sm:px-3 sm:py-1.5 rounded-xl border text-xs font-bold transition-all shadow-sm ${
                 isDark
                   ? 'bg-slate-900/90 border-purple-500/30 text-purple-200 hover:border-purple-400 hover:bg-slate-800'
                   : 'bg-purple-50/80 border-purple-200 text-purple-900 hover:bg-purple-100'
               }`}
               title="Click to view or change your active service location"
             >
-              <div className={`w-2 h-2 rounded-full shrink-0 ${
+              <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full shrink-0 ${
                 selectedLocation.isServiced !== false ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'
               }`} />
-              <MapPin className="w-3.5 h-3.5 text-purple-500 shrink-0" />
-              <div className="text-left flex flex-col sm:flex-row sm:items-center sm:space-x-1">
-                <span className="truncate max-w-[100px] sm:max-w-[160px] font-black">
+              <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-purple-500 shrink-0" />
+              <div className="text-left flex items-center truncate">
+                <span className="truncate max-w-[60px] sm:max-w-[140px] font-black text-[11px] sm:text-xs">
                   {selectedLocation.name.split('(')[0]}
                 </span>
-                {selectedLocation.isServiced === false ? (
-                  <span className="text-[9px] uppercase font-black px-1 rounded bg-amber-500/20 text-amber-500 hidden sm:inline">
-                    Soon
-                  </span>
-                ) : (
-                  <span className="text-[9px] uppercase font-black px-1 rounded bg-purple-500/20 text-purple-400 hidden sm:inline">
-                    {selectedLocation.district || 'Active'}
-                  </span>
-                )}
               </div>
-              <ChevronDown className="w-3.5 h-3.5 opacity-60 shrink-0" />
+              <ChevronDown className="w-3 h-3 opacity-60 shrink-0" />
             </button>
           </div>
 
           {/* Right Controls */}
-          <div className="flex items-center space-x-1.5 sm:space-x-3 shrink-0">
+          <div className="flex items-center space-x-1 sm:space-x-2 shrink-0">
             
             {/* Language Switcher (Item 8: Malayalam support) */}
             <button
               onClick={onToggleLanguage}
-              className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border text-xs font-black transition-all ${
+              className={`flex items-center space-x-1 px-2 py-1.5 sm:px-2.5 rounded-xl border text-xs font-black transition-all ${
                 isDark
                   ? 'bg-slate-900 border-slate-800 text-slate-300 hover:border-purple-500'
                   : 'bg-slate-100 border-slate-200 text-slate-700 hover:border-purple-300'
               }`}
               title="Toggle English / മലയാളം"
             >
-              <Globe className="w-3.5 h-3.5 text-purple-500" />
-              <span>{language === 'en' ? 'മലയാളം' : 'English'}</span>
+              <Globe className="w-3.5 h-3.5 text-purple-500 shrink-0" />
+              <span className="hidden sm:inline">{language === 'en' ? 'മലയാളം' : 'English'}</span>
+              <span className="sm:hidden font-black text-[11px]">{language === 'en' ? 'ML' : 'EN'}</span>
             </button>
 
-            {/* SOS Emergency Helpline */}
+            {/* SOS Emergency Helpline (Shown on sm+, MobileBottomNav has main SOS on mobile) */}
             {onOpenEmergency && (
               <button
                 onClick={onOpenEmergency}
-                className="flex items-center space-x-1 px-2.5 sm:px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-black shadow-md shadow-red-600/30 transition-transform hover:scale-105 active:scale-95 animate-pulse"
+                className="hidden sm:flex items-center space-x-1 px-2.5 sm:px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-black shadow-md shadow-red-600/30 transition-transform hover:scale-105 active:scale-95 animate-pulse"
                 title="24/7 Emergency Helplines: Police 112, Ambulance 108, Fire 101"
               >
                 <Siren className="w-3.5 h-3.5" />
@@ -230,10 +222,10 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
             )}
 
-            {/* Theme Toggle Button */}
+            {/* Theme Toggle Button (Shown on sm+, available in drawer on mobile) */}
             <button
               onClick={onToggleTheme}
-              className={`flex items-center space-x-1 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-extrabold transition-all shadow-sm ${
+              className={`hidden sm:flex items-center space-x-1 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-extrabold transition-all shadow-sm ${
                 isDark
                   ? 'bg-slate-900 border-amber-500/30 text-amber-300 hover:bg-slate-800 hover:border-amber-400'
                   : 'bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200'
@@ -253,11 +245,11 @@ export const Header: React.FC<HeaderProps> = ({
               )}
             </button>
 
-            {/* Mobile Phone View / Desktop Switcher */}
+            {/* Mobile Phone View / Desktop Switcher (Desktop only!) */}
             {onToggleMobileView && (
               <button
                 onClick={onToggleMobileView}
-                className={`flex items-center space-x-1 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-black transition-all shadow-sm ${
+                className={`hidden md:flex items-center space-x-1 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-black transition-all shadow-sm ${
                   isMobileView
                     ? 'bg-purple-600 border-purple-500 text-white shadow-md shadow-purple-600/30'
                     : isDark
@@ -269,12 +261,12 @@ export const Header: React.FC<HeaderProps> = ({
                 {isMobileView ? (
                   <>
                     <Monitor className="w-3.5 h-3.5" />
-                    <span className="hidden md:inline">Desktop</span>
+                    <span>Desktop</span>
                   </>
                 ) : (
                   <>
                     <Smartphone className="w-3.5 h-3.5 text-purple-400" />
-                    <span className="hidden md:inline">Phone View</span>
+                    <span>Phone View</span>
                   </>
                 )}
               </button>
@@ -295,8 +287,8 @@ export const Header: React.FC<HeaderProps> = ({
                     <div className="w-5 h-5 rounded-full bg-purple-600 text-white flex items-center justify-center text-[10px]">
                       {currentUser.name.charAt(0)}
                     </div>
-                    <span className="max-w-[90px] truncate">{currentUser.name.split(' ')[0]}</span>
-                    <span className="text-[9px] uppercase px-1 rounded bg-purple-600 text-white font-extrabold">
+                    <span className="max-w-[60px] sm:max-w-[90px] truncate">{currentUser.name.split(' ')[0]}</span>
+                    <span className="text-[9px] uppercase px-1 rounded bg-purple-600 text-white font-extrabold hidden sm:inline">
                       {currentUser.role}
                     </span>
                     <ChevronDown className="w-3 h-3 opacity-60" />
@@ -372,10 +364,11 @@ export const Header: React.FC<HeaderProps> = ({
               ) : (
                 <button
                   onClick={() => onOpenAuthModal('customer')}
-                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-black text-xs shadow-md transition-all cursor-pointer"
+                  className="flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-black text-xs shadow-md transition-all cursor-pointer shrink-0"
                 >
                   <User className="w-3.5 h-3.5" />
-                  <span>{t('login_btn')}</span>
+                  <span className="hidden sm:inline">{t('login_btn')}</span>
+                  <span className="sm:hidden text-xs">Login</span>
                 </button>
               )}
             </div>

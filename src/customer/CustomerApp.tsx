@@ -733,7 +733,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
   const allCompletedJobs = jobs.filter(j => j.status === 'COMPLETED');
 
   return (
-    <div className="space-y-6 pb-20">
+    <div className="space-y-6 pb-20 w-full max-w-full overflow-x-hidden">
       
       {/* 0. Coverage Notice Banner for upcoming Kerala districts */}
       {selectedLocation.isServiced === false && (

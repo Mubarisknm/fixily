@@ -201,7 +201,7 @@ export function App() {
       theme={theme}
       language={language}
     >
-      <div className={`min-h-screen transition-colors duration-200 flex flex-col font-sans relative ${
+      <div className={`min-h-screen transition-colors duration-200 flex flex-col font-sans relative w-full max-w-full overflow-x-hidden ${
         isDark ? 'bg-slate-950 text-white' : 'bg-slate-50 text-slate-900'
       }`}>
         <Header
@@ -222,7 +222,7 @@ export function App() {
           onToggleMobileView={handleToggleMobilePhoneView}
         />
 
-        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-28">
+        <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 pb-28 w-full max-w-full overflow-x-hidden">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-3">
               <div className="w-10 h-10 border-4 border-purple-600 border-t-transparent rounded-full animate-spin" />
