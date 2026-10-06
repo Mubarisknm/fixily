@@ -27,13 +27,13 @@ import { api } from './services/api';
 export function App() {
   const [activeTab, setActiveTab] = useState<'customer' | 'partner' | 'admin'>('customer');
   const [theme, setTheme] = useState<ThemeMode>(() => {
-    const saved = localStorage.getItem('fixily_theme');
+    const saved = localStorage.getItem('fykso_theme');
     return (saved === 'light' || saved === 'dark') ? (saved as ThemeMode) : 'dark';
   });
 
   const [language, setLanguage] = useState<AppLanguage>(() => {
     try {
-      const saved = localStorage.getItem('fixily_lang');
+      const saved = localStorage.getItem('fykso_lang');
       return saved === 'ml' ? 'ml' : 'en';
     } catch {
       return 'en';
@@ -42,7 +42,7 @@ export function App() {
 
   const [currentUser, setCurrentUser] = useState<UserSession | null>(() => {
     try {
-      const saved = localStorage.getItem('fixily_session');
+      const saved = localStorage.getItem('fykso_session');
       return saved ? JSON.parse(saved) : null;
     } catch {
       return null;
@@ -51,7 +51,7 @@ export function App() {
 
   const [isMobilePhoneView, setIsMobilePhoneView] = useState<boolean>(() => {
     try {
-      const saved = localStorage.getItem('fixily_phone_view');
+      const saved = localStorage.getItem('fykso_phone_view');
       if (saved !== null) return saved === 'true';
       return false;
     } catch {
@@ -69,7 +69,7 @@ export function App() {
   const [locations, setLocations] = useState<KochiLocation[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<KochiLocation>(() => {
     try {
-      const saved = localStorage.getItem('fixily_selected_location');
+      const saved = localStorage.getItem('fykso_selected_location');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed && parsed.name) return parsed;
@@ -142,7 +142,7 @@ export function App() {
 
         setSelectedLocation(liveLoc);
         try {
-          localStorage.setItem('fixily_selected_location', JSON.stringify(liveLoc));
+          localStorage.setItem('fykso_selected_location', JSON.stringify(liveLoc));
         } catch (e) {}
 
         if (showToast) {
@@ -170,7 +170,7 @@ export function App() {
     const updated = { ...loc };
     setSelectedLocation(updated);
     try {
-      localStorage.setItem('fixily_selected_location', JSON.stringify(updated));
+      localStorage.setItem('fykso_selected_location', JSON.stringify(updated));
     } catch (e) {}
     setLiveGpsToast({
       message: updated.isLiveGps
@@ -196,7 +196,7 @@ export function App() {
       // Merge custom added locations from localStorage if any
       let finalLocs = locs;
       try {
-        const customLocsStr = localStorage.getItem('fixily_custom_locations');
+        const customLocsStr = localStorage.getItem('fykso_custom_locations');
         if (customLocsStr) {
           const customLocs: KochiLocation[] = JSON.parse(customLocsStr);
           if (Array.isArray(customLocs) && customLocs.length > 0) {
@@ -218,7 +218,7 @@ export function App() {
 
   useEffect(() => {
     try {
-      localStorage.setItem('fixily_theme', theme);
+      localStorage.setItem('fykso_theme', theme);
       if (theme === 'dark') {
         document.documentElement.classList.add('dark');
       } else {
@@ -232,9 +232,9 @@ export function App() {
   useEffect(() => {
     try {
       if (currentUser) {
-        localStorage.setItem('fixily_session', JSON.stringify(currentUser));
+        localStorage.setItem('fykso_session', JSON.stringify(currentUser));
       } else {
-        localStorage.removeItem('fixily_session');
+        localStorage.removeItem('fykso_session');
       }
     } catch (e) {
       // Local storage protection
@@ -249,7 +249,7 @@ export function App() {
     setLanguage(prev => {
       const next = prev === 'en' ? 'ml' : 'en';
       try {
-        localStorage.setItem('fixily_lang', next);
+        localStorage.setItem('fykso_lang', next);
       } catch (e) {}
       return next;
     });
@@ -259,7 +259,7 @@ export function App() {
     setIsMobilePhoneView(prev => {
       const next = !prev;
       try {
-        localStorage.setItem('fixily_phone_view', String(next));
+        localStorage.setItem('fykso_phone_view', String(next));
       } catch (e) {}
       return next;
     });
@@ -363,7 +363,7 @@ export function App() {
           {isLoading ? (
             <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-3">
               <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-              <p className="text-xs font-bold text-slate-500">Loading Fixily Platform...</p>
+              <p className="text-xs font-bold text-slate-500">Loading Fykso Platform...</p>
             </div>
           ) : (
             <>

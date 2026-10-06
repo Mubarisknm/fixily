@@ -71,7 +71,7 @@ export const api = {
 
     const newPartner: GigPartner = {
       id: `p-${Date.now().toString().slice(-4)}`,
-      name: payload.name || 'Fixily Verified Partner',
+      name: payload.name || 'Fykso Verified Partner',
       phone: payload.phone || '+91 98470 00000',
       role: payload.role || 'Freelance Service Partner',
       rating: 5.0,

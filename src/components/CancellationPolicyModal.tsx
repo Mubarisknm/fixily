@@ -36,7 +36,7 @@ export const CancellationPolicyModal: React.FC<CancellationPolicyModalProps> = (
               <ShieldCheck className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="font-black text-lg">Fixily Kerala Trust Charter</h3>
+              <h3 className="font-black text-lg">Fykso Kerala Trust Charter</h3>
               <p className="text-xs text-slate-400">Cancellation, Refund &amp; Damage Liability Policies</p>
             </div>
           </div>
@@ -104,7 +104,7 @@ export const CancellationPolicyModal: React.FC<CancellationPolicyModalProps> = (
               <h4>4. 100% Damage Liability &amp; 24-Hour Dispute Hold</h4>
             </div>
             <p className={isDark ? 'text-slate-300' : 'text-slate-700'}>
-              All verified Fixily gig partners sign a mandatory damage liability contract. Furthermore, partner earnings are placed on a <strong>24-hour safety escrow hold</strong>. If any accidental damage or poor service occurs, report it immediately to pause payouts and request compensation up to ₹10,000.
+              All verified Fykso gig partners sign a mandatory damage liability contract. Furthermore, partner earnings are placed on a <strong>24-hour safety escrow hold</strong>. If any accidental damage or poor service occurs, report it immediately to pause payouts and request compensation up to ₹10,000.
             </p>
           </div>
 

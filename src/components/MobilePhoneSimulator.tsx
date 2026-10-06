@@ -260,7 +260,7 @@ export const MobilePhoneSimulator: React.FC<MobilePhoneSimulatorProps> = ({
                   <div className="w-2 h-2 rounded-full bg-slate-950 ring-1 ring-slate-800 shrink-0" />
                   {islandExpanded ? (
                     <span className="text-[10px] text-blue-400 font-extrabold truncate px-1">
-                      Fixily Pro • Active
+                      Fykso Pro • Active
                     </span>
                   ) : (
                     <div className="w-2.5 h-2.5 rounded-full bg-blue-500/80" />

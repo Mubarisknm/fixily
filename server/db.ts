@@ -1,4 +1,4 @@
-// Mock Database & Business Logic Store for Fixily Kerala
+// Mock Database & Business Logic Store for Fykso Kerala
 
 export const KOCHI_LOCATIONS = [
   { id: 'kakkanad', name: 'Kakkanad (InfoPark & Seaport)', pin: '682030', lat: 10.0159, lng: 76.3419 },

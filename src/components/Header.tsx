@@ -164,7 +164,7 @@ export const Header: React.FC<HeaderProps> = ({
               <div>
                 <div className="flex items-center space-x-1 sm:space-x-1.5">
                   <span className={`text-base sm:text-xl font-black tracking-tight ${isDark ? 'text-white' : 'text-slate-950'}`}>
-                    Fixily
+                    Fykso
                   </span>
                   <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-wider bg-blue-500/10 text-blue-600 dark:text-blue-400 px-1.5 py-0.5 rounded-full border border-blue-500/20">
                     Kerala

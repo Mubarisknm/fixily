@@ -125,7 +125,7 @@ export interface PartnerKYC {
   pccStatus: 'VERIFIED' | 'PENDING_REVIEW' | 'REJECTED';
   pccRefNo?: string;
   pccExpiry?: string;
-  pccCheckedByFixily?: boolean;
+  pccCheckedByFykso?: boolean;
   bankVerified: boolean;
   damageLiabilityAgreed: boolean;
   liabilityAgreementTimestamp?: string;

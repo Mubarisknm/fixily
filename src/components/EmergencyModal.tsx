@@ -36,12 +36,12 @@ export const EmergencyModal: React.FC<EmergencyModalProps> = ({
 
   const coordinatesText = `${currentLocation.lat.toFixed(4)}, ${currentLocation.lng.toFixed(4)}`;
   const emergencyShareText = encodeURIComponent(
-    `🚨 EMERGENCY SOS from Fixily: I need immediate assistance! My current location is ${currentLocation.name}. Coordinates: ${coordinatesText} (https://maps.google.com/?q=${currentLocation.lat},${currentLocation.lng})`
+    `🚨 EMERGENCY SOS from Fykso: I need immediate assistance! My current location is ${currentLocation.name}. Coordinates: ${coordinatesText} (https://maps.google.com/?q=${currentLocation.lat},${currentLocation.lng})`
   );
 
   const handleCopyCoordinates = () => {
     navigator.clipboard.writeText(
-      `Fixily Emergency SOS Location: ${currentLocation.name} (GPS: ${coordinatesText}) https://maps.google.com/?q=${currentLocation.lat},${currentLocation.lng}`
+      `Fykso Emergency SOS Location: ${currentLocation.name} (GPS: ${coordinatesText}) https://maps.google.com/?q=${currentLocation.lat},${currentLocation.lng}`
     );
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);

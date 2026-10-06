@@ -1,4 +1,4 @@
-// Backend Database Store for Fixily Kerala
+// Backend Database Store for Fykso Kerala
 export const KOCHI_LOCATIONS = [
   // 1. Ernakulam District (Metropolitan, Suburbs & Coastal/Rural)
   { id: 'kakkanad', name: 'Kakkanad (InfoPark & SmartCity)', city: 'Kochi', district: 'Ernakulam', taluk: 'Kanayannur', panchayat: 'Thrikkakara', regionType: 'URBAN', state: 'Kerala', pin: '682030', lat: 10.0159, lng: 76.3419, isServiced: true },
@@ -164,7 +164,7 @@ export const SERVICES = [
     allowancePolicy: '100% kept by driver (Zero platform commission on return bus fare/batta)',
     priceRangeNotice: '₹250 for first 2 hours + ₹80/hr. No surprise surge pricing.',
     features: [
-      'Police Clearance Certificate (PCC) checked by Fixily',
+      'Police Clearance Certificate (PCC) checked by Fykso',
       'Minimum 3+ years active LMV driving experience',
       'Hospital visits, Sabarimala pilgrimage, airport runs',
       'Return bus fare & meal allowance kept 100% by driver'
@@ -576,7 +576,7 @@ export const MOCK_PARTNERS = [
       pccStatus: 'VERIFIED',
       pccRefNo: 'KL-PCC-2024-88912',
       pccExpiry: '2027-04-15',
-      pccCheckedByFixily: true,
+      pccCheckedByFykso: true,
       bankVerified: true,
       damageLiabilityAgreed: true,
       liabilityAgreementTimestamp: '2026-04-15T09:30:00Z'
@@ -634,7 +634,7 @@ export const MOCK_PARTNERS = [
       pccStatus: 'VERIFIED',
       pccRefNo: 'KL-PCC-2024-66381',
       pccExpiry: '2027-11-20',
-      pccCheckedByFixily: true,
+      pccCheckedByFykso: true,
       bankVerified: true,
       damageLiabilityAgreed: true,
       liabilityAgreementTimestamp: '2026-05-15T10:00:00Z'

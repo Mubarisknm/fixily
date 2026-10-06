@@ -57,7 +57,7 @@ export const DisputeModal: React.FC<DisputeModalProps> = ({
   };
 
   const handleWhatsAppEscalation = () => {
-    const text = `*Fixily Kerala Dispute Escalate - Ticket ${submittedTicket}*%0A%0A*Customer Phone:* ${phone}%0A*Issue Type:* ${issueType}%0A*Description:* ${encodeURIComponent(description)}%0A%0APlease hold partner payout and contact me for inspection.`;
+    const text = `*Fykso Kerala Dispute Escalate - Ticket ${submittedTicket}*%0A%0A*Customer Phone:* ${phone}%0A*Issue Type:* ${issueType}%0A*Description:* ${encodeURIComponent(description)}%0A%0APlease hold partner payout and contact me for inspection.`;
     window.open(`https://wa.me/919895000112?text=${text}`, '_blank');
   };
 
@@ -214,7 +214,7 @@ export const DisputeModal: React.FC<DisputeModalProps> = ({
             }`}>
               <ShieldAlert className="w-4 h-4 shrink-0 mt-0.5" />
               <span>
-                <strong>Fixily Escrow Protection:</strong> Submitting this dispute places a 24-hour administrative hold on the partner's payout and routes this ticket to our senior operations desk in Kochi.
+                <strong>Fykso Escrow Protection:</strong> Submitting this dispute places a 24-hour administrative hold on the partner's payout and routes this ticket to our senior operations desk in Kochi.
               </span>
             </div>
 

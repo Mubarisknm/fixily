@@ -289,7 +289,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
               <span className="text-[10px] font-bold text-amber-500">₹250 Joining Bonus</span>
             </div>
             <h3 className="text-base sm:text-lg font-extrabold mt-1">
-              Want to earn with Fixily? Complete 3-Minute Aadhaar & PCC Document KYC
+              Want to earn with Fykso? Complete 3-Minute Aadhaar & PCC Document KYC
             </h3>
             <p className={`text-xs mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
               Accept on-demand jobs in your area with zero platform cut on customer travel allowances and daily instant UPI payouts.
@@ -352,7 +352,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
                     : isDark ? 'bg-amber-950 text-amber-300 border border-amber-800' : 'bg-amber-50 text-amber-700 border border-amber-200'
                 }`}>
                   <ShieldCheck className="w-3 h-3" />
-                  <span>PCC Checked by Fixily: {currentPartner.kyc.pccStatus}</span>
+                  <span>PCC Checked by Fykso: {currentPartner.kyc.pccStatus}</span>
                 </span>
 
                 <span className={`inline-flex items-center space-x-1 text-[10px] px-2 py-0.5 rounded-md font-bold ${
@@ -504,7 +504,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
           );
         })()}
 
-        {/* Anti-Leakage / Work For Fixily Policy Notice */}
+        {/* Anti-Leakage / Work For Fykso Policy Notice */}
         <div className={`p-4 rounded-2xl border text-xs space-y-2 ${
           isDark ? 'bg-slate-950/80 border-slate-800 text-slate-300' : 'bg-white border-slate-200 text-slate-700'
         }`}>
@@ -947,7 +947,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="text-xs uppercase tracking-widest text-emerald-400 font-bold">
-              Fixily Partner Earnings Hub
+              Fykso Partner Earnings Hub
             </div>
             <h3 className="text-xl font-extrabold text-white mt-0.5">
               1-Tap Daily Instant UPI Withdrawal
@@ -1283,7 +1283,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
                   autoFocus
                 />
                 <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
-                  Ask the customer for the 4-digit code shown on their Fixily app screen. This ensures the customer is satisfied and protects against premature claims.
+                  Ask the customer for the 4-digit code shown on their Fykso app screen. This ensures the customer is satisfied and protects against premature claims.
                   <span className="block text-[10px] text-emerald-400 mt-0.5">
                     (Customer OTP: <strong>{showCompletionModal.completionOtp || '4921'}</strong>)
                   </span>

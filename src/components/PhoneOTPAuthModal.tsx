@@ -71,7 +71,7 @@ export const PhoneOTPAuthModal: React.FC<PhoneOTPAuthModalProps> = ({
       partnerId: targetRole === 'partner' ? 'p-106' : undefined
     };
 
-    localStorage.setItem('fixily_user_session', JSON.stringify(session));
+    localStorage.setItem('fykso_user_session', JSON.stringify(session));
     onLoginSuccess(session);
     onClose();
   };
@@ -89,12 +89,12 @@ export const PhoneOTPAuthModal: React.FC<PhoneOTPAuthModalProps> = ({
     const session: UserSession = {
       id: 'adm-001',
       phone: `+91 ${phoneNumber.replace(/\D/g, '').slice(-10)}`,
-      name: name || 'Fixily Kerala Operations Admin',
+      name: name || 'Fykso Kerala Operations Admin',
       role: 'admin',
       isVerified: true
     };
 
-    localStorage.setItem('fixily_user_session', JSON.stringify(session));
+    localStorage.setItem('fykso_user_session', JSON.stringify(session));
     onLoginSuccess(session);
     onClose();
   };
@@ -289,7 +289,7 @@ export const PhoneOTPAuthModal: React.FC<PhoneOTPAuthModalProps> = ({
                 Enter Admin Security Passcode (PIN)
               </span>
               <span className="text-xs text-slate-500">
-                Authorized Fixily Kerala Personnel Only
+                Authorized Fykso Kerala Personnel Only
               </span>
             </div>
 
