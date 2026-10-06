@@ -25,6 +25,7 @@ import {
 import { KochiLocation, ThemeMode, AppLanguage, UserSession, UserRole } from '../types';
 import { useTranslation } from '../utils/translations';
 import { KeralaMapLocationModal } from './KeralaMapLocationModal';
+import { FyksoLogo } from './FyksoLogo';
 
 interface HeaderProps {
   activeTab: 'customer' | 'partner' | 'admin';
@@ -154,26 +155,10 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="flex items-center space-x-1.5 sm:space-x-4 min-w-0">
             <div
               onClick={() => setActiveTab('customer')}
-              className="flex items-center space-x-1.5 sm:space-x-2.5 cursor-pointer group shrink-0"
+              className="cursor-pointer group shrink-0"
+              title="Fykso Kerala — Home"
             >
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-blue-600 via-blue-500 to-green-500 p-0.5 shadow-md group-hover:scale-105 transition-transform duration-200 shrink-0">
-                <div className="w-full h-full bg-[#0F172A] rounded-[10px] sm:rounded-[14px] flex items-center justify-center">
-                  <Wrench className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400 group-hover:rotate-12 transition-transform" />
-                </div>
-              </div>
-              <div>
-                <div className="flex items-center space-x-1 sm:space-x-1.5">
-                  <span className={`text-base sm:text-xl font-black tracking-tight ${isDark ? 'text-white' : 'text-slate-950'}`}>
-                    Fykso
-                  </span>
-                  <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-wider bg-blue-500/10 text-blue-600 dark:text-blue-400 px-1.5 py-0.5 rounded-full border border-blue-500/20">
-                    Kerala
-                  </span>
-                </div>
-                <p className="text-[10px] text-slate-400 font-medium hidden lg:block">
-                  {t('brand_tagline')}
-                </p>
-              </div>
+              <FyksoLogo isDark={isDark} size="md" variant="full" />
             </div>
 
             {/* Active District / Location Selector */}

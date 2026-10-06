@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ShieldCheck, Phone, Mail, MapPin, MessageSquare, Lock, Heart, FileText, CheckCircle2, X } from 'lucide-react';
 import { ThemeMode, AppLanguage } from '../types';
 import { useTranslation } from '../utils/translations';
+import { FyksoLogo } from './FyksoLogo';
 
 interface LegalFooterProps {
   theme: ThemeMode;
@@ -35,12 +36,7 @@ export const LegalFooter: React.FC<LegalFooterProps> = ({
             
             {/* Col 1: Brand & Kerala Trust */}
             <div className="space-y-3">
-              <div className="flex items-center space-x-2">
-                <span className="text-xl font-black text-blue-600">Fykso</span>
-                <span className="text-xs font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400">
-                  Kerala
-                </span>
-              </div>
+              <FyksoLogo isDark={isDark} size="md" variant="full" />
               <p className="text-xs leading-relaxed">
                 Kerala's premier doorstep service platform. Certified freelance specialists with police clearance (PCC) documents checked by Fykso and 100% damage liability guarantee.
               </p>

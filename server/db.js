@@ -526,6 +526,109 @@ export const SERVICES = [
     rating: 0,
     reviewsCount: 0,
     isNewService: true
+  },
+  {
+    id: 'coconut-tree-climber',
+    phase: 1,
+    category: 'Agro & Palm Tree Care',
+    title: 'Trained Coconut Tree Climber & Palm Trimming',
+    tagline: 'Certified climbers with safety harness for coconut harvesting & crown cleaning.',
+    badge: 'Kerala Essential',
+    icon: 'Sparkles',
+    imageUrl: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=600&auto=format&fit=crop&q=80',
+    eta: '30 mins',
+    isInstant: true,
+    priceType: 'tiered',
+    tiers: [
+      { name: '1 - 3 Coconut Trees (Harvest & Frond Clean)', price: 299, duration: '45 mins' },
+      { name: '4 - 8 Coconut Trees (Harvest & Crown Clean)', price: 599, duration: '90 mins' },
+      { name: '10+ Trees Full Compound Harvesting', price: 999, duration: '2.5 hrs' }
+    ],
+    features: ['Mechanical safety harness device (zero fall risk)', 'Dead frond removal & crown beetle inspection', 'Tender coconut harvesting & branch lowering'],
+    rating: 4.9,
+    reviewsCount: 34
+  },
+  {
+    id: 'monsoon-roof-waterproofing',
+    phase: 1,
+    category: 'Monsoon & Roof Protection',
+    title: 'Monsoon Roof Leakage Proofing & Tarpaulin Sheet Fixing',
+    tagline: 'Emergency roof tarpaulin fixing, tile replacement, crack silicone & gutter clearing.',
+    badge: 'Monsoon Rescue',
+    icon: 'ShieldCheck',
+    imageUrl: 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=600&auto=format&fit=crop&q=80',
+    eta: '25 mins',
+    isInstant: true,
+    priceType: 'tiered',
+    tiers: [
+      { name: 'Terrace / Tile Crack Sealant & Gutter Clean', price: 499, duration: '60 mins' },
+      { name: 'Heavy UV Tarpaulin Sheet Rigging & Tie-Down', price: 899, duration: '90 mins' },
+      { name: 'Complete Roof Polyurethane Polymer Waterproofing', price: 1899, duration: '3 hrs' }
+    ],
+    features: ['Heavy-gauge UV tarpaulin tie-down rope rigging', 'Displaced clay tile realignment & replacement', 'Rainwater drain gutter unblocking'],
+    rating: 4.8,
+    reviewsCount: 29
+  },
+  {
+    id: 'septic-tank-vacuum-cleaning',
+    phase: 1,
+    category: 'Septic & Drainage Sanitation',
+    title: 'Septic Tank Vacuum Suction & Sump Drainage Cleaning',
+    tagline: 'Heavy hydraulic vacuum pump tanker for odor-free septic tank clearance.',
+    badge: 'Sanitation Care',
+    icon: 'Droplet',
+    imageUrl: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&auto=format&fit=crop&q=80',
+    eta: '45 mins',
+    isInstant: false,
+    priceType: 'tiered',
+    tiers: [
+      { name: 'Standard Residential Tanker (Up to 3,000L)', price: 1899, duration: '60 mins' },
+      { name: 'Large Villa / Commercial Tanker (Up to 6,000L)', price: 3299, duration: '90 mins' }
+    ],
+    features: ['Closed odorless vacuum suction pipe', 'Bio-enzymatic odor neutralizer flush', 'Government certified municipal treatment disposal'],
+    rating: 4.8,
+    reviewsCount: 18
+  },
+  {
+    id: 'elderly-care-hospital-escort',
+    phase: 1,
+    category: 'Elderly Care & Family Assistance',
+    title: 'Senior Citizen Hospital Escort & Care Companion',
+    tagline: 'Verified compassionate assistant to escort parents to hospital, token queues & doctor visits.',
+    badge: 'Family Support',
+    icon: 'UserCheck',
+    imageUrl: 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=600&auto=format&fit=crop&q=80',
+    eta: 'Scheduled',
+    isInstant: false,
+    priceType: 'tiered',
+    tiers: [
+      { name: 'Half-Day Hospital Escort & Token Support (3-4 hrs)', price: 599, duration: '4 hrs' },
+      { name: 'Full-Day Medical Escort & Pharmacy Assistance (7-8 hrs)', price: 1099, duration: '8 hrs' }
+    ],
+    features: ['PCC background verified & trained companion', 'Wheelchair maneuvering & outpatient queue management', 'Doctor prescription & medicine pickup assistance'],
+    rating: 4.9,
+    reviewsCount: 37
+  },
+  {
+    id: 'brush-cutter-grass-clearing',
+    phase: 1,
+    category: 'Garden & Compound Maintenance',
+    title: 'Motorized Brush Cutter & Compound Weed Clearing',
+    tagline: 'Heavy-duty petrol brush cutter to clear overgrown bushes and maintain snake-free compounds.',
+    badge: 'Snake-Safe Compound',
+    icon: 'Sparkles',
+    imageUrl: 'https://images.unsplash.com/photo-1558904541-efa8c4a08931?w=600&auto=format&fit=crop&q=80',
+    eta: '40 mins',
+    isInstant: true,
+    priceType: 'tiered',
+    tiers: [
+      { name: 'Front Courtyard & Perimeter (Up to 3 Cents)', price: 599, duration: '60 mins' },
+      { name: 'Medium Compound (5 to 10 Cents Overgrowth)', price: 1199, duration: '2 hrs' },
+      { name: 'Large Vacant Plot Weed & Bush Clearing', price: 1999, duration: '3.5 hrs' }
+    ],
+    features: ['Commercial 2-stroke petrol brush cutter', 'Boundary wall snake-barrier weed clearance', 'Neat green waste stacking and collection'],
+    rating: 4.8,
+    reviewsCount: 22
   }
 ];
 
@@ -657,6 +760,147 @@ export const MOCK_PARTNERS = [
         eta: '35 mins',
         features: ['Rooftop solar DC/AC cabling check', 'Battery specific gravity testing', 'Pure sine wave inverter diagnostics'],
         equipment: 'Carrying digital multimeter, solar crimping pliers & tester',
+        isActive: true
+      }
+    ]
+  },
+  {
+    id: 'p-107',
+    name: 'Manoj Soman',
+    phone: '+91 98471 22334',
+    role: 'Trained Coconut Tree Climber & Monsoon Roofer',
+    rating: 4.9,
+    jobsCompleted: 48,
+    reviewsCount: 28,
+    isOnline: true,
+    isTopRated: true,
+    hourlyRateMultiplier: 1.25,
+    damageLiabilityAgreed: true,
+    currentLocation: { name: 'Aluva & Angamaly Rural', lat: 10.1080, lng: 76.3520 },
+    availableSlots: [
+      'Today, 03:00 PM - 05:00 PM',
+      'Tomorrow, 08:30 AM - 11:30 AM',
+      'Tomorrow, 02:00 PM - 05:00 PM'
+    ],
+    targetAchievement: {
+      weeklyTarget: 15,
+      completedJobsThisWeek: 14,
+      bonusAmount: 1500,
+      isBonusUnlocked: false,
+      tierLevel: 'GOLD_TOP_RATED',
+      commissionDiscountPercent: 5
+    },
+    reviews: [
+      {
+        id: 'rev-8',
+        customerName: 'K. R. Nambiar',
+        rating: 5,
+        comment: 'Manoj cleaned 6 coconut trees and fixed our roof tiles before the monsoon rain. Very skilled and safe work!',
+        serviceTitle: 'Trained Coconut Tree Climber & Palm Trimming',
+        createdAt: '2026-10-04'
+      }
+    ],
+    kyc: {
+      aadhaarVerified: true,
+      govtIdType: 'AADHAAR',
+      govtIdNumber: '•••• •••• 9102',
+      govtIdFileAttached: true,
+      pccStatus: 'VERIFIED',
+      pccRefNo: 'KL-PCC-2024-81190',
+      pccExpiry: '2027-12-15',
+      pccCheckedByFykso: true,
+      bankVerified: true,
+      damageLiabilityAgreed: true,
+      liabilityAgreementTimestamp: '2026-04-10T10:00:00Z'
+    },
+    vehicle: 'Tree Harness Safety Gear & Tarpaulin Toolbag',
+    walletBalance: 3200,
+    escrowBalance: 400,
+    withdrawableBalance: 2800,
+    todaysEarnings: 1250,
+    photoUrl: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=150&auto=format&fit=crop&q=80',
+    aadhaarMasked: '•••• •••• 9102',
+    customProfessions: [
+      {
+        id: 'cp-107',
+        title: 'Trained Coconut Tree Climber & Palm Trimming',
+        category: 'Agro & Palm Tree Care',
+        tagline: 'Mechanical safety harness climber for coconut harvesting and frond trimming.',
+        priceType: 'tiered',
+        price: 299,
+        eta: '30 mins',
+        features: ['Zero fall risk harness', 'Crown beetle cleaning', 'Tender coconut harvesting'],
+        equipment: 'Mechanical tree climber safety device, curved sickle, rope pulley',
+        isActive: true
+      }
+    ]
+  },
+  {
+    id: 'p-108',
+    name: 'Sister Mary Varghese',
+    phone: '+91 98478 99881',
+    role: 'Senior Citizen Care Companion & Hospital Escort',
+    rating: 4.95,
+    jobsCompleted: 62,
+    reviewsCount: 41,
+    isOnline: true,
+    isTopRated: true,
+    hourlyRateMultiplier: 1.25,
+    damageLiabilityAgreed: true,
+    currentLocation: { name: 'Kakkanad & Palarivattom', lat: 10.0150, lng: 76.3200 },
+    availableSlots: [
+      'Today, 02:00 PM - 06:00 PM',
+      'Tomorrow, 08:00 AM - 01:00 PM'
+    ],
+    targetAchievement: {
+      weeklyTarget: 15,
+      completedJobsThisWeek: 15,
+      bonusAmount: 1500,
+      isBonusUnlocked: true,
+      tierLevel: 'GOLD_TOP_RATED',
+      commissionDiscountPercent: 5
+    },
+    reviews: [
+      {
+        id: 'rev-9',
+        customerName: 'Anil Kurian (Dubai NRI)',
+        rating: 5,
+        comment: 'Sister Mary took my elderly mother to Aster Medcity, got the token, and sent WhatsApp updates throughout. A true blessing for NRIs!',
+        serviceTitle: 'Senior Citizen Hospital Escort & Care Companion',
+        createdAt: '2026-10-05'
+      }
+    ],
+    kyc: {
+      aadhaarVerified: true,
+      govtIdType: 'AADHAAR',
+      govtIdNumber: '•••• •••• 4421',
+      govtIdFileAttached: true,
+      pccStatus: 'VERIFIED',
+      pccRefNo: 'KL-PCC-2024-99014',
+      pccExpiry: '2027-10-10',
+      pccCheckedByFykso: true,
+      bankVerified: true,
+      damageLiabilityAgreed: true,
+      liabilityAgreementTimestamp: '2026-03-01T10:00:00Z'
+    },
+    vehicle: 'Senior Care Escort Medical First-Aid Kit',
+    walletBalance: 4100,
+    escrowBalance: 500,
+    withdrawableBalance: 3600,
+    todaysEarnings: 1800,
+    photoUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
+    aadhaarMasked: '•••• •••• 4421',
+    customProfessions: [
+      {
+        id: 'cp-108',
+        title: 'Senior Citizen Hospital Escort & Care Companion',
+        category: 'Elderly Care & Family Assistance',
+        tagline: 'Compassionate assistance for medical visits, token queues, and elderly support.',
+        priceType: 'tiered',
+        price: 599,
+        eta: 'Scheduled',
+        features: ['Doctor appointment token queue management', 'Wheelchair assistance', 'Live WhatsApp photo updates to family'],
+        equipment: 'First-aid kit, digital BP monitor, pulse oximeter',
         isActive: true
       }
     ]

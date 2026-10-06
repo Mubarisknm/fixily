@@ -547,6 +547,15 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
         if (otherServicesSubFilter === 'worker-custom') {
           return Boolean(service.createdByPartnerId) || service.category === 'Other Works' || service.category === 'Other Services';
         }
+        if (otherServicesSubFilter === 'agro') {
+          return service.category === 'Agro & Palm Tree Care' || service.category === 'Garden & Compound Maintenance' || service.title.toLowerCase().includes('coconut') || service.title.toLowerCase().includes('weed');
+        }
+        if (otherServicesSubFilter === 'monsoon') {
+          return service.category === 'Monsoon & Roof Protection' || service.title.toLowerCase().includes('roof') || service.title.toLowerCase().includes('waterproof');
+        }
+        if (otherServicesSubFilter === 'elderly') {
+          return service.category === 'Elderly Care & Family Assistance' || service.title.toLowerCase().includes('elderly') || service.title.toLowerCase().includes('hospital');
+        }
         if (otherServicesSubFilter === 'cleaning') {
           return service.category === 'Deep Cleaning & Housekeeping' || service.category === 'Outdoor & Property Maintenance';
         }
@@ -569,7 +578,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
           return service.category === 'Laptop and Mobile Phone Repair';
         }
         if (otherServicesSubFilter === 'water') {
-          return service.category === 'Water Supply';
+          return service.category === 'Water Supply' || service.category === 'Septic & Drainage Sanitation';
         }
         return true;
       });
@@ -865,7 +874,9 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             {[
               { label: '🚨 20m Mechanic', query: 'mechanic' },
               { label: '👨‍✈️ Thuna Driver', query: 'driver' },
-              { label: '🚗 Foam Car Wash', query: 'car wash' },
+              { label: '🥥 Coconut Climber', query: 'coconut' },
+              { label: '🌧️ Roof Leak Fix', query: 'roof' },
+              { label: '🏥 Senior Care Escort', query: 'hospital' },
               { label: '❄️ AC Cleaning', query: 'ac' },
               { label: '⚡ Electrician', query: 'electrician' }
             ].map(chip => (
@@ -1403,14 +1414,17 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
               {[
                 { id: 'all', label: 'All Other Works', icon: '🌐' },
                 { id: 'worker-custom', label: 'Worker Custom Trades', icon: '👤', tag: 'Partner Added' },
+                { id: 'agro', label: 'Coconut & Farm', icon: '🥥', tag: 'Essential' },
+                { id: 'monsoon', label: 'Monsoon Roof Fix', icon: '🌧️', tag: 'Monsoon' },
+                { id: 'elderly', label: 'Senior Care Escort', icon: '🏥', tag: 'Family' },
                 { id: 'cleaning', label: 'Cleaning & Property', icon: '✨' },
                 { id: 'carpentry', label: 'Carpentry & Paint', icon: '🔨' },
                 { id: 'security', label: 'CCTV & Security', icon: '📹' },
-                { id: 'nri', label: 'NRI Property Care', icon: '🏡' },
+                { id: 'nri', label: 'Vacant Home Care', icon: '🏡' },
                 { id: 'salon', label: 'Salon & Spa', icon: '✂️' },
                 { id: 'mobility', label: 'Taxi & Rentals', icon: '🚕' },
                 { id: 'tech', label: 'Mobile & Laptop', icon: '📱' },
-                { id: 'water', label: 'Water Tanker', icon: '🚚' },
+                { id: 'water', label: 'Water Tanker & Septic', icon: '🚚' },
               ].map((sub) => {
                 const isActive = otherServicesSubFilter === sub.id;
                 return (

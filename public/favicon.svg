@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <rect width="64" height="64" rx="20" fill="#0F172A" />
+  <rect x="2" y="2" width="60" height="60" rx="18" stroke="#2563EB" stroke-width="2" stroke-opacity="0.4" />
+  <!-- Vertical Stem -->
+  <path d="M16 14C16 12.8954 16.8954 12 18 12H25C26.1046 12 27 12.8954 27 14V50C27 51.1046 26.1046 52 25 52H18C16.8954 52 16 51.1046 16 50V14Z" fill="#2563EB" />
+  <!-- Top Bar -->
+  <path d="M25 12H46C48.2091 12 50 13.7909 50 16C50 18.2091 48.2091 20 46 20H25V12Z" fill="#3B82F6" />
+  <!-- Middle Verification Bar -->
+  <path d="M25 29C25 27.8954 25.8954 27 27 27H40C41.6569 27 43 28.3431 43 30C43 31.6569 41.6569 33 40 33H27C25.8954 33 25 32.1046 25 31V29Z" fill="#22C55E" />
+  <!-- Accent Check Spark -->
+  <polygon points="44,30 52,24 48,34 54,34" fill="#22C55E" />
+</svg>
