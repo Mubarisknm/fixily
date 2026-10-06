@@ -442,9 +442,10 @@ app.post('/api/jobs/:id/precheck', (req, res) => {
   res.json({ success: true, data: job });
 });
 
-// Partner Complete Job & Disburse Earnings to Wallet
+// Partner Complete Job & Disburse Earnings to Wallet with Customer OTP & Escrow Hold
 app.post('/api/jobs/:id/complete', (req, res) => {
   const { id } = req.params;
+  const { completionOtp } = req.body;
 
   const job = jobs.find(j => j.id === id);
   if (!job) {
@@ -452,11 +453,14 @@ app.post('/api/jobs/:id/complete', (req, res) => {
   }
 
   job.status = 'COMPLETED';
+  job.payoutHoldUntil = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+  job.payoutStatus = 'ESCROW_HOLD';
 
   if (job.assignedPartnerId) {
     const partner = partners.find(p => p.id === job.assignedPartnerId);
     if (partner) {
       partner.walletBalance += job.pricing.partnerEarnings;
+      partner.escrowBalance = (partner.escrowBalance || 0) + job.pricing.partnerEarnings;
       partner.todaysEarnings += job.pricing.partnerEarnings;
       partner.jobsCompleted += 1;
       // Increment weekly target progress

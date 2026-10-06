@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   ShieldCheck,
   UserCheck,
-  LayoutDashboard,
   MapPin,
   Wrench,
   Sun,
@@ -14,9 +13,17 @@ import {
   Check,
   X,
   Compass,
-  Navigation
+  Navigation,
+  Globe,
+  Lock,
+  User,
+  LogOut,
+  AlertCircle,
+  Smartphone,
+  Monitor
 } from 'lucide-react';
-import { KochiLocation, ThemeMode } from '../types';
+import { KochiLocation, ThemeMode, AppLanguage, UserSession, UserRole } from '../types';
+import { useTranslation } from '../utils/translations';
 
 interface HeaderProps {
   activeTab: 'customer' | 'partner' | 'admin';
@@ -27,6 +34,13 @@ interface HeaderProps {
   theme: ThemeMode;
   onToggleTheme: () => void;
   onOpenEmergency?: () => void;
+  language: AppLanguage;
+  onToggleLanguage: () => void;
+  currentUser: UserSession | null;
+  onOpenAuthModal: (role: UserRole) => void;
+  onLogout: () => void;
+  isMobileView?: boolean;
+  onToggleMobileView?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -37,19 +51,30 @@ export const Header: React.FC<HeaderProps> = ({
   onSelectLocation,
   theme,
   onToggleTheme,
-  onOpenEmergency
+  onOpenEmergency,
+  language,
+  onToggleLanguage,
+  currentUser,
+  onOpenAuthModal,
+  onLogout,
+  isMobileView,
+  onToggleMobileView
 }) => {
+  const { t } = useTranslation(language);
   const isDark = theme === 'dark';
+
   const [showLocationModal, setShowLocationModal] = useState<boolean>(false);
   const [searchLocationQuery, setSearchLocationQuery] = useState<string>('');
   const [isDetectingGps, setIsDetectingGps] = useState<boolean>(false);
   const [gpsToast, setGpsToast] = useState<string | null>(null);
+  const [showUserDropdown, setShowUserDropdown] = useState<boolean>(false);
 
   const filteredLocations = locations.filter(loc => {
     const q = searchLocationQuery.toLowerCase().trim();
     return (
       !q ||
       loc.name.toLowerCase().includes(q) ||
+      (loc.district && loc.district.toLowerCase().includes(q)) ||
       (loc.pin && loc.pin.includes(q)) ||
       (loc.city && loc.city.toLowerCase().includes(q))
     );
@@ -89,6 +114,26 @@ export const Header: React.FC<HeaderProps> = ({
     );
   };
 
+  const handleSwitchToPartner = () => {
+    setShowUserDropdown(false);
+    if (currentUser?.role === 'partner' || currentUser?.role === 'admin') {
+      setActiveTab('partner');
+    } else {
+      // Require phone OTP login for Partner Portal (Item 14)
+      onOpenAuthModal('partner');
+    }
+  };
+
+  const handleSwitchToAdmin = () => {
+    setShowUserDropdown(false);
+    if (currentUser?.role === 'admin') {
+      setActiveTab('admin');
+    } else {
+      // Require Admin Security PIN authentication (Item 14)
+      onOpenAuthModal('admin');
+    }
+  };
+
   return (
     <header className={`sticky top-0 z-50 transition-colors duration-200 border-b backdrop-blur-md ${
       isDark
@@ -115,16 +160,16 @@ export const Header: React.FC<HeaderProps> = ({
                     Fixily
                   </span>
                   <span className="text-[10px] font-black uppercase tracking-wider bg-purple-500/10 text-purple-600 dark:text-purple-400 px-2 py-0.5 rounded-full border border-purple-500/20">
-                    On-Demand
+                    Kerala
                   </span>
                 </div>
                 <p className="text-[10px] text-slate-400 font-medium hidden lg:block">
-                  Doorstep Services & 24/7 Roadside Rescue
+                  {t('brand_tagline')}
                 </p>
               </div>
             </div>
 
-            {/* Prominent Active Location Indicator & Settings Trigger */}
+            {/* Active District / Location Selector */}
             <button
               onClick={() => setShowLocationModal(true)}
               className={`flex items-center space-x-1.5 sm:space-x-2 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-sm ${
@@ -134,24 +179,46 @@ export const Header: React.FC<HeaderProps> = ({
               }`}
               title="Click to view or change your active service location"
             >
-              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+              <div className={`w-2 h-2 rounded-full shrink-0 ${
+                selectedLocation.isServiced !== false ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'
+              }`} />
               <MapPin className="w-3.5 h-3.5 text-purple-500 shrink-0" />
               <div className="text-left flex flex-col sm:flex-row sm:items-center sm:space-x-1">
                 <span className="truncate max-w-[100px] sm:max-w-[160px] font-black">
                   {selectedLocation.name.split('(')[0]}
                 </span>
-                <span className="text-[9px] uppercase font-black px-1 rounded bg-purple-500/20 text-purple-400 hidden sm:inline">
-                  Active
-                </span>
+                {selectedLocation.isServiced === false ? (
+                  <span className="text-[9px] uppercase font-black px-1 rounded bg-amber-500/20 text-amber-500 hidden sm:inline">
+                    Soon
+                  </span>
+                ) : (
+                  <span className="text-[9px] uppercase font-black px-1 rounded bg-purple-500/20 text-purple-400 hidden sm:inline">
+                    {selectedLocation.district || 'Active'}
+                  </span>
+                )}
               </div>
               <ChevronDown className="w-3.5 h-3.5 opacity-60 shrink-0" />
             </button>
           </div>
 
-          {/* Right Controls: SOS Emergency, Theme Toggle & Portal Switcher */}
+          {/* Right Controls */}
           <div className="flex items-center space-x-1.5 sm:space-x-3 shrink-0">
             
-            {/* SOS Emergency Helpline Button */}
+            {/* Language Switcher (Item 8: Malayalam support) */}
+            <button
+              onClick={onToggleLanguage}
+              className={`flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border text-xs font-black transition-all ${
+                isDark
+                  ? 'bg-slate-900 border-slate-800 text-slate-300 hover:border-purple-500'
+                  : 'bg-slate-100 border-slate-200 text-slate-700 hover:border-purple-300'
+              }`}
+              title="Toggle English / മലയാളം"
+            >
+              <Globe className="w-3.5 h-3.5 text-purple-500" />
+              <span>{language === 'en' ? 'മലയാളം' : 'English'}</span>
+            </button>
+
+            {/* SOS Emergency Helpline */}
             {onOpenEmergency && (
               <button
                 onClick={onOpenEmergency}
@@ -186,44 +253,131 @@ export const Header: React.FC<HeaderProps> = ({
               )}
             </button>
 
-            {/* Portal Switcher */}
-            <div className={`flex items-center p-1 rounded-xl border ${
-              isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-slate-100 border-slate-200'
-            }`}>
+            {/* Mobile Phone View / Desktop Switcher */}
+            {onToggleMobileView && (
               <button
-                onClick={() => setActiveTab('customer')}
-                className={`px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                  activeTab === 'customer'
-                    ? 'bg-purple-600 text-white shadow-sm'
-                    : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
+                onClick={onToggleMobileView}
+                className={`flex items-center space-x-1 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-black transition-all shadow-sm ${
+                  isMobileView
+                    ? 'bg-purple-600 border-purple-500 text-white shadow-md shadow-purple-600/30'
+                    : isDark
+                      ? 'bg-slate-900 border-slate-800 text-slate-300 hover:border-purple-500 hover:bg-slate-800'
+                      : 'bg-slate-100 border-slate-200 text-slate-700 hover:border-purple-300 hover:bg-slate-200'
                 }`}
+                title={isMobileView ? "Switch back to Fullscreen Desktop View" : "Switch to Mobile Phone View"}
               >
-                Customer
+                {isMobileView ? (
+                  <>
+                    <Monitor className="w-3.5 h-3.5" />
+                    <span className="hidden md:inline">Desktop</span>
+                  </>
+                ) : (
+                  <>
+                    <Smartphone className="w-3.5 h-3.5 text-purple-400" />
+                    <span className="hidden md:inline">Phone View</span>
+                  </>
+                )}
               </button>
+            )}
 
-              <button
-                onClick={() => setActiveTab('partner')}
-                className={`px-2 sm:px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
-                  activeTab === 'partner'
-                    ? 'bg-purple-600 text-white shadow-sm'
-                    : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
-                }`}
-                title="Gig Partner Portal"
-              >
-                Partner
-              </button>
+            {/* Protected Role-Based Account Button (Item 14: No open public tabs) */}
+            <div className="relative">
+              {currentUser ? (
+                <div>
+                  <button
+                    onClick={() => setShowUserDropdown(!showUserDropdown)}
+                    className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl border text-xs font-black transition-all ${
+                      isDark
+                        ? 'bg-purple-950/40 border-purple-800 text-purple-200 hover:bg-purple-900/50'
+                        : 'bg-purple-50 border-purple-200 text-purple-900 hover:bg-purple-100'
+                    }`}
+                  >
+                    <div className="w-5 h-5 rounded-full bg-purple-600 text-white flex items-center justify-center text-[10px]">
+                      {currentUser.name.charAt(0)}
+                    </div>
+                    <span className="max-w-[90px] truncate">{currentUser.name.split(' ')[0]}</span>
+                    <span className="text-[9px] uppercase px-1 rounded bg-purple-600 text-white font-extrabold">
+                      {currentUser.role}
+                    </span>
+                    <ChevronDown className="w-3 h-3 opacity-60" />
+                  </button>
 
-              <button
-                onClick={() => setActiveTab('admin')}
-                className={`px-2 sm:px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
-                  activeTab === 'admin'
-                    ? 'bg-slate-800 text-white shadow-sm'
-                    : isDark ? 'text-slate-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'
-                }`}
-                title="Admin Management Console"
-              >
-                Admin
-              </button>
+                  {/* Dropdown Menu */}
+                  {showUserDropdown && (
+                    <div className={`absolute right-0 mt-2 w-56 rounded-2xl border shadow-2xl p-2 z-50 text-xs animate-in fade-in ${
+                      isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+                    }`}>
+                      <div className="p-2 border-b border-slate-100 dark:border-slate-800">
+                        <div className="font-extrabold">{currentUser.name}</div>
+                        <div className="text-[11px] text-slate-400">{currentUser.phone}</div>
+                        <div className="text-[10px] text-emerald-500 font-bold mt-0.5">✓ Phone OTP Verified</div>
+                      </div>
+
+                      <div className="py-1">
+                        <button
+                          onClick={() => {
+                            setActiveTab('customer');
+                            setShowUserDropdown(false);
+                          }}
+                          className={`w-full text-left px-3 py-2 rounded-xl font-bold flex items-center space-x-2 ${
+                            activeTab === 'customer'
+                              ? 'bg-purple-600 text-white'
+                              : isDark ? 'hover:bg-slate-800' : 'hover:bg-slate-100'
+                          }`}
+                        >
+                          <User className="w-3.5 h-3.5" />
+                          <span>Customer Portal</span>
+                        </button>
+
+                        <button
+                          onClick={handleSwitchToPartner}
+                          className={`w-full text-left px-3 py-2 rounded-xl font-bold flex items-center space-x-2 ${
+                            activeTab === 'partner'
+                              ? 'bg-purple-600 text-white'
+                              : isDark ? 'hover:bg-slate-800' : 'hover:bg-slate-100'
+                          }`}
+                        >
+                          <Lock className="w-3.5 h-3.5 text-purple-400" />
+                          <span>Gig Partner Portal</span>
+                        </button>
+
+                        <button
+                          onClick={handleSwitchToAdmin}
+                          className={`w-full text-left px-3 py-2 rounded-xl font-bold flex items-center space-x-2 ${
+                            activeTab === 'admin'
+                              ? 'bg-purple-600 text-white'
+                              : isDark ? 'hover:bg-slate-800' : 'hover:bg-slate-100'
+                          }`}
+                        >
+                          <ShieldCheck className="w-3.5 h-3.5 text-rose-400" />
+                          <span>Admin Console</span>
+                        </button>
+                      </div>
+
+                      <div className="pt-1 border-t border-slate-100 dark:border-slate-800">
+                        <button
+                          onClick={() => {
+                            setShowUserDropdown(false);
+                            onLogout();
+                          }}
+                          className="w-full text-left px-3 py-2 rounded-xl text-rose-500 font-bold hover:bg-rose-500/10 flex items-center space-x-2"
+                        >
+                          <LogOut className="w-3.5 h-3.5" />
+                          <span>{t('logout_btn')}</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <button
+                  onClick={() => onOpenAuthModal('customer')}
+                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-black text-xs shadow-md transition-all cursor-pointer"
+                >
+                  <User className="w-3.5 h-3.5" />
+                  <span>{t('login_btn')}</span>
+                </button>
+              )}
             </div>
 
           </div>
@@ -239,143 +393,103 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       )}
 
-      {/* Location Change Settings Modal */}
+      {/* Kerala District & Location Modal */}
       {showLocationModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-          <div className={`relative w-full max-w-lg rounded-3xl border shadow-2xl overflow-hidden my-auto flex flex-col ${
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in">
+          <div className={`relative w-full max-w-lg rounded-3xl border shadow-2xl p-6 sm:p-7 overflow-hidden transition-all ${
             isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
           }`}>
-            
-            {/* Modal Header */}
-            <div className={`p-5 border-b flex items-center justify-between ${
-              isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
-            }`}>
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-2xl bg-purple-600 text-white flex items-center justify-center shrink-0 shadow-md">
-                  <MapPin className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-base font-black">Location Settings</h3>
-                  <p className="text-[11px] text-slate-400">
-                    Switch your active city or micro-market coverage
-                  </p>
-                </div>
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+              <div className="flex items-center space-x-2">
+                <MapPin className="w-5 h-5 text-purple-600" />
+                <h3 className="font-black text-base">Select Your District or Town</h3>
               </div>
-
               <button
                 onClick={() => setShowLocationModal(false)}
-                className="text-slate-400 hover:text-white p-1 rounded-full hover:bg-slate-800"
+                className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Currently Active Location Highlight Card */}
-            <div className="p-5 space-y-4">
-              <div className={`p-4 rounded-2xl border flex items-center justify-between gap-3 ${
-                isDark ? 'bg-purple-950/30 border-purple-500/40 text-purple-200' : 'bg-purple-50 border-purple-200 text-purple-900'
-              }`}>
-                <div className="flex items-center space-x-3">
-                  <div className="w-9 h-9 rounded-xl bg-purple-600 text-white flex items-center justify-center font-black shrink-0">
-                    📍
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-black uppercase tracking-wider text-purple-500">
-                      Currently Using
-                    </span>
-                    <h4 className="text-sm font-extrabold">{selectedLocation.name}</h4>
-                    <span className="text-[10px] text-slate-400 font-mono">
-                      PIN: {selectedLocation.pin} • GPS: {selectedLocation.lat.toFixed(4)}, {selectedLocation.lng.toFixed(4)}
-                    </span>
-                  </div>
-                </div>
-
-                <span className="bg-emerald-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full shrink-0">
-                  ACTIVE
-                </span>
-              </div>
-
-              {/* 1-Tap Detect Current GPS Button */}
+            {/* GPS Match Button */}
+            <div className="pt-4">
               <button
                 onClick={handleDetectGPS}
                 disabled={isDetectingGps}
-                className="w-full py-3 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:brightness-110 text-white text-xs font-black shadow-lg transition-transform hover:scale-[1.02] flex items-center justify-center space-x-2 disabled:opacity-50"
+                className="w-full py-2.5 px-3 rounded-2xl border border-purple-500/30 bg-purple-500/10 text-purple-600 dark:text-purple-300 font-extrabold text-xs flex items-center justify-center space-x-2 hover:bg-purple-500/20 transition-all cursor-pointer"
               >
                 <Crosshair className={`w-4 h-4 ${isDetectingGps ? 'animate-spin' : ''}`} />
-                <span>{isDetectingGps ? 'Acquiring GPS Coordinates...' : 'Detect My Current GPS Location'}</span>
+                <span>{isDetectingGps ? 'Locating Nearest Kerala Hub...' : 'Detect Exact Location via GPS'}</span>
               </button>
+            </div>
 
-              {/* Search Filter */}
+            {/* Search Input */}
+            <div className="pt-3">
               <div className="relative">
-                <Search className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
                 <input
                   type="text"
                   value={searchLocationQuery}
                   onChange={(e) => setSearchLocationQuery(e.target.value)}
-                  placeholder="Search city, neighborhood, or PIN code..."
-                  className={`w-full text-xs pl-9 pr-3 py-2.5 rounded-xl border focus:outline-none focus:border-purple-500 font-semibold ${
-                    isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
+                  placeholder="Search district, town or pin (e.g. Ernakulam, Kozhikode, 682030)..."
+                  className={`w-full pl-9 pr-3 py-2 rounded-xl border text-xs font-bold focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+                    isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-slate-50 border-slate-200 text-slate-900'
                   }`}
                 />
               </div>
-
-              {/* Location Options Grid */}
-              <div className="space-y-1.5 max-h-60 overflow-y-auto pr-1">
-                {filteredLocations.map(loc => {
-                  const isCurrent = loc.id === selectedLocation.id;
-                  return (
-                    <button
-                      key={loc.id}
-                      onClick={() => {
-                        onSelectLocation(loc);
-                        setShowLocationModal(false);
-                      }}
-                      className={`w-full p-3 rounded-xl border text-left transition-all flex items-center justify-between text-xs ${
-                        isCurrent
-                          ? isDark
-                            ? 'bg-purple-900/30 border-purple-500 text-white font-extrabold'
-                            : 'bg-purple-50 border-purple-500 text-purple-950 font-extrabold'
-                          : isDark
-                          ? 'bg-slate-950/60 border-slate-800 hover:border-slate-700 text-slate-300'
-                          : 'bg-white border-slate-200 hover:border-purple-200 text-slate-800'
-                      }`}
-                    >
-                      <div className="flex items-center space-x-2.5">
-                        <MapPin className={`w-4 h-4 shrink-0 ${isCurrent ? 'text-purple-500' : 'text-slate-400'}`} />
-                        <div>
-                          <div className="font-bold">{loc.name}</div>
-                          <span className="text-[10px] text-slate-400 font-mono">PIN: {loc.pin}</span>
-                        </div>
-                      </div>
-
-                      {isCurrent ? (
-                        <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                      ) : (
-                        <span className="text-[10px] font-bold text-purple-500 hover:underline">Select</span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-
             </div>
 
-            {/* Modal Footer */}
-            <div className={`p-4 border-t text-right ${
-              isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
-            }`}>
-              <button
-                onClick={() => setShowLocationModal(false)}
-                className="px-4 py-1.5 text-xs font-bold rounded-xl bg-slate-800 text-white hover:bg-slate-700"
-              >
-                Done
-              </button>
+            {/* Locations List */}
+            <div className="mt-4 max-h-64 overflow-y-auto space-y-2 pr-1">
+              {filteredLocations.map(loc => {
+                const isSelected = selectedLocation.id === loc.id;
+                const isServiced = loc.isServiced !== false;
+                return (
+                  <button
+                    key={loc.id}
+                    onClick={() => {
+                      onSelectLocation(loc);
+                      setShowLocationModal(false);
+                    }}
+                    className={`w-full p-3 rounded-2xl border text-left text-xs font-bold transition-all flex items-center justify-between ${
+                      isSelected
+                        ? 'border-purple-600 bg-purple-600/10 text-purple-600 dark:text-purple-300'
+                        : isDark
+                        ? 'border-slate-800 hover:border-slate-700 hover:bg-slate-800'
+                        : 'border-slate-100 hover:border-slate-200 hover:bg-slate-50'
+                    }`}
+                  >
+                    <div>
+                      <div className="flex items-center space-x-1.5">
+                        <span className="font-extrabold">{loc.name}</span>
+                        {loc.district && (
+                          <span className="text-[10px] text-slate-400">({loc.district})</span>
+                        )}
+                      </div>
+                      <div className="text-[10px] text-slate-400 mt-0.5">PIN: {loc.pin}</div>
+                    </div>
+
+                    <div className="flex items-center space-x-1.5">
+                      {isServiced ? (
+                        <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                          Active Hub
+                        </span>
+                      ) : (
+                        <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                          Launching Soon
+                        </span>
+                      )}
+                      {isSelected && <Check className="w-4 h-4 text-purple-600 shrink-0" />}
+                    </div>
+                  </button>
+                );
+              })}
             </div>
 
           </div>
         </div>
       )}
-
     </header>
   );
 };

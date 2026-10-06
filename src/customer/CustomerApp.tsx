@@ -42,11 +42,21 @@ import {
   MessageSquare,
   Award,
   ThumbsUp,
-  BadgeAlert
+  BadgeAlert,
+  FileText,
+  RotateCcw,
+  Ban,
+  Shield,
+  HelpCircle,
+  ExternalLink
 } from 'lucide-react';
-import { ServiceItem, KochiLocation, BookingJob, ThemeMode, GigPartner } from '../types';
+import { ServiceItem, KochiLocation, BookingJob, ThemeMode, GigPartner, AppLanguage } from '../types';
 import { LiveMap } from '../components/LiveMap';
 import { EmergencyModal } from '../components/EmergencyModal';
+import { CancellationPolicyModal } from '../components/CancellationPolicyModal';
+import { DisputeModal } from '../components/DisputeModal';
+import { InvoiceModal } from '../components/InvoiceModal';
+import { useTranslation } from '../utils/translations';
 import { api } from '../services/api';
 
 interface CustomerAppProps {
@@ -58,6 +68,10 @@ interface CustomerAppProps {
   theme: ThemeMode;
   isEmergencyModalOpen?: boolean;
   setIsEmergencyModalOpen?: (open: boolean) => void;
+  language?: AppLanguage;
+  onOpenCancellationPolicy?: () => void;
+  onOpenDispute?: (job: BookingJob) => void;
+  onOpenInvoice?: (job: BookingJob) => void;
 }
 
 // Fallback SVG Generator for bulletproof image rendering under all network conditions
@@ -137,9 +151,15 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
   onRefreshJobs,
   theme,
   isEmergencyModalOpen,
-  setIsEmergencyModalOpen
+  setIsEmergencyModalOpen,
+  language = 'en',
+  onOpenCancellationPolicy,
+  onOpenDispute,
+  onOpenInvoice
 }) => {
   const isDark = theme === 'dark';
+  const { t } = useTranslation(language);
+
   const [internalEmergencyOpen, setInternalEmergencyOpen] = useState<boolean>(false);
   const emergencyModalOpen = isEmergencyModalOpen !== undefined ? isEmergencyModalOpen : internalEmergencyOpen;
   const setEmergencyModalOpen = setIsEmergencyModalOpen || setInternalEmergencyOpen;
@@ -167,7 +187,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
   const [feedbackDamageNotes, setFeedbackDamageNotes] = useState<string>('');
   const [isSubmittingFeedback, setIsSubmittingFeedback] = useState<boolean>(false);
 
-  // Booking Modal State
+  // Booking Modal State (Defaults to Pay After Service - COD)
   const [selectedService, setSelectedService] = useState<ServiceItem | null>(null);
   const [bookingStep, setBookingStep] = useState<number>(1);
   const [selectedTier, setSelectedTier] = useState<string>('');
@@ -175,10 +195,29 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
   const [customerPhone, setCustomerPhone] = useState<string>('+91 98950 12345');
   const [address, setAddress] = useState<string>(`Asset Homes Enclave, ${selectedLocation.name}`);
   const [vehicleDetails, setVehicleDetails] = useState<string>('Honda City (KL-07-CC-4091)');
-  const [paymentMethod, setPaymentMethod] = useState<'UPI' | 'COD'>('UPI');
+  const [paymentMethod, setPaymentMethod] = useState<'UPI' | 'COD'>('COD');
   const [includeInsurance, setIncludeInsurance] = useState<boolean>(true);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [activeTrackJob, setActiveTrackJob] = useState<BookingJob | null>(null);
+
+  // Rescheduling & Cancellation Modals
+  const [reschedulingJob, setReschedulingJob] = useState<BookingJob | null>(null);
+  const [newRescheduleDate, setNewRescheduleDate] = useState<string>(() => new Date().toISOString().split('T')[0]);
+  const [newRescheduleSlot, setNewRescheduleSlot] = useState<string>('Morning: 09:00 AM - 12:00 PM');
+  const [isRescheduling, setIsRescheduling] = useState<boolean>(false);
+
+  const [cancellingJob, setCancellingJob] = useState<BookingJob | null>(null);
+  const [cancellationReasonInput, setCancellationReasonInput] = useState<string>('Change of plans');
+  const [isCancelling, setIsCancelling] = useState<boolean>(false);
+
+  // Invoice, Dispute & Policy Modals
+  const [activeInvoiceJob, setActiveInvoiceJob] = useState<BookingJob | null>(null);
+  const [activeDisputeJob, setActiveDisputeJob] = useState<BookingJob | null>(null);
+  const [policyModalOpen, setPolicyModalOpen] = useState<boolean>(false);
+
+  // Unserviced area notify state
+  const [notifyPhone, setNotifyPhone] = useState<string>('');
+  const [notifySuccess, setNotifySuccess] = useState<boolean>(false);
 
   // Top Verified Pros ranking: Online/Available first, then Top Rated Pro, then trust score
   const sortedPartners = useMemo(() => {
@@ -646,13 +685,129 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
     }
   };
 
+  const handleRescheduleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!reschedulingJob) return;
+    setIsRescheduling(true);
+    try {
+      await api.rescheduleJob(reschedulingJob.id, newRescheduleDate, newRescheduleSlot);
+      setIsRescheduling(false);
+      setReschedulingJob(null);
+      onRefreshJobs();
+      alert(`✅ Job #${reschedulingJob.id} rescheduled to ${newRescheduleDate} (${newRescheduleSlot}) with ₹0 reschedule fee!`);
+    } catch (err) {
+      setIsRescheduling(false);
+      alert('Failed to reschedule job. Please try again.');
+    }
+  };
+
+  const handleCancelSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!cancellingJob) return;
+    setIsCancelling(true);
+    try {
+      await api.cancelJob(cancellingJob.id, cancellationReasonInput);
+      setIsCancelling(false);
+      setCancellingJob(null);
+      onRefreshJobs();
+      alert(`✅ Order #${cancellingJob.id} cancelled. 100% refund applied according to Fixily Kerala policy.`);
+    } catch (err) {
+      setIsCancelling(false);
+      alert('Failed to cancel job. Please try again.');
+    }
+  };
+
+  const handleRebookPartner = (job: BookingJob) => {
+    const matchedPartner = partners.find(p => p.id === job.assignedPartnerId);
+    const matchedService = services.find(s => s.id === job.serviceId) || services[0];
+    if (matchedPartner) {
+      handleStartDirectBooking(matchedPartner, matchedService);
+    } else {
+      handleStartBooking(matchedService);
+    }
+  };
+
   const myActiveJobs = jobs.filter(j => j.status !== 'CANCELLED');
   const completedJobsNeedingFeedback = jobs.filter(j => j.status === 'COMPLETED' && !j.customerFeedback);
   const completedJobsWithFeedback = jobs.filter(j => j.status === 'COMPLETED' && j.customerFeedback);
+  const allCompletedJobs = jobs.filter(j => j.status === 'COMPLETED');
 
   return (
     <div className="space-y-6 pb-20">
       
+      {/* 0. Coverage Notice Banner for upcoming Kerala districts */}
+      {selectedLocation.isServiced === false && (
+        <div className={`rounded-3xl p-5 sm:p-6 border-2 transition-all shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 ${
+          isDark
+            ? 'bg-gradient-to-r from-amber-950/60 via-slate-900 to-purple-950/40 border-amber-500/50 text-white'
+            : 'bg-gradient-to-r from-amber-50 via-white to-purple-50 border-amber-300 text-slate-900'
+        }`}>
+          <div className="flex items-start space-x-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-amber-500 text-slate-950 flex items-center justify-center shrink-0 font-black shadow-lg">
+              <MapPin className="w-6 h-6" />
+            </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="text-[10px] font-black uppercase tracking-wider bg-amber-500 text-slate-950 px-2.5 py-0.5 rounded-full">
+                  Upcoming Coverage Zone
+                </span>
+                <span className="text-xs font-bold text-amber-500">
+                  {selectedLocation.name} ({selectedLocation.district || 'District'})
+                </span>
+              </div>
+              <h3 className="text-base sm:text-lg font-black mt-1">
+                Standard doorstep services are launching soon in {selectedLocation.name}!
+              </h3>
+              <p className={`text-xs mt-0.5 max-w-xl ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                Full technician network is currently live in <strong>Kochi, Kozhikode, and Trivandrum</strong>. In {selectedLocation.name}, our 24/7 emergency SOS helpline is active. Get notified on WhatsApp with ₹200 launch credits.
+              </p>
+            </div>
+          </div>
+
+          <div className="w-full md:w-auto flex flex-col sm:flex-row items-center gap-2">
+            {notifySuccess ? (
+              <div className="text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-4 py-2.5 rounded-xl">
+                ✓ You're on the priority notification list!
+              </div>
+            ) : (
+              <div className="flex items-center space-x-2 w-full sm:w-auto">
+                <input
+                  type="tel"
+                  value={notifyPhone}
+                  onChange={(e) => setNotifyPhone(e.target.value)}
+                  placeholder="WhatsApp Mobile..."
+                  className={`text-xs p-2.5 rounded-xl border font-bold focus:outline-none focus:border-amber-500 w-full sm:w-44 ${
+                    isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-900'
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (notifyPhone.trim().length >= 10) {
+                      setNotifySuccess(true);
+                    } else {
+                      alert('Please enter a valid 10-digit mobile number');
+                    }
+                  }}
+                  className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs transition-all shadow shrink-0 cursor-pointer"
+                >
+                  Notify Me
+                </button>
+              </div>
+            )}
+            <a
+              href={`https://wa.me/919895000112?text=Hello%20Fixily%20Support,%20is%20service%20available%20in%20${encodeURIComponent(selectedLocation.name)}?`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-all flex items-center justify-center space-x-1 shrink-0"
+            >
+              <span>WhatsApp Support</span>
+              <ExternalLink className="w-3 h-3" />
+            </a>
+          </div>
+        </div>
+      )}
+
       {/* 1. Welcoming Hero Banner */}
       <div className={`relative overflow-hidden rounded-3xl p-6 sm:p-8 border shadow-lg transition-all duration-300 ${
         isDark
@@ -662,15 +817,15 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
         <div className="relative z-10 max-w-3xl space-y-4">
           
           <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
-            <span>⚡ Rapid 20-Min Doorstep Dispatch across {selectedLocation.name}</span>
+            <span>⚡ {t('hero_badge')} • {selectedLocation.name}</span>
           </div>
 
           <h1 className="text-2xl sm:text-4xl font-black tracking-tight leading-tight">
-            Reliable doorstep services & 20-minute roadside rescue.
+            {t('hero_title')}
           </h1>
 
           <p className={`text-sm sm:text-base font-medium max-w-2xl leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
-            Book verified mechanics, certified drivers, electricians, and trusted home care specialists in seconds.
+            {t('hero_sub')}
           </p>
 
           {/* Interactive Search Bar */}
@@ -681,6 +836,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
           }`}>
             <Search className="w-5 h-5 text-purple-600 ml-3 mr-2 shrink-0" />
             <input
+              id="service-search-input"
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -873,37 +1029,263 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
         </div>
       )}
 
-      {/* 3. Active Order Live Banner */}
+      {/* 3. Comprehensive Active Orders & Live Status Hub */}
       {myActiveJobs.length > 0 && (
-        <div className={`rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md border ${
-          isDark
-            ? 'bg-slate-900 border-purple-900/60 text-white'
-            : 'bg-purple-900 text-white border-purple-800'
-        }`}>
-          <div className="flex items-center space-x-3">
-            <div className="bg-amber-400 text-slate-950 p-2.5 rounded-xl font-black shrink-0 shadow">
-              <Clock className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="text-[10px] uppercase tracking-wider text-amber-300 font-extrabold">
-                Active Order #{myActiveJobs[0].id}
-              </div>
-              <div className="font-bold text-sm text-white">
-                {myActiveJobs[0].serviceTitle} — <span className="text-amber-300 font-extrabold">{myActiveJobs[0].status.replace('_', ' ')}</span>
-              </div>
-              <p className="text-[11px] text-purple-200">
-                Partner dispatched to {myActiveJobs[0].location.address}
-              </p>
-            </div>
+        <div id="active-orders-section" className="space-y-4 scroll-mt-20">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-black flex items-center space-x-2">
+              <Clock className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+              <span>{t('active_orders')} ({myActiveJobs.length})</span>
+            </h3>
+            <span className="text-xs font-bold text-slate-400">Live Status & Customer Controls</span>
           </div>
 
-          <button
-            onClick={() => setActiveTrackJob(myActiveJobs[0])}
-            className="w-full sm:w-auto bg-white text-purple-900 hover:bg-purple-50 px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center justify-center space-x-1 shadow"
-          >
-            <span>Track on Live Radar</span>
-            <ChevronRight className="w-4 h-4" />
-          </button>
+          <div className="space-y-4">
+            {myActiveJobs.map((job) => {
+              const statusStep =
+                job.status === 'PENDING' ? 1 :
+                job.status === 'ASSIGNED' ? 2 :
+                job.status === 'ON_THE_WAY' ? 3 :
+                job.status === 'IN_PROGRESS' ? 4 : 5;
+
+              return (
+                <div
+                  key={job.id}
+                  className={`rounded-3xl p-5 sm:p-6 border shadow-xl space-y-4 transition-all ${
+                    isDark
+                      ? 'bg-gradient-to-br from-slate-900 via-slate-900 to-purple-950/30 border-purple-800/40 text-white'
+                      : 'bg-white border-purple-200 text-slate-900 shadow-md'
+                  }`}
+                >
+                  {/* Order Header */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
+                    <div>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-purple-600 dark:text-purple-400">
+                          Order #{job.id}
+                        </span>
+                        <span className="text-[10px] bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold px-2 py-0.5 rounded-full border border-emerald-500/30">
+                          {job.paymentStatus === 'PAY_ON_SERVICE' ? '💵 Pay After Service' : '✓ Paid UPI'}
+                        </span>
+                        {job.rescheduledAt && (
+                          <span className="text-[10px] bg-blue-500/20 text-blue-400 font-bold px-2 py-0.5 rounded-full">
+                            Rescheduled
+                          </span>
+                        )}
+                      </div>
+                      <h4 className="text-base font-black mt-0.5">{job.serviceTitle}</h4>
+                      <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                        📅 Scheduled: <strong>{job.scheduledTime || `${job.targetDate} (${job.targetTimeSlot})`}</strong> • 📍 {job.location.address}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                      <span className={`text-xs px-3 py-1 rounded-full font-black uppercase ${
+                        job.status === 'IN_PROGRESS'
+                          ? 'bg-emerald-500 text-slate-950 animate-pulse'
+                          : 'bg-purple-600/20 text-purple-600 dark:text-purple-300 border border-purple-500/30'
+                      }`}>
+                        {job.status.replace('_', ' ')}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* 5-Step Live Progress Stepper */}
+                  <div className="py-2">
+                    <div className="grid grid-cols-5 gap-1.5 text-center">
+                      {[
+                        { step: 1, label: t('step_booked'), icon: '📝' },
+                        { step: 2, label: t('step_assigned'), icon: '👤' },
+                        { step: 3, label: t('step_on_way'), icon: '🚗' },
+                        { step: 4, label: t('step_in_progress'), icon: '⚙️' },
+                        { step: 5, label: t('step_completed'), icon: '✓' }
+                      ].map((s) => {
+                        const isDone = statusStep >= s.step;
+                        const isCurrent = statusStep === s.step;
+                        return (
+                          <div key={s.step} className="space-y-1">
+                            <div className={`h-1.5 rounded-full transition-all ${
+                              isDone ? 'bg-emerald-500' : isDark ? 'bg-slate-800' : 'bg-slate-200'
+                            }`} />
+                            <div className="text-[10px] font-bold truncate">
+                              <span className={isCurrent ? 'text-emerald-500 font-black' : isDone ? 'text-slate-300' : 'text-slate-500'}>
+                                {s.label}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Customer Completion OTP Gate Box (Shown during IN_PROGRESS) */}
+                  {job.status === 'IN_PROGRESS' && (
+                    <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-950 via-slate-900 to-teal-950 border-2 border-emerald-500/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg">
+                      <div className="flex items-center space-x-3.5">
+                        <div className="w-12 h-12 rounded-2xl bg-emerald-500 text-slate-950 flex items-center justify-center font-black text-2xl shadow-lg shrink-0">
+                          🔒
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-black uppercase tracking-wider text-emerald-400 block">
+                            Your 4-Digit Job Completion OTP
+                          </span>
+                          <div className="text-2xl font-mono font-black text-white tracking-widest mt-0.5">
+                            {job.completionOtp || '4921'}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="text-xs text-slate-300 max-w-sm leading-relaxed">
+                        ⚠️ <strong>Satisfaction Guarantee:</strong> Give this OTP to {job.assignedPartnerName || 'the partner'} ONLY after inspecting the finished service. Payout is withheld until you provide this code.
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Assigned Partner Profile Bar if assigned */}
+                  {job.assignedPartnerName && (
+                    <div className={`p-3.5 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+                      isDark ? 'bg-slate-950 border-slate-800' : 'bg-purple-50/60 border-purple-200'
+                    }`}>
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold shrink-0">
+                          <UserCheck className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h4 className="text-xs font-black">{job.assignedPartnerName}</h4>
+                          <span className="text-[10px] text-emerald-500 font-extrabold flex items-center space-x-1">
+                            <ShieldCheck className="w-3 h-3" />
+                            <span>PCC Document Checked by Fixily</span>
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center space-x-2">
+                        <a
+                          href={`tel:${job.assignedPartnerPhone || '+919895012345'}`}
+                          className="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-all flex items-center space-x-1 shadow"
+                        >
+                          <Phone className="w-3.5 h-3.5" />
+                          <span>Call via Masked Relay</span>
+                        </a>
+
+                        <button
+                          onClick={() => setActiveTrackJob(job)}
+                          className="px-3 py-1.5 rounded-xl text-xs font-bold bg-purple-600 hover:bg-purple-500 text-white transition-all flex items-center space-x-1 shadow"
+                        >
+                          <MapPin className="w-3.5 h-3.5" />
+                          <span>Track Radar</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Customer Controls & Policies Action Bar */}
+                  <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setReschedulingJob(job);
+                        setNewRescheduleDate(job.targetDate || new Date().toISOString().split('T')[0]);
+                        setNewRescheduleSlot(job.targetTimeSlot || 'Morning: 09:00 AM - 12:00 PM');
+                      }}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-1 border ${
+                        isDark ? 'border-slate-700 hover:bg-slate-800 text-slate-300' : 'border-slate-300 hover:bg-slate-100 text-slate-700'
+                      }`}
+                    >
+                      <RotateCcw className="w-3.5 h-3.5 text-purple-400" />
+                      <span>{t('reschedule_btn')}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setCancellingJob(job)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-1 border text-rose-500 ${
+                        isDark ? 'border-rose-900/50 hover:bg-rose-950/40' : 'border-rose-200 hover:bg-rose-50'
+                      }`}
+                    >
+                      <Ban className="w-3.5 h-3.5" />
+                      <span>{t('cancel_btn')}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setActiveInvoiceJob(job)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-1 border ${
+                        isDark ? 'border-slate-700 hover:bg-slate-800 text-slate-300' : 'border-slate-300 hover:bg-slate-100 text-slate-700'
+                      }`}
+                    >
+                      <FileText className="w-3.5 h-3.5 text-amber-400" />
+                      <span>{t('receipt_btn')}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setActiveDisputeJob(job)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-1 border text-amber-400 ${
+                        isDark ? 'border-amber-900/50 hover:bg-amber-950/40' : 'border-amber-200 hover:bg-amber-50'
+                      }`}
+                    >
+                      <Shield className="w-3.5 h-3.5" />
+                      <span>{t('dispute_btn')}</span>
+                    </button>
+
+                    <a
+                      href={`https://wa.me/919895000112?text=Hello%20Fixily%20Support,%20I%20am%20tracking%20Order%20%23${job.id}%20(${encodeURIComponent(job.serviceTitle)}).`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="ml-auto text-xs text-emerald-500 font-bold hover:underline flex items-center space-x-1"
+                    >
+                      <span>WhatsApp Confirm</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
+
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* 3.5. Easy Rebooking of Favorite Previous Providers */}
+      {allCompletedJobs.length > 0 && (
+        <div className={`rounded-3xl p-5 border shadow-sm space-y-3 ${
+          isDark ? 'bg-slate-900/60 border-slate-800' : 'bg-slate-50 border-slate-200'
+        }`}>
+          <div className="flex items-center justify-between">
+            <h4 className="text-sm font-black flex items-center space-x-2">
+              <RotateCcw className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+              <span>Easy Rebooking: Previous Preferred Pros</span>
+            </h4>
+            <span className="text-[10px] font-bold text-slate-400">1-Tap Re-hire</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+            {allCompletedJobs.slice(0, 3).map((pastJob) => (
+              <div
+                key={pastJob.id}
+                className={`p-3.5 rounded-2xl border flex items-center justify-between gap-3 ${
+                  isDark ? 'bg-slate-950 border-slate-800' : 'bg-white border-slate-200'
+                }`}
+              >
+                <div>
+                  <h5 className="font-bold text-xs">{pastJob.assignedPartnerName || 'Verified Pro'}</h5>
+                  <p className="text-[11px] text-slate-400 truncate">{pastJob.serviceTitle}</p>
+                  <span className="text-[10px] text-emerald-500 font-bold block mt-0.5">
+                    ✓ Completed #{pastJob.id}
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => handleRebookPartner(pastJob)}
+                  className="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-black transition-all shrink-0 shadow cursor-pointer"
+                >
+                  {t('rebook_btn')}
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
@@ -1296,7 +1678,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                     ) : service.category === 'Driver' ? (
                       <span className="bg-blue-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow flex items-center space-x-1">
                         <ShieldCheck className="w-3 h-3" />
-                        <span>Thuna PCC</span>
+                        <span>PCC Checked</span>
                       </span>
                     ) : service.category === 'Other Works' || service.category === 'Other Services' ? (
                       <span className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow flex items-center space-x-1">
@@ -1337,19 +1719,29 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                     </p>
                   </div>
 
-                  {/* Pricing and Action */}
+                  {/* Upfront Transparent Pricing and Action */}
                   <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
                     <div>
                       <span className="text-[10px] text-slate-400 block font-semibold">
-                        {service.tiers ? 'Starts at' : 'Flat Diagnostic'}
+                        {service.tiers ? 'Starts at' : 'Diagnostic Visit'}
                       </span>
-                      <span className="text-base font-black text-purple-600 dark:text-purple-400">
-                        ₹{service.tiers ? service.tiers[0].price : service.basePrice || service.diagnosticFee || service.estPrice}
+                      <div className="flex items-baseline space-x-1">
+                        <span className="text-base font-black text-purple-600 dark:text-purple-400">
+                          ₹{service.tiers ? service.tiers[0].price : service.basePrice || service.diagnosticFee || service.estPrice}
+                        </span>
+                        {service.priceRangeNotice && (
+                          <span className="text-[9px] text-slate-400 font-semibold truncate max-w-[110px]" title={service.priceRangeNotice}>
+                            • {service.priceRangeNotice}
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-[9px] text-emerald-500 font-extrabold block">
+                        ✓ {service.sparePartsNotice || 'Transparent Estimate Guarantee'}
                       </span>
                     </div>
 
                     <button
-                      className="bg-purple-600 hover:bg-purple-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow transition-all duration-200 flex items-center space-x-1 group-hover:scale-105"
+                      className="bg-purple-600 hover:bg-purple-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow transition-all duration-200 flex items-center space-x-1 group-hover:scale-105 shrink-0"
                     >
                       <span>Book</span>
                       <ChevronRight className="w-3.5 h-3.5" />
@@ -1422,9 +1814,9 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             <div className="w-9 h-9 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center font-bold mb-2.5">
               <ShieldCheck className="w-5 h-5" />
             </div>
-            <h4 className="font-extrabold text-xs">Kerala Police Thuna PCC</h4>
+            <h4 className="font-extrabold text-xs">PCC Checked by Fixily</h4>
             <p className="text-[11px] text-slate-400 mt-1">
-              Every driver and doorstep pro undergoes mandatory police criminal background clearance.
+              Every driver and doorstep pro has their PCC independently checked by Fixily to confirm zero criminal background.
             </p>
           </div>
 
@@ -1452,9 +1844,9 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             <div className="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center font-bold mb-2.5">
               <CreditCard className="w-5 h-5" />
             </div>
-            <h4 className="font-extrabold text-xs">₹0 Hidden Charges</h4>
+            <h4 className="font-extrabold text-xs">Pay After Service (COD)</h4>
             <p className="text-[11px] text-slate-400 mt-1">
-              Upfront pricing, transparent rates, and pay after completion via Cash or Instant UPI.
+              ₹0 advance required. Inspect the work first, then pay via Cash or UPI upon satisfaction.
             </p>
           </div>
         </div>
@@ -1830,24 +2222,11 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
 
                   <div>
                     <label className="block text-xs font-black uppercase tracking-wider mb-2 text-slate-400">
-                      Payment Mode
+                      Payment Mode (Pay After Service Preferred in Kerala)
                     </label>
                     <div className="grid grid-cols-2 gap-3">
                       <label className={`p-3 rounded-2xl border flex items-center space-x-2.5 cursor-pointer ${
-                        paymentMethod === 'UPI' ? 'border-purple-600 bg-purple-500/10 font-bold' : 'border-slate-800'
-                      }`}>
-                        <input
-                          type="radio"
-                          name="payment"
-                          checked={paymentMethod === 'UPI'}
-                          onChange={() => setPaymentMethod('UPI')}
-                          className="text-purple-600"
-                        />
-                        <span className="text-xs">Pay via UPI / GPay</span>
-                      </label>
-
-                      <label className={`p-3 rounded-2xl border flex items-center space-x-2.5 cursor-pointer ${
-                        paymentMethod === 'COD' ? 'border-purple-600 bg-purple-500/10 font-bold' : 'border-slate-800'
+                        paymentMethod === 'COD' ? 'border-purple-600 bg-purple-500/10 font-bold ring-2 ring-purple-500/20' : 'border-slate-800'
                       }`}>
                         <input
                           type="radio"
@@ -1856,8 +2235,41 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                           onChange={() => setPaymentMethod('COD')}
                           className="text-purple-600"
                         />
-                        <span className="text-xs">Pay After Service (Cash)</span>
+                        <div>
+                          <span className="text-xs font-bold block">💵 Pay After Service</span>
+                          <span className="text-[10px] text-slate-400">Cash / UPI on completion</span>
+                        </div>
                       </label>
+
+                      <label className={`p-3 rounded-2xl border flex items-center space-x-2.5 cursor-pointer ${
+                        paymentMethod === 'UPI' ? 'border-purple-600 bg-purple-500/10 font-bold ring-2 ring-purple-500/20' : 'border-slate-800'
+                      }`}>
+                        <input
+                          type="radio"
+                          name="payment"
+                          checked={paymentMethod === 'UPI'}
+                          onChange={() => setPaymentMethod('UPI')}
+                          className="text-purple-600"
+                        />
+                        <div>
+                          <span className="text-xs font-bold block">⚡ Instant UPI / GPay</span>
+                          <span className="text-[10px] text-slate-400">100% Refundable hold</span>
+                        </div>
+                      </label>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] text-slate-400 pt-3">
+                      <span className="flex items-center space-x-1">
+                        <Shield className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>100% Free cancellation before partner dispatch</span>
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setPolicyModalOpen(true)}
+                        className="text-purple-400 hover:underline font-bold"
+                      >
+                        Refund Policy
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -2205,6 +2617,193 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
           theme={theme}
         />
       )}
+
+      {/* 10. Customer Reschedule Modal */}
+      {reschedulingJob && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className={`rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border ${
+            isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+          }`}>
+            <div className={`p-5 flex items-center justify-between border-b ${
+              isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
+            }`}>
+              <div className="flex items-center space-x-2">
+                <RotateCcw className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                <h3 className="text-base font-black">Reschedule Service Slot</h3>
+              </div>
+              <button onClick={() => setReschedulingJob(null)} className="text-slate-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleRescheduleSubmit} className="p-5 sm:p-6 space-y-4">
+              <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-xs">
+                Order <strong>#{reschedulingJob.id}</strong> • {reschedulingJob.serviceTitle}
+                <span className="block text-emerald-500 font-bold mt-0.5">✓ ₹0 Free Rescheduling Guarantee</span>
+              </div>
+
+              <div>
+                <label className="block text-xs font-black uppercase text-slate-400 mb-1">
+                  Select New Date *
+                </label>
+                <input
+                  type="date"
+                  required
+                  value={newRescheduleDate}
+                  onChange={(e) => setNewRescheduleDate(e.target.value)}
+                  className={`w-full text-xs p-3 rounded-xl border font-bold focus:outline-none focus:border-purple-500 ${
+                    isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-900'
+                  }`}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-black uppercase text-slate-400 mb-1">
+                  Select New Time Slot *
+                </label>
+                <select
+                  value={newRescheduleSlot}
+                  onChange={(e) => setNewRescheduleSlot(e.target.value)}
+                  className={`w-full text-xs p-3 rounded-xl border font-bold focus:outline-none focus:border-purple-500 ${
+                    isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-900'
+                  }`}
+                >
+                  <option value="Morning: 09:00 AM - 12:00 PM">Morning: 09:00 AM - 12:00 PM</option>
+                  <option value="Afternoon: 01:00 PM - 04:00 PM">Afternoon: 01:00 PM - 04:00 PM</option>
+                  <option value="Evening: 05:00 PM - 08:00 PM">Evening: 05:00 PM - 08:00 PM</option>
+                  <option value="Night: 08:00 PM - 10:00 PM">Night: 08:00 PM - 10:00 PM</option>
+                </select>
+              </div>
+
+              <div className="flex items-center space-x-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setReschedulingJob(null)}
+                  className="flex-1 py-2.5 rounded-xl text-xs font-bold border border-slate-700 text-slate-400 hover:text-white"
+                >
+                  Keep Existing
+                </button>
+                <button
+                  type="submit"
+                  disabled={isRescheduling}
+                  className="flex-1 py-2.5 rounded-xl text-xs font-black bg-purple-600 hover:bg-purple-500 text-white shadow-lg disabled:opacity-50"
+                >
+                  {isRescheduling ? 'Updating Slot...' : 'Confirm Reschedule'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 11. Customer Free Cancellation Modal */}
+      {cancellingJob && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className={`rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border ${
+            isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+          }`}>
+            <div className={`p-5 flex items-center justify-between border-b ${
+              isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
+            }`}>
+              <div className="flex items-center space-x-2 text-rose-500">
+                <Ban className="w-5 h-5" />
+                <h3 className="text-base font-black">Cancel Service Booking</h3>
+              </div>
+              <button onClick={() => setCancellingJob(null)} className="text-slate-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCancelSubmit} className="p-5 sm:p-6 space-y-4">
+              <div className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-xs space-y-1">
+                <div className="font-bold text-rose-400">100% Free Cancellation Guarantee:</div>
+                <p className="text-slate-300">
+                  Zero cancellation charges before the service partner arrives at your address. Any advance UPI hold is refunded instantly to your original payment mode within 2-4 hours.
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-xs font-black uppercase text-slate-400 mb-1">
+                  Reason for Cancellation
+                </label>
+                <select
+                  value={cancellationReasonInput}
+                  onChange={(e) => setCancellationReasonInput(e.target.value)}
+                  className={`w-full text-xs p-3 rounded-xl border font-bold focus:outline-none focus:border-rose-500 ${
+                    isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-900'
+                  }`}
+                >
+                  <option value="Change of plans / Emergency postponed">Change of plans / Emergency postponed</option>
+                  <option value="Booked incorrect time slot">Booked incorrect time slot</option>
+                  <option value="Issue resolved on my own">Issue resolved on my own</option>
+                  <option value="Selected wrong service">Selected wrong service</option>
+                  <option value="Found alternate local solution">Found alternate local solution</option>
+                </select>
+              </div>
+
+              <div className="flex items-center space-x-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setCancellingJob(null)}
+                  className="flex-1 py-2.5 rounded-xl text-xs font-bold border border-slate-700 text-slate-400 hover:text-white"
+                >
+                  Keep Booking
+                </button>
+                <button
+                  type="submit"
+                  disabled={isCancelling}
+                  className="flex-1 py-2.5 rounded-xl text-xs font-black bg-rose-600 hover:bg-rose-500 text-white shadow-lg disabled:opacity-50"
+                >
+                  {isCancelling ? 'Cancelling...' : 'Confirm Free Cancellation'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 12. Formal Tax Invoice & Receipt Modal */}
+      {activeInvoiceJob && (
+        <InvoiceModal
+          isOpen={Boolean(activeInvoiceJob)}
+          onClose={() => setActiveInvoiceJob(null)}
+          job={activeInvoiceJob}
+          theme={theme}
+        />
+      )}
+
+      {/* 13. Dispute & Bad Experience Modal */}
+      {activeDisputeJob && (
+        <DisputeModal
+          isOpen={Boolean(activeDisputeJob)}
+          onClose={() => setActiveDisputeJob(null)}
+          job={activeDisputeJob}
+          theme={theme}
+          onDisputeSubmitted={() => {
+            onRefreshJobs();
+            setActiveDisputeJob(null);
+          }}
+        />
+      )}
+
+      {/* 14. Cancellation & Refund Policy Modal */}
+      <CancellationPolicyModal
+        isOpen={policyModalOpen}
+        onClose={() => setPolicyModalOpen(false)}
+        theme={theme}
+      />
+
+      {/* 15. Floating 24/7 Kerala WhatsApp Helpline Widget */}
+      <a
+        href="https://wa.me/919895000112?text=Hello%20Fixily%20Support,%20I%20am%20inquiring%20about%20doorstep%20services%20in%20Kerala."
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 z-40 bg-emerald-600 hover:bg-emerald-500 text-white p-3.5 sm:px-4 sm:py-3 rounded-full shadow-2xl flex items-center space-x-2 hover:scale-105 transition-all group cursor-pointer border border-emerald-400/40"
+        title="Fixily Kerala 24/7 WhatsApp Helpline"
+      >
+        <MessageSquare className="w-5 h-5 fill-current" />
+        <span className="hidden sm:inline text-xs font-black">WhatsApp Help (+91 98950 00112)</span>
+      </a>
 
     </div>
   );

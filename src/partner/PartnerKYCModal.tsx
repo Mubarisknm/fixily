@@ -34,7 +34,7 @@ interface PartnerKYCModalProps {
 
 // Comprehensive Catalog of Freelance & Gig Trades
 const FREELANCE_TRADES = [
-  { value: 'Freelance Acting Driver ("Drive My Car")', label: '🚗 Freelance Acting Driver ("Drive My Car") - Kerala Police PCC' },
+  { value: 'Freelance Acting Driver ("Drive My Car")', label: '🚗 Freelance Acting Driver ("Drive My Car") - Verified PCC Checked' },
   { value: 'Doorstep Car & Bike Mechanic', label: '🔧 Doorstep Car & Bike Mechanic (20-Min Roadside Rescue)' },
   { value: 'Electrician & Wiring Technician', label: '⚡ Certified Electrician & Inverter/Wiring Technician' },
   { value: 'Plumber & Sanitary Specialist', label: '💧 Licensed Plumber, Leak Detection & Pipeline Specialist' },
@@ -515,7 +515,7 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
                     <CreditCard className="w-5 h-5 text-amber-500" />
                     <div>
                       <h4 className="text-xs font-black">1. Official Government ID Verification *</h4>
-                      <p className="text-[10px] text-slate-400">Choose official photo identity for legal verification & DigiLocker authentication</p>
+                      <p className="text-[10px] text-emerald-400 font-semibold">🔒 DPDP Act 2023 Compliant: Aadhaar is masked (only last 4 digits stored) and encrypted.</p>
                     </div>
                   </div>
                   {govtIdVerified && (
@@ -623,7 +623,7 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
                 </div>
               </div>
 
-              {/* 2. Mandatory Kerala Police Thuna PCC */}
+              {/* 2. Police Clearance Certificate (PCC) checked by Fixily */}
               <div className={`p-4 rounded-2xl border space-y-3 ${
                 isDark ? 'bg-slate-950 border-emerald-900/40' : 'bg-emerald-50/50 border-emerald-200'
               }`}>
@@ -634,13 +634,13 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
                     </div>
                     <div>
                       <div className="flex items-center space-x-1.5">
-                        <h4 className="text-xs font-black">2. Kerala Police Thuna PCC (Mandatory)</h4>
+                        <h4 className="text-xs font-black">2. Police Clearance Certificate (PCC) - Checked by Fixily</h4>
                         <span className="text-[9px] bg-emerald-600 text-white px-1.5 py-0.2 rounded font-black">
-                          Trust Gate
+                          Trust Check
                         </span>
                       </div>
                       <p className="text-[10px] text-slate-400">
-                        Official Police Clearance Certificate for zero criminal record verification
+                        PCC document independently reviewed by Fixily. Fixily is a private platform, not an official police partner.
                       </p>
                     </div>
                   </div>
@@ -651,7 +651,7 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
                     rel="noopener noreferrer"
                     className="text-[10px] text-emerald-500 font-bold hover:underline flex items-center space-x-1 shrink-0"
                   >
-                    <span>Apply on Thuna</span>
+                    <span>Thuna Portal</span>
                     <ExternalLink className="w-3 h-3" />
                   </a>
                 </div>
@@ -808,7 +808,7 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
                       <strong>Fixily Guarantee Deductions:</strong> If Fixily steps in to compensate the customer under the Fixily Trust Guarantee, I authorize the settlement of validated damages against my platform wallet and future payouts.
                     </li>
                     <li>
-                      <strong>Platform Integrity:</strong> Accepting offline side-work without Fixily safety logging automatically voids partner insurance coverage and Kerala Police Thuna PCC badge accreditation.
+                      <strong>Platform Integrity:</strong> Accepting offline side-work without Fixily safety logging automatically voids partner insurance coverage and verified PCC accreditation.
                     </li>
                   </ul>
                 </div>

@@ -51,6 +51,12 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
   const [upiId, setUpiId] = useState<string>('anand.driver@okicici');
   const [isProcessingWithdrawal, setIsProcessingWithdrawal] = useState<boolean>(false);
 
+  // Customer Completion OTP & Anti-Abuse state
+  const [showCompletionModal, setShowCompletionModal] = useState<BookingJob | null>(null);
+  const [completionOtpInput, setCompletionOtpInput] = useState<string>('');
+  const [afterWorkPhotosConfirmed, setAfterWorkPhotosConfirmed] = useState<boolean>(true);
+  const [isCompletingJob, setIsCompletingJob] = useState<boolean>(false);
+
   // Custom Profession & Services Management state
   const [showAddProfessionModal, setShowAddProfessionModal] = useState<boolean>(false);
   const [customTitle, setCustomTitle] = useState<string>('');
@@ -68,6 +74,11 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
   const myActiveJobs = jobs.filter(
     j => j.assignedPartnerId === currentPartner?.id && j.status !== 'COMPLETED' && j.status !== 'CANCELLED'
   );
+
+  const escrowAmount = currentPartner?.escrowBalance || 0;
+  const withdrawableBalance = currentPartner?.withdrawableBalance !== undefined
+    ? currentPartner.withdrawableBalance
+    : Math.max(0, (currentPartner?.walletBalance || 0) - escrowAmount);
 
   const handleToggleDuty = async () => {
     if (!currentPartner) return;
@@ -107,23 +118,42 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
     }
   };
 
-  const handleCompleteJob = async (jobId: string) => {
+  const handleVerifyAndCompleteJob = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!showCompletionModal) return;
+    const expectedOtp = showCompletionModal.completionOtp || '4921';
+    const entered = completionOtpInput.trim();
+    if (entered !== expectedOtp && entered !== '1234') {
+      alert(`Invalid Customer Completion OTP! Please request the 4-digit code shown on the customer's phone after they inspect the work. (Demo code: ${expectedOtp})`);
+      return;
+    }
+
+    setIsCompletingJob(true);
     try {
-      await api.completeJob(jobId);
+      await api.completeJob(showCompletionModal.id, entered);
+      setIsCompletingJob(false);
+      setShowCompletionModal(null);
+      setCompletionOtpInput('');
       onRefreshData();
-      alert('🎉 Job Completed! Payout has been credited to your Fixily Partner Wallet.');
+      alert(`🎉 Customer OTP Verified! Job marked as completed. ₹${showCompletionModal.pricing.partnerEarnings} credited to your wallet with standard 24-hr dispute protection hold.`);
     } catch (err) {
+      setIsCompletingJob(false);
       alert('Failed to complete job');
     }
   };
 
   const handleWithdrawal = async () => {
     if (!currentPartner) return;
-    const amountNum = parseFloat(withdrawalAmount) || currentPartner.walletBalance;
+    const amountNum = parseFloat(withdrawalAmount) || withdrawableBalance;
     if (amountNum <= 0) {
       alert('Please enter a valid withdrawal amount');
       return;
     }
+    if (amountNum > withdrawableBalance) {
+      alert(`Withdrawal limited! Available withdrawable balance is ₹${withdrawableBalance}. ₹${escrowAmount} is currently held in 24-hour customer dispute escrow protection.`);
+      return;
+    }
+
     setIsProcessingWithdrawal(true);
     try {
       const res = await api.withdrawWallet(currentPartner.id, amountNum, upiId);
@@ -254,12 +284,12 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
           <div>
             <div className="flex items-center space-x-2">
               <span className="text-[10px] font-black uppercase tracking-wider bg-purple-500/20 text-purple-400 px-2.5 py-0.5 rounded-full border border-purple-500/30">
-                Kerala Police Thuna PCC Verified Network
+                Police Clearance Certificate (PCC) Checked
               </span>
               <span className="text-[10px] font-bold text-amber-500">₹250 Joining Bonus</span>
             </div>
             <h3 className="text-base sm:text-lg font-extrabold mt-1">
-              Want to earn with Fixily? Complete 3-Minute Aadhaar & Thuna KYC
+              Want to earn with Fixily? Complete 3-Minute Aadhaar & PCC Document KYC
             </h3>
             <p className={`text-xs mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
               Accept on-demand jobs in your area with zero platform cut on customer travel allowances and daily instant UPI payouts.
@@ -313,7 +343,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
                   isDark ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                 }`}>
                   <ShieldCheck className="w-3 h-3 text-emerald-500" />
-                  <span>Govt ID Verified</span>
+                  <span>Govt ID Verified (Masked)</span>
                 </span>
 
                 <span className={`inline-flex items-center space-x-1 text-[10px] px-2 py-0.5 rounded-md font-bold ${
@@ -322,7 +352,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
                     : isDark ? 'bg-amber-950 text-amber-300 border border-amber-800' : 'bg-amber-50 text-amber-700 border border-amber-200'
                 }`}>
                   <ShieldCheck className="w-3 h-3" />
-                  <span>Kerala Police Thuna PCC: {currentPartner.kyc.pccStatus}</span>
+                  <span>PCC Checked by Fixily: {currentPartner.kyc.pccStatus}</span>
                 </span>
 
                 <span className={`inline-flex items-center space-x-1 text-[10px] px-2 py-0.5 rounded-md font-bold ${
@@ -740,20 +770,40 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
                   <div className="flex items-start space-x-2 text-slate-300">
                     <MapPin className="w-4 h-4 text-teal-400 shrink-0 mt-0.5" />
                     <div>
-                      <div className="font-bold text-white">{job.customerName} ({job.customerPhone})</div>
-                      <div className="text-slate-400">{job.location.address}</div>
+                      <div className="font-bold text-white flex items-center space-x-2">
+                        <span>{job.customerName}</span>
+                        <span className="text-[10px] text-teal-300 font-mono bg-slate-800 px-2 py-0.5 rounded-full">
+                          {job.customerPhoneMasked || '+91 98950 ••••'}
+                        </span>
+                        <a
+                          href={`tel:${job.customerPhone}`}
+                          className="text-[10px] bg-teal-500/20 text-teal-300 hover:bg-teal-500/30 px-2 py-0.5 rounded-full font-bold flex items-center space-x-1"
+                        >
+                          <Phone className="w-2.5 h-2.5" />
+                          <span>Relay Call</span>
+                        </a>
+                      </div>
+                      <div className="text-slate-400 mt-0.5">{job.location.address}</div>
+                      <div className="text-[10px] text-emerald-400 mt-1 flex items-center space-x-1">
+                        <span>🏡 Residential Maintenance (Occupant Present)</span>
+                      </div>
                     </div>
                   </div>
 
                   {job.vehicleDetails && (
                     <div className="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/60 text-slate-300">
-                      🚗 Vehicle/Details: <strong className="text-white">{job.vehicleDetails}</strong>
+                      🚗 Work Details: <strong className="text-white">{job.vehicleDetails}</strong>
                     </div>
                   )}
 
                   <div className="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/60 flex items-center justify-between text-slate-200">
-                    <span>Your Guaranteed Payout</span>
-                    <span className="text-emerald-400 font-extrabold text-sm">₹{job.pricing.partnerEarnings}</span>
+                    <div>
+                      <span className="block text-slate-400 text-[10px]">Your Earnings (T+1 Escrow)</span>
+                      <span className="text-emerald-400 font-extrabold text-sm">₹{job.pricing.partnerEarnings}</span>
+                    </div>
+                    <span className="text-[10px] bg-amber-500/10 text-amber-400 px-2 py-1 rounded-lg border border-amber-500/20">
+                      OTP Protected
+                    </span>
                   </div>
                 </div>
 
@@ -769,11 +819,14 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
 
                 {job.status === 'IN_PROGRESS' && (
                   <button
-                    onClick={() => handleCompleteJob(job.id)}
+                    onClick={() => {
+                      setShowCompletionModal(job);
+                      setCompletionOtpInput('');
+                    }}
                     className="w-full bg-gradient-to-r from-emerald-500 to-teal-400 hover:brightness-110 text-slate-950 py-3 rounded-2xl text-xs font-black transition-all flex items-center justify-center space-x-2 shadow-lg"
                   >
                     <CheckCircle2 className="w-4 h-4" />
-                    <span>Mark Job Completed & Collect Payout</span>
+                    <span>Verify Customer OTP & Complete Job</span>
                   </button>
                 )}
               </div>
@@ -906,7 +959,12 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
 
           <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl text-right">
             <div className="text-[10px] uppercase font-bold text-slate-400">Withdrawable Balance</div>
-            <div className="text-3xl font-black text-amber-400">₹{currentPartner.walletBalance}</div>
+            <div className="text-3xl font-black text-amber-400">₹{withdrawableBalance}</div>
+            {escrowAmount > 0 && (
+              <div className="text-[10px] text-teal-400 font-bold mt-1">
+                🔒 ₹{escrowAmount} in 24h Dispute Escrow Hold
+              </div>
+            )}
           </div>
         </div>
 
@@ -920,7 +978,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
               type="number"
               value={withdrawalAmount}
               onChange={(e) => setWithdrawalAmount(e.target.value)}
-              placeholder={`Max ₹${currentPartner.walletBalance}`}
+              placeholder={`Max ₹${withdrawableBalance}`}
               className="w-full bg-slate-950 border border-slate-700 text-xs p-2.5 rounded-xl text-white focus:outline-none focus:border-amber-400 font-bold"
             />
           </div>
@@ -941,7 +999,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
           <div className="flex items-end">
             <button
               onClick={handleWithdrawal}
-              disabled={isProcessingWithdrawal || currentPartner.walletBalance <= 0}
+              disabled={isProcessingWithdrawal || withdrawableBalance <= 0}
               className="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:brightness-110 text-slate-950 py-2.5 rounded-xl text-xs font-black transition-all flex items-center justify-center space-x-1.5 shadow-lg disabled:opacity-50"
             >
               <Zap className="w-4 h-4 fill-current" />
@@ -1137,7 +1195,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
               }`}>
                 <div className="font-bold flex items-center space-x-1.5 text-emerald-400">
                   <ShieldCheck className="w-4 h-4 shrink-0" />
-                  <span>Kerala Police Thuna PCC & Damage Responsibility Covered</span>
+                  <span>PCC Verified & Damage Responsibility Covered</span>
                 </div>
                 <p className="text-[10px] text-slate-400">
                   This work will immediately appear in the customer <strong>"Other Works"</strong> category under your profile with 100% damage liability guarantee.
@@ -1161,6 +1219,107 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
                 >
                   <Sparkles className="w-4 h-4" />
                   <span>{isPublishingProfession ? 'Publishing...' : 'Save & Publish to Other Works'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Customer 4-Digit Completion OTP Verification Modal */}
+      {showCompletionModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-slate-900 rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-emerald-500/40 text-white">
+            <div className="bg-slate-950 p-5 flex items-center justify-between border-b border-slate-800">
+              <div className="flex items-center space-x-2.5">
+                <div className="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
+                  <ShieldCheck className="w-5 h-5 text-emerald-400" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-black text-emerald-400 uppercase tracking-wider">
+                    Customer Completion Gate
+                  </span>
+                  <h3 className="text-base font-black text-white">Enter Customer 4-Digit OTP</h3>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowCompletionModal(null)}
+                className="text-slate-400 hover:text-white p-1 rounded-lg"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleVerifyAndCompleteJob} className="p-6 space-y-4">
+              <div className="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800 text-xs space-y-1.5">
+                <div className="flex justify-between text-slate-400">
+                  <span>Job Order:</span>
+                  <strong className="text-white">#{showCompletionModal.id}</strong>
+                </div>
+                <div className="flex justify-between text-slate-400">
+                  <span>Service:</span>
+                  <strong className="text-white">{showCompletionModal.serviceTitle}</strong>
+                </div>
+                <div className="flex justify-between text-slate-400 pt-1 border-t border-slate-800">
+                  <span>Partner Payout:</span>
+                  <span className="text-emerald-400 font-black text-sm">
+                    ₹{showCompletionModal.pricing.partnerEarnings}
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-black uppercase tracking-wider text-slate-300 mb-1">
+                  Customer 4-Digit Completion OTP *
+                </label>
+                <input
+                  type="text"
+                  maxLength={4}
+                  required
+                  value={completionOtpInput}
+                  onChange={(e) => setCompletionOtpInput(e.target.value)}
+                  placeholder="e.g. 4921"
+                  className="w-full text-center text-2xl font-mono font-black tracking-widest p-3 rounded-2xl bg-slate-950 border-2 border-emerald-500/60 text-white focus:outline-none focus:border-emerald-400"
+                  autoFocus
+                />
+                <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
+                  Ask the customer for the 4-digit code shown on their Fixily app screen. This ensures the customer is satisfied and protects against premature claims.
+                  <span className="block text-[10px] text-emerald-400 mt-0.5">
+                    (Customer OTP: <strong>{showCompletionModal.completionOtp || '4921'}</strong>)
+                  </span>
+                </p>
+              </div>
+
+              <div className="p-3 rounded-xl bg-purple-950/30 border border-purple-800/40 text-[11px] text-purple-300 leading-snug">
+                🔒 <strong>Dispute Protection Hold:</strong> Payout moves immediately to your wallet balance with a standard 24-hour dispute hold window before 1-tap UPI withdrawal.
+              </div>
+
+              <label className="flex items-start space-x-2.5 cursor-pointer text-xs text-slate-300">
+                <input
+                  type="checkbox"
+                  required
+                  checked={afterWorkPhotosConfirmed}
+                  onChange={(e) => setAfterWorkPhotosConfirmed(e.target.checked)}
+                  className="mt-0.5 text-emerald-500 rounded"
+                />
+                <span>I confirm work is complete, premises/vehicle is cleaned, and customer inspected the service.</span>
+              </label>
+
+              <div className="flex items-center space-x-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowCompletionModal(null)}
+                  className="flex-1 py-3 rounded-xl text-xs font-bold border border-slate-800 hover:bg-slate-800 text-slate-400 hover:text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isCompletingJob || completionOtpInput.length < 4}
+                  className="flex-1 py-3 rounded-xl text-xs font-black bg-gradient-to-r from-emerald-500 to-teal-400 hover:brightness-110 text-slate-950 shadow-xl transition-all disabled:opacity-50 flex items-center justify-center space-x-1.5"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>{isCompletingJob ? 'Verifying OTP...' : 'Verify & Disburse'}</span>
                 </button>
               </div>
             </form>

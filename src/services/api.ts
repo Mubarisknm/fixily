@@ -337,23 +337,73 @@ export const api = {
     return job || localJobs[0];
   },
 
-  async completeJob(jobId: string): Promise<BookingJob> {
+  async completeJob(jobId: string, completionOtp?: string): Promise<BookingJob> {
     const data = await fetchJson(`${API_BASE}/jobs/${jobId}/complete`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({})
+      body: JSON.stringify({ completionOtp })
     });
     if (data) return data;
 
     const job = localJobs.find((j: BookingJob) => j.id === jobId);
     if (job) {
       job.status = 'COMPLETED';
+      job.payoutHoldUntil = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+      job.payoutStatus = 'ESCROW_HOLD';
       if (job.assignedPartnerId) {
         const p = localPartners.find((item: GigPartner) => item.id === job.assignedPartnerId);
         if (p) {
           p.walletBalance += job.pricing.partnerEarnings;
+          p.escrowBalance = (p.escrowBalance || 0) + job.pricing.partnerEarnings;
           p.todaysEarnings += job.pricing.partnerEarnings;
           p.jobsCompleted += 1;
+        }
+      }
+    }
+    return job || localJobs[0];
+  },
+
+  async rescheduleJob(jobId: string, newDate: string, newTimeSlot: string): Promise<BookingJob> {
+    const job = localJobs.find((j: BookingJob) => j.id === jobId);
+    if (job) {
+      job.targetDate = newDate;
+      job.targetTimeSlot = newTimeSlot;
+      job.scheduledTime = `${newDate} • ${newTimeSlot}`;
+      job.rescheduledAt = new Date().toISOString();
+    }
+    return job || localJobs[0];
+  },
+
+  async cancelJob(jobId: string, reason: string): Promise<BookingJob> {
+    const job = localJobs.find((j: BookingJob) => j.id === jobId);
+    if (job) {
+      job.status = 'CANCELLED';
+      job.cancellationReason = reason;
+      job.refundStatus = job.paymentStatus === 'PAID_UPI' ? 'REFUNDED_100' : 'NO_CHARGE';
+    }
+    return job || localJobs[0];
+  },
+
+  async reportDispute(jobId: string, issue: string): Promise<BookingJob> {
+    const job = localJobs.find((j: BookingJob) => j.id === jobId);
+    if (job) {
+      job.payoutStatus = 'DISPUTED';
+      job.disputeReport = {
+        id: `DISP-KL-${Math.floor(1000 + Math.random() * 9000)}`,
+        jobId,
+        serviceTitle: job.serviceTitle,
+        customerPhone: job.customerPhone,
+        partnerName: job.assignedPartnerName || undefined,
+        issueType: 'quality',
+        description: issue,
+        status: 'INVESTIGATING',
+        createdAt: new Date().toISOString()
+      };
+      if (job.assignedPartnerId) {
+        const p = localPartners.find((item: GigPartner) => item.id === job.assignedPartnerId);
+        if (p) {
+          p.escrowBalance = (p.escrowBalance || 0) + (job.pricing?.partnerEarnings || 0);
+          p.withdrawableBalance = Math.max(0, p.walletBalance - p.escrowBalance);
         }
       }
     }
