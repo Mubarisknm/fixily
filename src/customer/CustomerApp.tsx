@@ -739,8 +739,8 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       {selectedLocation.isServiced === false && (
         <div className={`rounded-3xl p-5 sm:p-6 border-2 transition-all shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 ${
           isDark
-            ? 'bg-gradient-to-r from-amber-950/60 via-slate-900 to-purple-950/40 border-amber-500/50 text-white'
-            : 'bg-gradient-to-r from-amber-50 via-white to-purple-50 border-amber-300 text-slate-900'
+            ? 'bg-gradient-to-r from-amber-950/60 via-slate-900 to-blue-950/40 border-amber-500/50 text-white'
+            : 'bg-gradient-to-r from-amber-50 via-white to-blue-50 border-amber-300 text-slate-900'
         }`}>
           <div className="flex items-start space-x-3.5">
             <div className="w-12 h-12 rounded-2xl bg-amber-500 text-slate-950 flex items-center justify-center shrink-0 font-black shadow-lg">
@@ -811,8 +811,8 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       {/* 1. Welcoming Hero Banner */}
       <div className={`relative overflow-hidden rounded-3xl p-6 sm:p-8 border shadow-lg transition-all duration-300 ${
         isDark
-          ? 'bg-gradient-to-br from-slate-900 via-slate-900 to-purple-950/40 border-slate-800 text-white'
-          : 'bg-gradient-to-br from-white via-purple-50/40 to-amber-50/30 border-purple-100 text-slate-900 shadow-sm'
+          ? 'bg-gradient-to-br from-slate-900 via-slate-900 to-blue-950/40 border-slate-800 text-white'
+          : 'bg-gradient-to-br from-white via-blue-50/40 to-amber-50/30 border-blue-100 text-slate-900 shadow-sm'
       }`}>
         <div className="relative z-10 max-w-3xl space-y-4">
           
@@ -831,10 +831,10 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
           {/* Interactive Search Bar */}
           <div className={`relative flex items-center rounded-2xl border p-1.5 shadow-md max-w-xl transition-all ${
             isDark
-              ? 'bg-slate-950/90 border-slate-700/80 focus-within:border-purple-500 ring-purple-500/20'
-              : 'bg-white border-slate-200 focus-within:border-purple-500 ring-purple-500/10'
+              ? 'bg-slate-950/90 border-slate-700/80 focus-within:border-blue-500 ring-blue-500/20'
+              : 'bg-white border-slate-200 focus-within:border-blue-500 ring-blue-500/10'
           }`}>
-            <Search className="w-5 h-5 text-purple-600 ml-3 mr-2 shrink-0" />
+            <Search className="w-5 h-5 text-blue-600 ml-3 mr-2 shrink-0" />
             <input
               id="service-search-input"
               type="text"
@@ -853,7 +853,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             )}
             <button
               onClick={() => {}}
-              className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl text-xs font-bold shrink-0 transition-colors shadow-sm"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-bold shrink-0 transition-colors shadow-sm"
             >
               Search
             </button>
@@ -874,10 +874,10 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                 onClick={() => setSearchQuery(chip.query)}
                 className={`text-xs px-2.5 py-1 rounded-full font-semibold border transition-all ${
                   searchQuery === chip.query
-                    ? 'bg-purple-600 text-white border-purple-600 shadow-sm'
+                    ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
                     : isDark
                     ? 'bg-slate-800/80 border-slate-700 text-slate-300 hover:bg-slate-700'
-                    : 'bg-white border-slate-200 text-slate-700 hover:bg-purple-50 hover:border-purple-200'
+                    : 'bg-white border-slate-200 text-slate-700 hover:bg-blue-50 hover:border-blue-200'
                 }`}
               >
                 {chip.label}
@@ -887,10 +887,10 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
 
           {/* Scheduling Bar (Date & Custom Time Slots) */}
           <div className={`p-3.5 rounded-2xl border space-y-2.5 max-w-xl transition-all ${
-            isDark ? 'bg-slate-950/80 border-slate-800' : 'bg-white/90 border-purple-100 shadow-sm'
+            isDark ? 'bg-slate-950/80 border-slate-800' : 'bg-white/90 border-blue-100 shadow-sm'
           }`}>
             <div className="flex items-center justify-between text-xs font-black">
-              <span className="flex items-center space-x-1.5 text-purple-600 dark:text-purple-400">
+              <span className="flex items-center space-x-1.5 text-blue-600 dark:text-blue-400">
                 <Calendar className="w-3.5 h-3.5" />
                 <span>Search with Scheduling & Custom Time Slots</span>
               </span>
@@ -909,7 +909,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                     type="date"
                     value={targetDate}
                     onChange={(e) => setTargetDate(e.target.value)}
-                    className={`w-full p-2 rounded-xl border text-xs font-bold focus:outline-none focus:border-purple-500 ${
+                    className={`w-full p-2 rounded-xl border text-xs font-bold focus:outline-none focus:border-blue-500 ${
                       isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-200 text-slate-900'
                     }`}
                   />
@@ -918,7 +918,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                     onClick={() => setTargetDate(new Date().toISOString().split('T')[0])}
                     className={`px-2 py-2 rounded-xl text-[10px] font-bold border transition-colors shrink-0 ${
                       targetDate === new Date().toISOString().split('T')[0]
-                        ? 'bg-purple-600 text-white border-purple-600'
+                        ? 'bg-blue-600 text-white border-blue-600'
                         : isDark ? 'border-slate-700 text-slate-300' : 'border-slate-200 text-slate-700'
                     }`}
                   >
@@ -952,7 +952,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                       setIsCustomSlot(false);
                     }
                   }}
-                  className={`w-full p-2 rounded-xl border text-xs font-bold focus:outline-none focus:border-purple-500 ${
+                  className={`w-full p-2 rounded-xl border text-xs font-bold focus:outline-none focus:border-blue-500 ${
                     isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-200 text-slate-900'
                   }`}
                 >
@@ -973,8 +973,8 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                   value={customTimeInput}
                   onChange={(e) => setCustomTimeInput(e.target.value)}
                   placeholder="e.g. 03:30 PM - 05:30 PM or Specific Window"
-                  className={`w-full p-2 rounded-xl border text-xs font-bold focus:outline-none focus:border-purple-500 ${
-                    isDark ? 'bg-slate-900 border-purple-500/50 text-white' : 'bg-white border-purple-400 text-slate-900'
+                  className={`w-full p-2 rounded-xl border text-xs font-bold focus:outline-none focus:border-blue-500 ${
+                    isDark ? 'bg-slate-900 border-blue-500/50 text-white' : 'bg-white border-blue-400 text-slate-900'
                   }`}
                 />
               </div>
@@ -984,15 +984,15 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
         </div>
 
         {/* Decorative background glow */}
-        <div className="absolute -right-10 -bottom-10 w-72 h-72 bg-gradient-to-tr from-purple-600/20 to-amber-500/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -right-10 -bottom-10 w-72 h-72 bg-gradient-to-tr from-blue-600/20 to-amber-500/20 rounded-full blur-3xl pointer-events-none" />
       </div>
 
       {/* Rate & Review Freelancer Prompt (Customer Feedback) */}
       {completedJobsNeedingFeedback.length > 0 && (
         <div className={`rounded-2xl p-4 sm:p-5 border shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${
           isDark
-            ? 'bg-gradient-to-r from-amber-950/40 via-slate-900 to-purple-950/40 border-amber-500/30 text-white'
-            : 'bg-gradient-to-r from-amber-50 via-white to-purple-50 border-amber-200 text-slate-900'
+            ? 'bg-gradient-to-r from-amber-950/40 via-slate-900 to-blue-950/40 border-amber-500/30 text-white'
+            : 'bg-gradient-to-r from-amber-50 via-white to-blue-50 border-amber-200 text-slate-900'
         }`}>
           <div className="flex items-start space-x-3.5">
             <div className="w-11 h-11 rounded-2xl bg-amber-500 text-slate-950 flex items-center justify-center shrink-0 shadow-lg">
@@ -1034,7 +1034,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
         <div id="active-orders-section" className="space-y-4 scroll-mt-20">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-black flex items-center space-x-2">
-              <Clock className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+              <Clock className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               <span>{t('active_orders')} ({myActiveJobs.length})</span>
             </h3>
             <span className="text-xs font-bold text-slate-400">Live Status & Customer Controls</span>
@@ -1053,15 +1053,15 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                   key={job.id}
                   className={`rounded-3xl p-5 sm:p-6 border shadow-xl space-y-4 transition-all ${
                     isDark
-                      ? 'bg-gradient-to-br from-slate-900 via-slate-900 to-purple-950/30 border-purple-800/40 text-white'
-                      : 'bg-white border-purple-200 text-slate-900 shadow-md'
+                      ? 'bg-gradient-to-br from-slate-900 via-slate-900 to-blue-950/30 border-blue-800/40 text-white'
+                      : 'bg-white border-blue-200 text-slate-900 shadow-md'
                   }`}
                 >
                   {/* Order Header */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
                     <div>
                       <div className="flex items-center space-x-2">
-                        <span className="text-[10px] font-black uppercase tracking-wider text-purple-600 dark:text-purple-400">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-blue-600 dark:text-blue-400">
                           Order #{job.id}
                         </span>
                         <span className="text-[10px] bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold px-2 py-0.5 rounded-full border border-emerald-500/30">
@@ -1083,7 +1083,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                       <span className={`text-xs px-3 py-1 rounded-full font-black uppercase ${
                         job.status === 'IN_PROGRESS'
                           ? 'bg-emerald-500 text-slate-950 animate-pulse'
-                          : 'bg-purple-600/20 text-purple-600 dark:text-purple-300 border border-purple-500/30'
+                          : 'bg-blue-600/20 text-blue-600 dark:text-blue-300 border border-blue-500/30'
                       }`}>
                         {job.status.replace('_', ' ')}
                       </span>
@@ -1144,10 +1144,10 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                   {/* Assigned Partner Profile Bar if assigned */}
                   {job.assignedPartnerName && (
                     <div className={`p-3.5 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
-                      isDark ? 'bg-slate-950 border-slate-800' : 'bg-purple-50/60 border-purple-200'
+                      isDark ? 'bg-slate-950 border-slate-800' : 'bg-blue-50/60 border-blue-200'
                     }`}>
                       <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold shrink-0">
+                        <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold shrink-0">
                           <UserCheck className="w-5 h-5" />
                         </div>
                         <div>
@@ -1170,7 +1170,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
 
                         <button
                           onClick={() => setActiveTrackJob(job)}
-                          className="px-3 py-1.5 rounded-xl text-xs font-bold bg-purple-600 hover:bg-purple-500 text-white transition-all flex items-center space-x-1 shadow"
+                          className="px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white transition-all flex items-center space-x-1 shadow"
                         >
                           <MapPin className="w-3.5 h-3.5" />
                           <span>Track Radar</span>
@@ -1192,7 +1192,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                         isDark ? 'border-slate-700 hover:bg-slate-800 text-slate-300' : 'border-slate-300 hover:bg-slate-100 text-slate-700'
                       }`}
                     >
-                      <RotateCcw className="w-3.5 h-3.5 text-purple-400" />
+                      <RotateCcw className="w-3.5 h-3.5 text-blue-400" />
                       <span>{t('reschedule_btn')}</span>
                     </button>
 
@@ -1254,7 +1254,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
         }`}>
           <div className="flex items-center justify-between">
             <h4 className="text-sm font-black flex items-center space-x-2">
-              <RotateCcw className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+              <RotateCcw className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               <span>Easy Rebooking: Previous Preferred Pros</span>
             </h4>
             <span className="text-[10px] font-bold text-slate-400">1-Tap Re-hire</span>
@@ -1279,7 +1279,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                 <button
                   type="button"
                   onClick={() => handleRebookPartner(pastJob)}
-                  className="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-black transition-all shrink-0 shadow cursor-pointer"
+                  className="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-black transition-all shrink-0 shadow cursor-pointer"
                 >
                   {t('rebook_btn')}
                 </button>
@@ -1317,15 +1317,15 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                 className={`flex items-center space-x-2 px-3.5 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition-all border shrink-0 ${
                   isSelected
                     ? isOther
-                      ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white border-purple-500 shadow-md ring-2 ring-purple-600/40'
-                      : 'bg-purple-600 text-white border-purple-600 shadow-md ring-2 ring-purple-600/30'
+                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-blue-500 shadow-md ring-2 ring-blue-600/40'
+                      : 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-600/30'
                     : isOther
                     ? isDark
-                      ? 'bg-purple-950/40 border-purple-800/60 text-purple-300 hover:bg-purple-900/50 hover:border-purple-600 font-extrabold'
-                      : 'bg-purple-50 border-purple-200 text-purple-800 hover:bg-purple-100 hover:border-purple-300 font-extrabold'
+                      ? 'bg-blue-950/40 border-blue-800/60 text-blue-300 hover:bg-blue-900/50 hover:border-blue-600 font-extrabold'
+                      : 'bg-blue-50 border-blue-200 text-blue-800 hover:bg-blue-100 hover:border-blue-300 font-extrabold'
                     : isDark
                     ? 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700 hover:bg-slate-800'
-                    : 'bg-white border-slate-200 text-slate-700 hover:border-purple-200 hover:bg-purple-50/50'
+                    : 'bg-white border-slate-200 text-slate-700 hover:border-blue-200 hover:bg-blue-50/50'
                 }`}
               >
                 <span>{cluster.icon}</span>
@@ -1335,8 +1335,8 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                     isSelected
                       ? 'bg-white/20 text-white'
                       : isOther
-                      ? 'bg-purple-200 text-purple-900 dark:bg-purple-900 dark:text-purple-200'
-                      : 'bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300'
+                      ? 'bg-blue-200 text-blue-900 dark:bg-blue-900 dark:text-blue-200'
+                      : 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300'
                   }`}>
                     {cluster.tag}
                   </span>
@@ -1359,7 +1359,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                 : selectedCategoryTab}
             </h3>
             {selectedCategoryTab !== 'all' && (
-              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-purple-600 text-white">
+              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-blue-600 text-white">
                 {selectedCategoryTab === 'Other Services' ? 'Expanded Hub' : 'Selected Category'}
               </span>
             )}
@@ -1371,7 +1371,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                 setSearchQuery('');
                 setOtherServicesSubFilter('all');
               }}
-              className="text-xs font-bold text-purple-600 hover:underline"
+              className="text-xs font-bold text-blue-600 hover:underline"
             >
               Reset to Core Services
             </button>
@@ -1381,7 +1381,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
         {/* Sub-filter Bar for 'Other Services' */}
         {selectedCategoryTab === 'Other Services' && (
           <div className={`p-4 rounded-3xl border space-y-3 ${
-            isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-purple-50/50 border-purple-200'
+            isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-blue-50/50 border-blue-200'
           }`}>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
@@ -1393,7 +1393,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                   Specialized trade services, installations, and custom freelance professions added directly by verified partners.
                 </p>
               </div>
-              <span className="text-xs font-bold px-2.5 py-1 rounded-xl bg-purple-600 text-white shrink-0 self-start sm:self-auto shadow-sm">
+              <span className="text-xs font-bold px-2.5 py-1 rounded-xl bg-blue-600 text-white shrink-0 self-start sm:self-auto shadow-sm">
                 {filteredServices.length} Works Available
               </span>
             </div>
@@ -1420,10 +1420,10 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                     onClick={() => setOtherServicesSubFilter(sub.id)}
                     className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all border shrink-0 ${
                       isActive
-                        ? 'bg-purple-600 text-white border-purple-600 shadow-sm ring-2 ring-purple-600/20'
+                        ? 'bg-blue-600 text-white border-blue-600 shadow-sm ring-2 ring-blue-600/20'
                         : isDark
                         ? 'bg-slate-950 border-slate-800 text-slate-300 hover:bg-slate-800 hover:border-slate-700'
-                        : 'bg-white border-slate-200 text-slate-700 hover:bg-purple-50 hover:border-purple-300'
+                        : 'bg-white border-slate-200 text-slate-700 hover:bg-blue-50 hover:border-blue-300'
                     }`}
                   >
                     <span>{sub.icon}</span>
@@ -1432,7 +1432,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                       <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-black ${
                         isActive
                           ? 'bg-white/20 text-white'
-                          : 'bg-purple-100 text-purple-700 dark:bg-purple-900/60 dark:text-purple-300'
+                          : 'bg-blue-100 text-blue-700 dark:bg-blue-900/60 dark:text-blue-300'
                       }`}>
                         {sub.tag}
                       </span>
@@ -1448,8 +1448,8 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
         {categoryMatchedPartners.length > 0 && (
           <div className={`p-4 sm:p-5 rounded-3xl border transition-all ${
             isDark
-              ? 'bg-gradient-to-br from-slate-900 via-slate-900 to-purple-950/20 border-purple-900/40'
-              : 'bg-gradient-to-br from-purple-50/50 via-white to-amber-50/40 border-purple-200 shadow-sm'
+              ? 'bg-gradient-to-br from-slate-900 via-slate-900 to-blue-950/20 border-blue-900/40'
+              : 'bg-gradient-to-br from-blue-50/50 via-white to-amber-50/40 border-blue-200 shadow-sm'
           }`}>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-4">
               <div>
@@ -1478,11 +1478,11 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                   className={`rounded-2xl border p-4 flex flex-col justify-between transition-all duration-300 ${
                     partner.isTopRated
                       ? isDark
-                        ? 'bg-slate-900 border-amber-500/40 shadow-lg shadow-purple-950/20 ring-1 ring-amber-500/20'
+                        ? 'bg-slate-900 border-amber-500/40 shadow-lg shadow-blue-950/20 ring-1 ring-amber-500/20'
                         : 'bg-white border-amber-300 shadow-md ring-1 ring-amber-400/20'
                       : isDark
-                      ? 'bg-slate-900/90 border-slate-800 hover:border-purple-500/50'
-                      : 'bg-white border-slate-200 hover:border-purple-300 shadow-sm'
+                      ? 'bg-slate-900/90 border-slate-800 hover:border-blue-500/50'
+                      : 'bg-white border-slate-200 hover:border-blue-300 shadow-sm'
                   }`}
                 >
                   <div className="space-y-3">
@@ -1492,7 +1492,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                         <img
                           src={partner.photoUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'}
                           alt={partner.name}
-                          className="w-14 h-14 rounded-2xl object-cover border-2 border-purple-500/40 shadow"
+                          className="w-14 h-14 rounded-2xl object-cover border-2 border-blue-500/40 shadow"
                         />
                         <span
                           className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 ${
@@ -1513,7 +1513,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                           )}
                         </div>
 
-                        <p className={`text-[11px] font-medium line-clamp-1 mt-0.5 ${isDark ? 'text-purple-300' : 'text-purple-700'}`}>
+                        <p className={`text-[11px] font-medium line-clamp-1 mt-0.5 ${isDark ? 'text-blue-300' : 'text-blue-700'}`}>
                           {partner.role}
                         </p>
 
@@ -1596,7 +1596,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                     onClick={() => handleStartDirectBooking(partner)}
                     className={`mt-4 w-full py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center space-x-1.5 cursor-pointer shadow-md ${
                       partner.isOnline
-                        ? 'bg-purple-600 hover:bg-purple-500 text-white hover:scale-[1.02]'
+                        ? 'bg-blue-600 hover:bg-blue-500 text-white hover:scale-[1.02]'
                         : isDark
                         ? 'bg-slate-800 text-slate-300 hover:bg-slate-700'
                         : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
@@ -1623,7 +1623,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                 setSearchQuery('');
                 setSelectedCategoryTab('all');
               }}
-              className="mt-4 px-4 py-2 bg-purple-600 text-white rounded-xl text-xs font-bold"
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold"
             >
               Show All Services
             </button>
@@ -1636,8 +1636,8 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                 onClick={() => handleStartBooking(service)}
                 className={`group cursor-pointer rounded-2xl border transition-all duration-300 overflow-hidden flex flex-col justify-between ${
                   isDark
-                    ? 'bg-slate-900/90 border-slate-800/90 hover:border-purple-500/80 text-white shadow-md hover:-translate-y-1 hover:shadow-xl'
-                    : 'bg-white border-slate-200/90 hover:border-purple-300 text-slate-900 shadow-sm hover:shadow-xl hover:-translate-y-1'
+                    ? 'bg-slate-900/90 border-slate-800/90 hover:border-blue-500/80 text-white shadow-md hover:-translate-y-1 hover:shadow-xl'
+                    : 'bg-white border-slate-200/90 hover:border-blue-300 text-slate-900 shadow-sm hover:shadow-xl hover:-translate-y-1'
                 }`}
               >
                 {/* Photo Header */}
@@ -1668,7 +1668,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                   {/* Right Badges */}
                   <div className="absolute top-2.5 right-2.5">
                     {service.createdByPartnerName ? (
-                      <span className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow flex items-center space-x-1">
+                      <span className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow flex items-center space-x-1">
                         <span>👤 {service.createdByPartnerName.split(' ')[0]}'s Custom Work</span>
                       </span>
                     ) : service.category === 'Mechanic & Roadside Assistance' ? (
@@ -1681,11 +1681,11 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                         <span>PCC Checked</span>
                       </span>
                     ) : service.category === 'Other Works' || service.category === 'Other Services' ? (
-                      <span className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow flex items-center space-x-1">
+                      <span className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow flex items-center space-x-1">
                         <span>🛠️ Custom Trade</span>
                       </span>
                     ) : (
-                      <span className="bg-slate-950/70 backdrop-blur text-purple-300 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                      <span className="bg-slate-950/70 backdrop-blur text-blue-300 text-[10px] font-bold px-2 py-0.5 rounded-full">
                         {service.eta}
                       </span>
                     )}
@@ -1708,7 +1708,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
 
                     {service.createdByPartnerName && (
                       <div className="mt-1 flex items-center space-x-1">
-                        <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 inline-flex items-center space-x-1">
+                        <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 inline-flex items-center space-x-1">
                           <span>👤 Added by Pro: {service.createdByPartnerName}</span>
                         </span>
                       </div>
@@ -1726,7 +1726,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                         {service.tiers ? 'Starts at' : 'Diagnostic Visit'}
                       </span>
                       <div className="flex items-baseline space-x-1">
-                        <span className="text-base font-black text-purple-600 dark:text-purple-400">
+                        <span className="text-base font-black text-blue-600 dark:text-blue-400">
                           ₹{service.tiers ? service.tiers[0].price : service.basePrice || service.diagnosticFee || service.estPrice}
                         </span>
                         {service.priceRangeNotice && (
@@ -1741,7 +1741,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                     </div>
 
                     <button
-                      className="bg-purple-600 hover:bg-purple-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow transition-all duration-200 flex items-center space-x-1 group-hover:scale-105 shrink-0"
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow transition-all duration-200 flex items-center space-x-1 group-hover:scale-105 shrink-0"
                     >
                       <span>Book</span>
                       <ChevronRight className="w-3.5 h-3.5" />
@@ -1757,19 +1757,19 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
         {selectedCategoryTab === 'all' && !searchQuery && (
           <div className={`mt-8 rounded-3xl p-6 sm:p-8 border shadow-lg relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 ${
             isDark
-              ? 'bg-gradient-to-r from-purple-950/70 via-slate-900 to-indigo-950/70 border-purple-500/30'
-              : 'bg-gradient-to-r from-purple-100 via-white to-indigo-100 border-purple-200'
+              ? 'bg-gradient-to-r from-blue-950/70 via-slate-900 to-indigo-950/70 border-blue-500/30'
+              : 'bg-gradient-to-r from-blue-100 via-white to-indigo-100 border-blue-200'
           }`}>
             <div className="flex items-start space-x-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 text-white flex items-center justify-center shrink-0 shadow-lg text-2xl">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center shrink-0 shadow-lg text-2xl">
                 🛠️
               </div>
               <div>
                 <div className="flex items-center space-x-2">
-                  <span className="text-[10px] uppercase font-black px-2.5 py-0.5 rounded-full bg-purple-600 text-white shadow-sm">
+                  <span className="text-[10px] uppercase font-black px-2.5 py-0.5 rounded-full bg-blue-600 text-white shadow-sm">
                     Other Services &amp; Custom Trades Hub
                   </span>
-                  <span className="text-xs font-bold text-purple-600 dark:text-purple-400">
+                  <span className="text-xs font-bold text-blue-600 dark:text-blue-400">
                     {services.filter(s => isOtherService(s)).length}+ Specialized Works
                   </span>
                 </div>
@@ -1787,7 +1787,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                 setSelectedCategoryTab('Other Services');
                 setOtherServicesSubFilter('all');
               }}
-              className="w-full md:w-auto bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-black px-6 py-3.5 rounded-2xl text-xs sm:text-sm shadow-xl transition-all duration-200 flex items-center justify-center space-x-2 shrink-0 hover:scale-105 cursor-pointer"
+              className="w-full md:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black px-6 py-3.5 rounded-2xl text-xs sm:text-sm shadow-xl transition-all duration-200 flex items-center justify-center space-x-2 shrink-0 hover:scale-105 cursor-pointer"
             >
               <span>Explore Other Services ({services.filter(s => isOtherService(s)).length}+)</span>
               <ArrowRight className="w-4 h-4" />
@@ -1801,7 +1801,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
         isDark ? 'bg-slate-900/60 border-slate-800' : 'bg-slate-50/80 border-slate-200'
       }`}>
         <div className="text-center max-w-xl mx-auto mb-6">
-          <span className="text-xs font-extrabold text-purple-600 uppercase tracking-widest">
+          <span className="text-xs font-extrabold text-blue-600 uppercase tracking-widest">
             Fixily Guarantee
           </span>
           <h3 className={`text-xl font-black mt-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>
@@ -1841,7 +1841,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
           </div>
 
           <div className={`p-4 rounded-2xl border ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}>
-            <div className="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center font-bold mb-2.5">
+            <div className="w-9 h-9 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center font-bold mb-2.5">
               <CreditCard className="w-5 h-5" />
             </div>
             <h4 className="font-extrabold text-xs">Pay After Service (COD)</h4>
@@ -1863,7 +1863,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
               isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
             }`}>
               <div>
-                <span className="text-[10px] font-black uppercase tracking-wider text-purple-600">
+                <span className="text-[10px] font-black uppercase tracking-wider text-blue-600">
                   Step {bookingStep} of 3 • Fixily Booking
                 </span>
                 <h3 className="text-base font-black">{selectedService.title}</h3>
@@ -1893,10 +1893,10 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                             key={t.name}
                             className={`flex items-center justify-between p-3.5 rounded-2xl border cursor-pointer transition-all ${
                               selectedTier === t.name
-                                ? 'border-purple-600 bg-purple-500/10 font-bold ring-2 ring-purple-500/20'
+                                ? 'border-blue-600 bg-blue-500/10 font-bold ring-2 ring-blue-500/20'
                                 : isDark
                                 ? 'border-slate-800 bg-slate-950 text-slate-300 hover:border-slate-700'
-                                : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-purple-200'
+                                : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-blue-200'
                             }`}
                           >
                             <div className="flex items-center space-x-3">
@@ -1905,14 +1905,14 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                                 name="tier"
                                 checked={selectedTier === t.name}
                                 onChange={() => setSelectedTier(t.name)}
-                                className="w-4 h-4 text-purple-600 focus:ring-purple-500"
+                                className="w-4 h-4 text-blue-600 focus:ring-blue-500"
                               />
                               <div>
                                 <span className="text-xs font-bold block">{t.name}</span>
                                 <span className="text-[10px] text-slate-400">{t.duration || 'Full Service'}</span>
                               </div>
                             </div>
-                            <div className="font-black text-sm text-purple-600 dark:text-purple-400">
+                            <div className="font-black text-sm text-blue-600 dark:text-blue-400">
                               ₹{t.price}
                             </div>
                           </label>
@@ -1924,7 +1924,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                       }`}>
                         <div className="font-bold text-sm">Standard Base Diagnostic</div>
                         <div className="text-xs text-slate-400 mt-1">{selectedService.tagline}</div>
-                        <div className="font-black text-base text-purple-600 mt-2">
+                        <div className="font-black text-base text-blue-600 mt-2">
                           ₹{selectedService.basePrice || selectedService.diagnosticFee || 299}
                         </div>
                       </div>
@@ -1940,7 +1940,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                       value={vehicleDetails}
                       onChange={(e) => setVehicleDetails(e.target.value)}
                       placeholder="e.g. Honda City / Daikin 1.5T AC"
-                      className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-purple-500 ${
+                      className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-blue-500 ${
                         isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
                       }`}
                     />
@@ -1958,7 +1958,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                         <label className="text-xs font-black uppercase tracking-wider text-slate-400">
                           Specialist Selection
                         </label>
-                        <span className="text-[10px] text-purple-500 font-bold">
+                        <span className="text-[10px] text-blue-500 font-bold">
                           {preferredPartner ? `Direct: ${preferredPartner.name.split(' ')[0]}` : 'Auto-Dispatch (Instant)'}
                         </span>
                       </div>
@@ -1974,13 +1974,13 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                           }}
                           className={`p-2.5 rounded-xl border text-left transition-all flex items-center space-x-2.5 cursor-pointer ${
                             !preferredPartner
-                              ? 'border-purple-600 bg-purple-500/15 ring-2 ring-purple-500/30 font-bold'
+                              ? 'border-blue-600 bg-blue-500/15 ring-2 ring-blue-500/30 font-bold'
                               : isDark
                               ? 'border-slate-800 bg-slate-950 text-slate-300 hover:border-slate-700'
-                              : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-purple-200'
+                              : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-blue-200'
                           }`}
                         >
-                          <div className="w-8 h-8 rounded-lg bg-purple-600/20 text-purple-500 flex items-center justify-center shrink-0">
+                          <div className="w-8 h-8 rounded-lg bg-blue-600/20 text-blue-500 flex items-center justify-center shrink-0">
                             <Zap className="w-4 h-4" />
                           </div>
                           <div className="min-w-0">
@@ -2005,16 +2005,16 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                               }}
                               className={`p-2.5 rounded-xl border text-left transition-all flex items-center space-x-2.5 cursor-pointer ${
                                 isSelected
-                                  ? 'border-purple-600 bg-purple-500/15 ring-2 ring-purple-500/30 font-bold'
+                                  ? 'border-blue-600 bg-blue-500/15 ring-2 ring-blue-500/30 font-bold'
                                   : isDark
                                   ? 'border-slate-800 bg-slate-950 text-slate-300 hover:border-slate-700'
-                                  : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-purple-200'
+                                  : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-blue-200'
                               }`}
                             >
                               <img
                                 src={p.photoUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'}
                                 alt={p.name}
-                                className="w-8 h-8 rounded-lg object-cover border border-purple-500/50 shrink-0"
+                                className="w-8 h-8 rounded-lg object-cover border border-blue-500/50 shrink-0"
                               />
                               <div className="min-w-0">
                                 <div className="flex items-center space-x-1">
@@ -2032,15 +2032,15 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
 
                   {/* Direct Worker Booking Banner if selected */}
                   {preferredPartner && (
-                    <div className="p-3.5 rounded-2xl bg-gradient-to-r from-purple-500/15 via-amber-500/10 to-purple-500/10 border border-purple-500/30 flex items-center space-x-3">
+                    <div className="p-3.5 rounded-2xl bg-gradient-to-r from-blue-500/15 via-amber-500/10 to-blue-500/10 border border-blue-500/30 flex items-center space-x-3">
                       <img
                         src={preferredPartner.photoUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'}
                         alt={preferredPartner.name}
-                        className="w-12 h-12 rounded-xl object-cover border-2 border-purple-500/50 shadow shrink-0"
+                        className="w-12 h-12 rounded-xl object-cover border-2 border-blue-500/50 shadow shrink-0"
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center space-x-1.5">
-                          <span className="text-[10px] font-black uppercase text-purple-600 dark:text-purple-400 bg-purple-500/20 px-2 py-0.2 rounded-full">
+                          <span className="text-[10px] font-black uppercase text-blue-600 dark:text-blue-400 bg-blue-500/20 px-2 py-0.2 rounded-full">
                             Direct Pro Booking
                           </span>
                           {preferredPartner.isTopRated && (
@@ -2069,7 +2069,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                         required
                         value={targetDate}
                         onChange={(e) => setTargetDate(e.target.value)}
-                        className={`w-full text-xs p-2.5 rounded-xl border focus:outline-none focus:border-purple-500 font-bold ${
+                        className={`w-full text-xs p-2.5 rounded-xl border focus:outline-none focus:border-blue-500 font-bold ${
                           isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
                         }`}
                       />
@@ -2086,7 +2086,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                             setTargetTimeSlot(e.target.value);
                             setIsCustomSlot(e.target.value === 'CUSTOM');
                           }}
-                          className={`w-full text-xs p-2.5 rounded-xl border focus:outline-none focus:border-purple-500 font-bold ${
+                          className={`w-full text-xs p-2.5 rounded-xl border focus:outline-none focus:border-blue-500 font-bold ${
                             isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
                           }`}
                         >
@@ -2102,7 +2102,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                             setTargetTimeSlot(e.target.value);
                             setIsCustomSlot(e.target.value === 'CUSTOM');
                           }}
-                          className={`w-full text-xs p-2.5 rounded-xl border focus:outline-none focus:border-purple-500 font-bold ${
+                          className={`w-full text-xs p-2.5 rounded-xl border focus:outline-none focus:border-blue-500 font-bold ${
                             isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
                           }`}
                         >
@@ -2127,7 +2127,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                         value={customTimeInput}
                         onChange={(e) => setCustomTimeInput(e.target.value)}
                         placeholder="e.g. 03:00 PM - 04:30 PM"
-                        className={`w-full text-xs p-2.5 rounded-xl border focus:outline-none focus:border-purple-500 font-bold ${
+                        className={`w-full text-xs p-2.5 rounded-xl border focus:outline-none focus:border-blue-500 font-bold ${
                           isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
                         }`}
                       />
@@ -2151,7 +2151,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                       rows={2}
                       value={address}
                       onChange={(e) => setAddress(e.target.value)}
-                      className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-purple-500 ${
+                      className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-blue-500 ${
                         isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
                       }`}
                     />
@@ -2166,7 +2166,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                         type="text"
                         value={customerName}
                         onChange={(e) => setCustomerName(e.target.value)}
-                        className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-purple-500 ${
+                        className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-blue-500 ${
                           isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
                         }`}
                       />
@@ -2180,7 +2180,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                         type="text"
                         value={customerPhone}
                         onChange={(e) => setCustomerPhone(e.target.value)}
-                        className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-purple-500 ${
+                        className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-blue-500 ${
                           isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
                         }`}
                       />
@@ -2214,7 +2214,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
 
                     <div className="pt-2.5 border-t border-slate-200 dark:border-slate-800 flex justify-between font-black text-sm">
                       <span>Total Payable</span>
-                      <span className="text-purple-600 dark:text-purple-400">
+                      <span className="text-blue-600 dark:text-blue-400">
                         ₹{(selectedService.tiers ? (selectedService.tiers.find(t => t.name === selectedTier)?.price || selectedService.tiers[0].price) : (selectedService.basePrice || selectedService.diagnosticFee || 299)) + 35 + 19}
                       </span>
                     </div>
@@ -2226,14 +2226,14 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                     </label>
                     <div className="grid grid-cols-2 gap-3">
                       <label className={`p-3 rounded-2xl border flex items-center space-x-2.5 cursor-pointer ${
-                        paymentMethod === 'COD' ? 'border-purple-600 bg-purple-500/10 font-bold ring-2 ring-purple-500/20' : 'border-slate-800'
+                        paymentMethod === 'COD' ? 'border-blue-600 bg-blue-500/10 font-bold ring-2 ring-blue-500/20' : 'border-slate-800'
                       }`}>
                         <input
                           type="radio"
                           name="payment"
                           checked={paymentMethod === 'COD'}
                           onChange={() => setPaymentMethod('COD')}
-                          className="text-purple-600"
+                          className="text-blue-600"
                         />
                         <div>
                           <span className="text-xs font-bold block">💵 Pay After Service</span>
@@ -2242,14 +2242,14 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                       </label>
 
                       <label className={`p-3 rounded-2xl border flex items-center space-x-2.5 cursor-pointer ${
-                        paymentMethod === 'UPI' ? 'border-purple-600 bg-purple-500/10 font-bold ring-2 ring-purple-500/20' : 'border-slate-800'
+                        paymentMethod === 'UPI' ? 'border-blue-600 bg-blue-500/10 font-bold ring-2 ring-blue-500/20' : 'border-slate-800'
                       }`}>
                         <input
                           type="radio"
                           name="payment"
                           checked={paymentMethod === 'UPI'}
                           onChange={() => setPaymentMethod('UPI')}
-                          className="text-purple-600"
+                          className="text-blue-600"
                         />
                         <div>
                           <span className="text-xs font-bold block">⚡ Instant UPI / GPay</span>
@@ -2266,7 +2266,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                       <button
                         type="button"
                         onClick={() => setPolicyModalOpen(true)}
-                        className="text-purple-400 hover:underline font-bold"
+                        className="text-blue-400 hover:underline font-bold"
                       >
                         Refund Policy
                       </button>
@@ -2293,7 +2293,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
               {bookingStep < 3 ? (
                 <button
                   onClick={() => setBookingStep(bookingStep + 1)}
-                  className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 rounded-xl text-xs font-black shadow-md flex items-center space-x-1"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-xs font-black shadow-md flex items-center space-x-1"
                 >
                   <span>Continue</span>
                   <ChevronRight className="w-4 h-4" />
@@ -2302,7 +2302,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                 <button
                   onClick={handleConfirmBooking}
                   disabled={isSubmitting}
-                  className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2.5 rounded-xl text-xs font-black shadow-xl"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl text-xs font-black shadow-xl"
                 >
                   {isSubmitting ? 'Confirming Dispatch...' : 'Confirm & Request Partner'}
                 </button>
@@ -2323,7 +2323,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
               isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
             }`}>
               <div>
-                <div className="text-[10px] font-black text-purple-600 uppercase tracking-wider">
+                <div className="text-[10px] font-black text-blue-600 uppercase tracking-wider">
                   Live Dispatch Tracker • Order #{activeTrackJob.id}
                 </div>
                 <h3 className="text-base font-extrabold">{activeTrackJob.serviceTitle}</h3>
@@ -2337,9 +2337,9 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             </div>
 
             <div className="p-5 overflow-y-auto space-y-4">
-              <div className="flex items-center justify-between p-3.5 rounded-2xl bg-purple-500/10 border border-purple-500/20">
+              <div className="flex items-center justify-between p-3.5 rounded-2xl bg-blue-500/10 border border-blue-500/20">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold">
+                  <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">
                     <UserCheck className="w-5 h-5" />
                   </div>
                   <div>
@@ -2395,7 +2395,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
           }`}>
             {/* Modal Header */}
-            <div className="bg-gradient-to-r from-amber-500 via-orange-500 to-purple-600 p-5 text-slate-950 flex items-start justify-between">
+            <div className="bg-gradient-to-r from-amber-500 via-orange-500 to-blue-600 p-5 text-slate-950 flex items-start justify-between">
               <div>
                 <span className="text-[10px] font-black uppercase tracking-wider bg-slate-950/20 px-2.5 py-0.5 rounded-full">
                   Verified Service Review
@@ -2420,7 +2420,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
               <div className={`p-3.5 rounded-2xl border flex items-center space-x-3 ${
                 isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
               }`}>
-                <div className="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold shrink-0">
                   <UserCheck className="w-5 h-5" />
                 </div>
                 <div>
@@ -2628,7 +2628,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
               isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
             }`}>
               <div className="flex items-center space-x-2">
-                <RotateCcw className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                <RotateCcw className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 <h3 className="text-base font-black">Reschedule Service Slot</h3>
               </div>
               <button onClick={() => setReschedulingJob(null)} className="text-slate-400 hover:text-white">
@@ -2637,7 +2637,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             </div>
 
             <form onSubmit={handleRescheduleSubmit} className="p-5 sm:p-6 space-y-4">
-              <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-xs">
+              <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs">
                 Order <strong>#{reschedulingJob.id}</strong> • {reschedulingJob.serviceTitle}
                 <span className="block text-emerald-500 font-bold mt-0.5">✓ ₹0 Free Rescheduling Guarantee</span>
               </div>
@@ -2651,7 +2651,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                   required
                   value={newRescheduleDate}
                   onChange={(e) => setNewRescheduleDate(e.target.value)}
-                  className={`w-full text-xs p-3 rounded-xl border font-bold focus:outline-none focus:border-purple-500 ${
+                  className={`w-full text-xs p-3 rounded-xl border font-bold focus:outline-none focus:border-blue-500 ${
                     isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-900'
                   }`}
                 />
@@ -2664,7 +2664,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                 <select
                   value={newRescheduleSlot}
                   onChange={(e) => setNewRescheduleSlot(e.target.value)}
-                  className={`w-full text-xs p-3 rounded-xl border font-bold focus:outline-none focus:border-purple-500 ${
+                  className={`w-full text-xs p-3 rounded-xl border font-bold focus:outline-none focus:border-blue-500 ${
                     isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-900'
                   }`}
                 >
@@ -2686,7 +2686,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                 <button
                   type="submit"
                   disabled={isRescheduling}
-                  className="flex-1 py-2.5 rounded-xl text-xs font-black bg-purple-600 hover:bg-purple-500 text-white shadow-lg disabled:opacity-50"
+                  className="flex-1 py-2.5 rounded-xl text-xs font-black bg-blue-600 hover:bg-blue-500 text-white shadow-lg disabled:opacity-50"
                 >
                   {isRescheduling ? 'Updating Slot...' : 'Confirm Reschedule'}
                 </button>

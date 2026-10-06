@@ -135,7 +135,7 @@ export const MobilePhoneSimulator: React.FC<MobilePhoneSimulatorProps> = ({
         
         {/* Left: Device Info Badge */}
         <div className="flex items-center space-x-2.5">
-          <div className="w-8 h-8 rounded-xl bg-purple-600/20 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold">
+          <div className="w-8 h-8 rounded-xl bg-blue-600/20 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">
             <Smartphone className="w-4 h-4" />
           </div>
           <div>
@@ -162,7 +162,7 @@ export const MobilePhoneSimulator: React.FC<MobilePhoneSimulatorProps> = ({
                 onClick={() => setSelectedDevice(devKey)}
                 className={`px-2.5 py-1 rounded-lg font-bold text-xs transition-all ${
                   isActive
-                    ? 'bg-purple-600 text-white shadow-sm'
+                    ? 'bg-blue-600 text-white shadow-sm'
                     : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'
                 }`}
               >
@@ -178,7 +178,7 @@ export const MobilePhoneSimulator: React.FC<MobilePhoneSimulatorProps> = ({
           <div className="flex items-center space-x-1 px-2 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-mono font-bold">
             <button
               onClick={() => setZoomScale(s => Math.max(0.75, +(s - 0.05).toFixed(2)))}
-              className="px-1.5 hover:text-purple-500"
+              className="px-1.5 hover:text-blue-500"
               title="Zoom Out"
             >
               -
@@ -186,7 +186,7 @@ export const MobilePhoneSimulator: React.FC<MobilePhoneSimulatorProps> = ({
             <span className="text-[11px] px-1">{Math.round(zoomScale * 100)}%</span>
             <button
               onClick={() => setZoomScale(s => Math.min(1.05, +(s + 0.05).toFixed(2)))}
-              className="px-1.5 hover:text-purple-500"
+              className="px-1.5 hover:text-blue-500"
               title="Zoom In"
             >
               +
@@ -196,7 +196,7 @@ export const MobilePhoneSimulator: React.FC<MobilePhoneSimulatorProps> = ({
           {/* Switch to Fullscreen Desktop View */}
           <button
             onClick={onToggleEnabled}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-extrabold shadow-md transition-all active:scale-95"
+            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold shadow-md transition-all active:scale-95"
             title="Switch back to Fullscreen Desktop View"
           >
             <Monitor className="w-3.5 h-3.5" />
@@ -259,11 +259,11 @@ export const MobilePhoneSimulator: React.FC<MobilePhoneSimulatorProps> = ({
                 >
                   <div className="w-2 h-2 rounded-full bg-slate-950 ring-1 ring-slate-800 shrink-0" />
                   {islandExpanded ? (
-                    <span className="text-[10px] text-purple-400 font-extrabold truncate px-1">
+                    <span className="text-[10px] text-blue-400 font-extrabold truncate px-1">
                       Fixily Pro • Active
                     </span>
                   ) : (
-                    <div className="w-2.5 h-2.5 rounded-full bg-purple-500/80" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-blue-500/80" />
                   )}
                   <div className="w-2 h-2 rounded-full bg-slate-900 ring-1 ring-slate-800 shrink-0" />
                 </div>

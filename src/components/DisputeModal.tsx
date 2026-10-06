@@ -145,11 +145,11 @@ export const DisputeModal: React.FC<DisputeModalProps> = ({
             
             {job && (
               <div className={`p-3 rounded-2xl border text-xs flex items-center justify-between ${
-                isDark ? 'bg-slate-950/70 border-slate-800' : 'bg-purple-50/50 border-purple-200'
+                isDark ? 'bg-slate-950/70 border-slate-800' : 'bg-blue-50/50 border-blue-200'
               }`}>
                 <div>
                   <span className="text-slate-400 block text-[10px] font-bold">Related Order:</span>
-                  <strong className="text-purple-600 dark:text-purple-400">{job.serviceTitle} (#{job.id})</strong>
+                  <strong className="text-blue-600 dark:text-blue-400">{job.serviceTitle} (#{job.id})</strong>
                 </div>
                 {job.assignedPartnerName && (
                   <span className="text-right text-[11px] font-semibold text-slate-400">

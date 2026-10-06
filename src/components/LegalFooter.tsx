@@ -36,8 +36,8 @@ export const LegalFooter: React.FC<LegalFooterProps> = ({
             {/* Col 1: Brand & Kerala Trust */}
             <div className="space-y-3">
               <div className="flex items-center space-x-2">
-                <span className="text-xl font-black text-purple-600">Fixily</span>
-                <span className="text-xs font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400">
+                <span className="text-xl font-black text-blue-600">Fixily</span>
+                <span className="text-xs font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400">
                   Kerala
                 </span>
               </div>
@@ -59,7 +59,7 @@ export const LegalFooter: React.FC<LegalFooterProps> = ({
                 <li>
                   <button
                     onClick={onOpenCancellationPolicy}
-                    className="hover:text-purple-600 dark:hover:text-purple-400 text-left transition-colors"
+                    className="hover:text-blue-600 dark:hover:text-blue-400 text-left transition-colors"
                   >
                     • Cancellation &amp; Refund Policy
                   </button>
@@ -67,7 +67,7 @@ export const LegalFooter: React.FC<LegalFooterProps> = ({
                 <li>
                   <button
                     onClick={() => setActiveModal('terms')}
-                    className="hover:text-purple-600 dark:hover:text-purple-400 text-left transition-colors"
+                    className="hover:text-blue-600 dark:hover:text-blue-400 text-left transition-colors"
                   >
                     • Terms of Service &amp; Damage Liability
                   </button>
@@ -75,7 +75,7 @@ export const LegalFooter: React.FC<LegalFooterProps> = ({
                 <li>
                   <button
                     onClick={() => setActiveModal('privacy')}
-                    className="hover:text-purple-600 dark:hover:text-purple-400 text-left transition-colors"
+                    className="hover:text-blue-600 dark:hover:text-blue-400 text-left transition-colors"
                   >
                     • Privacy Policy (DPDP &amp; Aadhaar Masking)
                   </button>
@@ -83,7 +83,7 @@ export const LegalFooter: React.FC<LegalFooterProps> = ({
                 <li>
                   <button
                     onClick={onOpenCancellationPolicy}
-                    className="hover:text-purple-600 dark:hover:text-purple-400 text-left transition-colors"
+                    className="hover:text-blue-600 dark:hover:text-blue-400 text-left transition-colors"
                   >
                     • 24-Hour Dispute Hold &amp; Escrow
                   </button>
@@ -98,11 +98,11 @@ export const LegalFooter: React.FC<LegalFooterProps> = ({
               </h4>
               <div className="space-y-2 text-xs">
                 <div className="flex items-start space-x-2">
-                  <MapPin className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
+                  <MapPin className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
                   <span>Phase II, Carnival Infopark, Kakkanad, Kochi, Kerala — 682030</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Phone className="w-4 h-4 text-purple-600 shrink-0" />
+                  <Phone className="w-4 h-4 text-blue-600 shrink-0" />
                   <a href="tel:+914842901234" className="hover:underline font-bold">
                     +91 484 290 1234 (Kochi HQ)
                   </a>
@@ -114,7 +114,7 @@ export const LegalFooter: React.FC<LegalFooterProps> = ({
                   </a>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Mail className="w-4 h-4 text-purple-600 shrink-0" />
+                  <Mail className="w-4 h-4 text-blue-600 shrink-0" />
                   <span>grievance@fixily.in (Grievance Officer: Deepa Nair)</span>
                 </div>
               </div>
@@ -131,7 +131,7 @@ export const LegalFooter: React.FC<LegalFooterProps> = ({
               <div className="space-y-2 pt-1">
                 <button
                   onClick={onOpenPartnerLogin}
-                  className="w-full py-2 px-3 rounded-xl border border-purple-500/30 text-purple-600 dark:text-purple-400 hover:bg-purple-500/10 font-bold text-xs transition-colors flex items-center justify-between"
+                  className="w-full py-2 px-3 rounded-xl border border-blue-500/30 text-blue-600 dark:text-blue-400 hover:bg-blue-500/10 font-bold text-xs transition-colors flex items-center justify-between"
                 >
                   <span>Gig Partner Portal</span>
                   <Lock className="w-3.5 h-3.5" />
@@ -206,7 +206,7 @@ export const LegalFooter: React.FC<LegalFooterProps> = ({
 
             <button
               onClick={() => setActiveModal(null)}
-              className="mt-6 w-full py-2.5 rounded-xl bg-purple-600 text-white font-bold text-xs"
+              className="mt-6 w-full py-2.5 rounded-xl bg-blue-600 text-white font-bold text-xs"
             >
               Close
             </button>
@@ -254,7 +254,7 @@ export const LegalFooter: React.FC<LegalFooterProps> = ({
 
             <button
               onClick={() => setActiveModal(null)}
-              className="mt-6 w-full py-2.5 rounded-xl bg-purple-600 text-white font-bold text-xs"
+              className="mt-6 w-full py-2.5 rounded-xl bg-blue-600 text-white font-bold text-xs"
             >
               Close
             </button>

@@ -189,7 +189,7 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
 
       const markerHtml = `
         <div class="group relative flex items-center justify-center cursor-pointer">
-          <div class="${pinColor} ${isCurrentSelected ? 'ring-4 ring-purple-400 ring-offset-2 scale-125' : 'hover:scale-115'} w-6 h-6 rounded-full text-[10px] text-white font-black flex items-center justify-center shadow-lg border-2 border-white transition-transform">
+          <div class="${pinColor} ${isCurrentSelected ? 'ring-4 ring-blue-400 ring-offset-2 scale-125' : 'hover:scale-115'} w-6 h-6 rounded-full text-[10px] text-white font-black flex items-center justify-center shadow-lg border-2 border-white transition-transform">
             ${pinIcon}
           </div>
         </div>
@@ -241,8 +241,8 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
 
     const pinHtml = `
       <div class="relative flex items-center justify-center">
-        <span class="animate-ping absolute inline-flex h-10 w-10 rounded-full bg-purple-400 opacity-75"></span>
-        <div class="relative w-9 h-9 rounded-full bg-purple-600 border-2 border-white shadow-2xl flex items-center justify-center text-white font-extrabold text-sm drop-shadow-lg">
+        <span class="animate-ping absolute inline-flex h-10 w-10 rounded-full bg-blue-400 opacity-75"></span>
+        <div class="relative w-9 h-9 rounded-full bg-blue-600 border-2 border-white shadow-2xl flex items-center justify-center text-white font-extrabold text-sm drop-shadow-lg">
           📍
         </div>
       </div>
@@ -457,13 +457,13 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
         {/* Modal Header */}
         <div className="px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0">
           <div className="flex items-center space-x-2.5">
-            <div className="w-9 h-9 rounded-2xl bg-purple-600/10 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-2xl bg-blue-600/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center">
               <MapPin className="w-5 h-5" />
             </div>
             <div>
               <h3 className="font-black text-base leading-tight flex items-center space-x-2">
                 <span>{language === 'ml' ? 'കേരള ലൊക്കേഷൻ തിരഞ്ഞെടുക്കുക' : 'Choose Your Kerala Location'}</span>
-                <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-300 border border-purple-500/20">
+                <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-300 border border-blue-500/20">
                   14 Districts & Rural Villages
                 </span>
               </h3>
@@ -490,7 +490,7 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
               onClick={() => setActiveTab('map')}
               className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center space-x-1.5 ${
                 activeTab === 'map'
-                  ? 'bg-purple-600 text-white shadow-md'
+                  ? 'bg-blue-600 text-white shadow-md'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -501,7 +501,7 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
               onClick={() => setActiveTab('directory')}
               className={`px-3.5 py-1.5 rounded-xl transition-all flex items-center space-x-1.5 ${
                 activeTab === 'directory'
-                  ? 'bg-purple-600 text-white shadow-md'
+                  ? 'bg-blue-600 text-white shadow-md'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -518,7 +518,7 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
           <button
             onClick={handleDetectGPS}
             disabled={isDetectingGps}
-            className="py-1.5 px-3 rounded-xl border border-purple-500/30 bg-purple-500/10 text-purple-600 dark:text-purple-300 font-extrabold text-xs flex items-center space-x-1.5 hover:bg-purple-500/20 active:scale-95 transition-all cursor-pointer"
+            className="py-1.5 px-3 rounded-xl border border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-300 font-extrabold text-xs flex items-center space-x-1.5 hover:bg-blue-500/20 active:scale-95 transition-all cursor-pointer"
           >
             <Crosshair className={`w-3.5 h-3.5 ${isDetectingGps ? 'animate-spin' : ''}`} />
             <span>
@@ -535,15 +535,15 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
             {/* District Quick-Fly Horizontal Pills */}
             <div className="px-5 py-2.5 border-b border-slate-100 dark:border-slate-800/80 overflow-x-auto no-scrollbar flex items-center space-x-1.5 shrink-0 bg-slate-50/50 dark:bg-slate-950/30">
               <span className="text-[10px] font-black uppercase text-slate-400 shrink-0 mr-1 flex items-center space-x-1">
-                <Compass className="w-3 h-3 text-purple-500" />
+                <Compass className="w-3 h-3 text-blue-500" />
                 <span>Jump:</span>
               </span>
               <button
                 onClick={() => handleFlyToDistrict('All')}
                 className={`text-[11px] font-black px-2.5 py-1 rounded-xl shrink-0 transition-all ${
                   selectedDistrict === 'All'
-                    ? 'bg-purple-600 text-white shadow-sm'
-                    : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-purple-400'
+                    ? 'bg-blue-600 text-white shadow-sm'
+                    : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-blue-400'
                 }`}
               >
                 All Kerala
@@ -554,8 +554,8 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
                   onClick={() => handleFlyToDistrict(dist.name)}
                   className={`text-[11px] font-bold px-2.5 py-1 rounded-xl shrink-0 transition-all ${
                     selectedDistrict === dist.name
-                      ? 'bg-purple-600 text-white font-black shadow-sm'
-                      : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-purple-400'
+                      ? 'bg-blue-600 text-white font-black shadow-sm'
+                      : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-blue-400'
                   }`}
                 >
                   {language === 'ml' ? dist.labelMl : dist.name}
@@ -569,7 +569,7 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
 
               {/* Map Guide Overlay Pill */}
               <div className="absolute top-3 left-3 z-[400] bg-slate-900/90 backdrop-blur-md text-white text-[10px] sm:text-[11px] font-bold px-3 py-1.5 rounded-full shadow-lg border border-slate-700 flex items-center space-x-1.5 pointer-events-none">
-                <MapPin className="w-3.5 h-3.5 text-purple-400 animate-pulse" />
+                <MapPin className="w-3.5 h-3.5 text-blue-400 animate-pulse" />
                 <span>
                   {language === 'ml'
                     ? 'നിങ്ങളുടെ ഗ്രാമത്തിലോ വീടിനടുത്തോ മാപ്പിൽ തൊടുക'
@@ -599,16 +599,16 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
             </div>
 
             {/* Selected / Pinned Location Card */}
-            <div className="p-4 sm:p-5 bg-gradient-to-b from-purple-500/5 to-transparent border-t border-slate-200 dark:border-slate-800">
+            <div className="p-4 sm:p-5 bg-gradient-to-b from-blue-500/5 to-transparent border-t border-slate-200 dark:border-slate-800">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="space-y-1">
                   <div className="flex items-center space-x-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-purple-600 animate-ping"></span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-blue-600 animate-ping"></span>
                     <h4 className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
                       {pinnedLocation.name}
                     </h4>
                     {pinnedLocation.district && (
-                      <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-300">
+                      <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-300">
                         {pinnedLocation.district}
                       </span>
                     )}
@@ -625,7 +625,7 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
                     <span>PIN: <b>{pinnedLocation.pin}</b></span>
                     <span>GPS: <b>{pinnedLocation.lat.toFixed(4)}, {pinnedLocation.lng.toFixed(4)}</b></span>
                     {pinDistanceToNearest !== null && pinDistanceToNearest > 0 && (
-                      <span className="text-purple-600 dark:text-purple-400 font-semibold">
+                      <span className="text-blue-600 dark:text-blue-400 font-semibold">
                         ({pinDistanceToNearest.toFixed(1)} km from nearest hub)
                       </span>
                     )}
@@ -635,7 +635,7 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
                 {/* Confirm Location Button */}
                 <button
                   onClick={handleConfirmLocation}
-                  className="w-full sm:w-auto px-5 py-3 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-black text-xs shadow-lg shadow-purple-500/30 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center space-x-2 shrink-0 cursor-pointer"
+                  className="w-full sm:w-auto px-5 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black text-xs shadow-lg shadow-blue-500/30 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center space-x-2 shrink-0 cursor-pointer"
                 >
                   <Check className="w-4 h-4" />
                   <span>
@@ -654,7 +654,7 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
                   value={customLandmark}
                   onChange={(e) => setCustomLandmark(e.target.value)}
                   placeholder="e.g. Near St. Mary Church / Karshika Bhavan / Estate Road"
-                  className={`flex-1 w-full px-3 py-1.5 rounded-xl border text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+                  className={`flex-1 w-full px-3 py-1.5 rounded-xl border text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     isDark
                       ? 'bg-slate-950 border-slate-800 text-white placeholder-slate-600'
                       : 'bg-white border-slate-200 text-slate-900 placeholder-slate-400'
@@ -681,7 +681,7 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
                       ? 'ഗ്രാമം, താലൂക്ക്, ജില്ല, അല്ലെങ്കിൽ പിൻ കോഡ് തിരയുക...'
                       : 'Search village, taluk, district or pin (e.g. Devikulam, Kuttanad, 685612)...'
                   }
-                  className={`w-full pl-9 pr-3 py-2.5 rounded-2xl border text-xs font-bold focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+                  className={`w-full pl-9 pr-3 py-2.5 rounded-2xl border text-xs font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     isDark
                       ? 'bg-slate-950 border-slate-800 text-white'
                       : 'bg-slate-50 border-slate-200 text-slate-900'
@@ -692,7 +692,7 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
               {/* Add Custom Village Toggle */}
               <button
                 onClick={() => setShowAddVillageForm(!showAddVillageForm)}
-                className="w-full sm:w-auto py-2.5 px-3.5 rounded-2xl border border-purple-500/30 bg-purple-500/10 text-purple-600 dark:text-purple-300 font-extrabold text-xs flex items-center justify-center space-x-1.5 hover:bg-purple-500/20 transition-all shrink-0 cursor-pointer"
+                className="w-full sm:w-auto py-2.5 px-3.5 rounded-2xl border border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-300 font-extrabold text-xs flex items-center justify-center space-x-1.5 hover:bg-blue-500/20 transition-all shrink-0 cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>
@@ -707,9 +707,9 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
             {showAddVillageForm && (
               <form
                 onSubmit={handleCreateNewVillage}
-                className="p-4 rounded-2xl border border-purple-500/30 bg-purple-500/5 space-y-3 animate-in fade-in"
+                className="p-4 rounded-2xl border border-blue-500/30 bg-blue-500/5 space-y-3 animate-in fade-in"
               >
-                <div className="flex items-center space-x-2 text-xs font-black text-purple-600 dark:text-purple-300">
+                <div className="flex items-center space-x-2 text-xs font-black text-blue-600 dark:text-blue-300">
                   <Sparkles className="w-4 h-4" />
                   <span>
                     {language === 'ml'
@@ -825,7 +825,7 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
 
                   <button
                     type="submit"
-                    className="px-4 py-1.5 rounded-xl bg-purple-600 text-white font-black text-xs hover:bg-purple-700 shadow-md transition-all cursor-pointer"
+                    className="px-4 py-1.5 rounded-xl bg-blue-600 text-white font-black text-xs hover:bg-blue-700 shadow-md transition-all cursor-pointer"
                   >
                     Save & Set Location
                   </button>
@@ -840,7 +840,7 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
                 onClick={() => setSelectedRegionType('ALL')}
                 className={`text-[10px] font-black px-2.5 py-1 rounded-xl transition-all ${
                   selectedRegionType === 'ALL'
-                    ? 'bg-purple-600 text-white'
+                    ? 'bg-blue-600 text-white'
                     : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900'
                 }`}
               >
@@ -917,7 +917,7 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
                 <div className="py-12 text-center text-slate-400 text-xs font-semibold">
                   <MapPin className="w-8 h-8 mx-auto mb-2 opacity-30" />
                   <p>No locations matched your filter or search query.</p>
-                  <p className="mt-1 text-[11px] text-purple-500 font-bold">
+                  <p className="mt-1 text-[11px] text-blue-500 font-bold">
                     You can switch to the Map tab to drop a pin anywhere, or click "+ Add Remote Village" above!
                   </p>
                 </div>
@@ -944,7 +944,7 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
                       key={loc.id}
                       className={`p-3.5 rounded-2xl border text-left text-xs font-bold transition-all flex items-center justify-between gap-3 ${
                         isSelected
-                          ? 'border-purple-600 bg-purple-600/10 text-purple-600 dark:text-purple-300'
+                          ? 'border-blue-600 bg-blue-600/10 text-blue-600 dark:text-blue-300'
                           : isDark
                           ? 'border-slate-800 hover:border-slate-700 hover:bg-slate-800/60'
                           : 'border-slate-100 hover:border-slate-200 hover:bg-slate-50'
@@ -983,7 +983,7 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
                               placeActivePinMarker(leafletMapRef.current, loc.lat, loc.lng, loc.name);
                             }
                           }}
-                          className="px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-purple-600 dark:hover:text-purple-300 text-[10px] font-extrabold flex items-center space-x-1 transition-all cursor-pointer"
+                          className="px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-300 text-[10px] font-extrabold flex items-center space-x-1 transition-all cursor-pointer"
                         >
                           <Navigation className="w-3 h-3" />
                           <span className="hidden sm:inline">View on Map</span>
@@ -1001,8 +1001,8 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
                           }}
                           className={`px-3 py-1.5 rounded-xl text-[11px] font-black transition-all flex items-center space-x-1 cursor-pointer ${
                             isSelected
-                              ? 'bg-purple-600 text-white shadow-md'
-                              : 'bg-purple-500/10 text-purple-600 dark:text-purple-300 hover:bg-purple-600 hover:text-white'
+                              ? 'bg-blue-600 text-white shadow-md'
+                              : 'bg-blue-500/10 text-blue-600 dark:text-blue-300 hover:bg-blue-600 hover:text-white'
                           }`}
                         >
                           {isSelected ? (
@@ -1026,7 +1026,7 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
         {/* Modal Footer */}
         <div className="px-5 py-3 bg-slate-50 dark:bg-slate-950/80 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 shrink-0">
           <div className="flex items-center space-x-1.5">
-            <Info className="w-3.5 h-3.5 text-purple-500 shrink-0" />
+            <Info className="w-3.5 h-3.5 text-blue-500 shrink-0" />
             <span>
               {language === 'ml'
                 ? 'ഫിക്സിലി കേരളത്തിലെ 14 ജില്ലകളിലെ ഗ്രാമങ്ങളിലും സേവനം എത്തിക്കുന്നു'
@@ -1036,7 +1036,7 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
 
           <button
             onClick={onClose}
-            className="font-bold text-slate-600 dark:text-slate-300 hover:text-purple-600 transition-colors"
+            className="font-bold text-slate-600 dark:text-slate-300 hover:text-blue-600 transition-colors"
           >
             Close
           </button>

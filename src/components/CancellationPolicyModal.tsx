@@ -72,7 +72,7 @@ export const CancellationPolicyModal: React.FC<CancellationPolicyModalProps> = (
           <div className={`p-4 rounded-2xl border ${
             isDark ? 'bg-slate-950/70 border-slate-800' : 'bg-slate-50 border-slate-200'
           }`}>
-            <div className="flex items-center space-x-2 text-purple-600 dark:text-purple-400 font-black text-sm mb-2">
+            <div className="flex items-center space-x-2 text-blue-600 dark:text-blue-400 font-black text-sm mb-2">
               <RefreshCw className="w-4 h-4" />
               <h4>2. Instant UPI &amp; Bank Refund Timeline</h4>
             </div>
@@ -127,7 +127,7 @@ export const CancellationPolicyModal: React.FC<CancellationPolicyModalProps> = (
 
           <button
             onClick={onClose}
-            className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-black text-xs shadow-md transition-all cursor-pointer"
+            className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs shadow-md transition-all cursor-pointer"
           >
             Understood &amp; Close
           </button>

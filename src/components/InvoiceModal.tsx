@@ -44,7 +44,7 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({
         {/* Actions bar at top */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800 print:hidden">
           <div className="flex items-center space-x-2">
-            <span className="text-xs font-black uppercase tracking-wider text-purple-600 bg-purple-500/10 px-2.5 py-1 rounded-lg">
+            <span className="text-xs font-black uppercase tracking-wider text-blue-600 bg-blue-500/10 px-2.5 py-1 rounded-lg">
               Official Tax Receipt
             </span>
             <span className="text-xs font-bold text-slate-400">#{invoiceNumber}</span>
@@ -83,7 +83,7 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({
           <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
             <div>
               <div className="flex items-center space-x-1.5">
-                <span className="text-xl font-black text-purple-600">Fixily</span>
+                <span className="text-xl font-black text-blue-600">Fixily</span>
                 <span className="text-xs font-extrabold uppercase text-slate-400">Kerala</span>
               </div>
               <p className="text-[11px] text-slate-400 mt-1">
@@ -119,9 +119,9 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({
               </span>
               <div className="font-extrabold text-sm flex items-center space-x-1">
                 <span>{job.assignedPartnerName || 'Fixily Certified Freelance Pro'}</span>
-                <ShieldCheck className="w-3.5 h-3.5 text-purple-600" />
+                <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
               </div>
-              <div className="text-purple-600 dark:text-purple-400 font-semibold text-[11px] mt-0.5">
+              <div className="text-blue-600 dark:text-blue-400 font-semibold text-[11px] mt-0.5">
                 ✓ PCC Document Checked by Fixily
               </div>
               <div className="text-slate-400 text-[11px] mt-0.5">
@@ -180,7 +180,7 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({
                 <span>Applicable GST (18% inclusive):</span>
                 <span>₹{(job.pricing.totalPaid * 0.18 / 1.18).toFixed(2)}</span>
               </div>
-              <div className="flex justify-between font-black text-sm pt-2 border-t border-slate-200 dark:border-slate-800 text-purple-600 dark:text-purple-400">
+              <div className="flex justify-between font-black text-sm pt-2 border-t border-slate-200 dark:border-slate-800 text-blue-600 dark:text-blue-400">
                 <span>Total Amount Paid:</span>
                 <span>₹{job.pricing.totalPaid}</span>
               </div>

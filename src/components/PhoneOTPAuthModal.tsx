@@ -112,7 +112,7 @@ export const PhoneOTPAuthModal: React.FC<PhoneOTPAuthModalProps> = ({
               targetRole === 'admin'
                 ? 'bg-gradient-to-tr from-rose-600 to-amber-600'
                 : targetRole === 'partner'
-                ? 'bg-gradient-to-tr from-purple-600 to-indigo-600'
+                ? 'bg-gradient-to-tr from-blue-600 to-indigo-600'
                 : 'bg-gradient-to-tr from-emerald-600 to-teal-600'
             }`}>
               {targetRole === 'admin' ? <KeyRound className="w-5 h-5" /> : <Phone className="w-5 h-5" />}
@@ -160,7 +160,7 @@ export const PhoneOTPAuthModal: React.FC<PhoneOTPAuthModalProps> = ({
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. Mathew Thomas"
-                  className={`w-full pl-9 pr-3 py-2.5 rounded-xl border text-sm font-bold focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+                  className={`w-full pl-9 pr-3 py-2.5 rounded-xl border text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-slate-50 border-slate-200 text-slate-900'
                   }`}
                 />
@@ -185,7 +185,7 @@ export const PhoneOTPAuthModal: React.FC<PhoneOTPAuthModalProps> = ({
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
                   placeholder="98950 12345"
-                  className={`flex-1 px-3 py-2.5 rounded-r-xl border text-sm font-black focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+                  className={`flex-1 px-3 py-2.5 rounded-r-xl border text-sm font-black focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-slate-50 border-slate-200 text-slate-900'
                   }`}
                 />
@@ -200,7 +200,7 @@ export const PhoneOTPAuthModal: React.FC<PhoneOTPAuthModalProps> = ({
               isDark ? 'bg-slate-950/60 border-slate-800 text-slate-400' : 'bg-slate-50 border-slate-200 text-slate-600'
             }`}>
               <div className="flex items-start space-x-2">
-                <ShieldCheck className="w-4 h-4 text-purple-500 shrink-0 mt-0.5" />
+                <ShieldCheck className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
                 <span>
                   <strong>DPDP Act 2023 Compliant:</strong> Your phone number is encrypted and used strictly for dispatch and authenticated access. Zero spam calls.
                 </span>
@@ -210,7 +210,7 @@ export const PhoneOTPAuthModal: React.FC<PhoneOTPAuthModalProps> = ({
             <button
               type="submit"
               disabled={isSending}
-              className="w-full py-3.5 px-4 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-black text-sm shadow-lg transition-all flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-50"
+              className="w-full py-3.5 px-4 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-black text-sm shadow-lg transition-all flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-50"
             >
               {isSending ? (
                 <>
@@ -234,7 +234,7 @@ export const PhoneOTPAuthModal: React.FC<PhoneOTPAuthModalProps> = ({
               <span className="text-xs text-slate-400 font-bold block">
                 Enter the 6-digit code sent to
               </span>
-              <span className="text-sm font-black text-purple-500">
+              <span className="text-sm font-black text-blue-500">
                 +91 {phoneNumber}
               </span>
             </div>
@@ -247,7 +247,7 @@ export const PhoneOTPAuthModal: React.FC<PhoneOTPAuthModalProps> = ({
                 value={otp}
                 onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
                 placeholder="• • • • • •"
-                className={`w-full text-center tracking-[0.5em] py-3 rounded-2xl border text-xl font-black focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+                className={`w-full text-center tracking-[0.5em] py-3 rounded-2xl border text-xl font-black focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-slate-50 border-slate-200 text-slate-900'
                 }`}
               />
@@ -258,7 +258,7 @@ export const PhoneOTPAuthModal: React.FC<PhoneOTPAuthModalProps> = ({
               <button
                 type="button"
                 onClick={() => setOtp('123456')}
-                className="text-purple-600 dark:text-purple-400 font-bold hover:underline"
+                className="text-blue-600 dark:text-blue-400 font-bold hover:underline"
               >
                 ⚡ Use Demo Code: 123456
               </button>
@@ -273,7 +273,7 @@ export const PhoneOTPAuthModal: React.FC<PhoneOTPAuthModalProps> = ({
 
             <button
               type="submit"
-              className="w-full py-3.5 px-4 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-black text-sm shadow-lg transition-all flex items-center justify-center space-x-2 cursor-pointer"
+              className="w-full py-3.5 px-4 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-black text-sm shadow-lg transition-all flex items-center justify-center space-x-2 cursor-pointer"
             >
               <Check className="w-4 h-4" />
               <span>Verify & Continue</span>

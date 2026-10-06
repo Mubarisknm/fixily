@@ -274,16 +274,16 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
       {/* Partner KYC Onboarding Callout Banner */}
       <div className={`rounded-3xl p-5 sm:p-6 border transition-all flex flex-col md:flex-row items-center justify-between gap-5 shadow-lg ${
         isDark
-          ? 'bg-gradient-to-r from-purple-950/50 via-slate-900 to-amber-950/30 border-purple-500/30 text-white'
-          : 'bg-gradient-to-r from-purple-50 via-white to-amber-50 border-purple-200 text-slate-900'
+          ? 'bg-gradient-to-r from-blue-950/50 via-slate-900 to-amber-950/30 border-blue-500/30 text-white'
+          : 'bg-gradient-to-r from-blue-50 via-white to-amber-50 border-blue-200 text-slate-900'
       }`}>
         <div className="flex items-start space-x-4">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-purple-600 text-white flex items-center justify-center shrink-0 shadow-md">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-blue-600 text-white flex items-center justify-center shrink-0 shadow-md">
             <ShieldCheck className="w-7 h-7" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <span className="text-[10px] font-black uppercase tracking-wider bg-purple-500/20 text-purple-400 px-2.5 py-0.5 rounded-full border border-purple-500/30">
+              <span className="text-[10px] font-black uppercase tracking-wider bg-blue-500/20 text-blue-400 px-2.5 py-0.5 rounded-full border border-blue-500/30">
                 Police Clearance Certificate (PCC) Checked
               </span>
               <span className="text-[10px] font-bold text-amber-500">₹250 Joining Bonus</span>
@@ -444,17 +444,17 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
       {/* 🎯 Weekly Target Achievement & Retention Program */}
       <div className={`rounded-3xl border p-6 sm:p-7 shadow-2xl space-y-5 transition-all ${
         isDark
-          ? 'bg-gradient-to-br from-slate-900 via-purple-950/30 to-slate-950 border-purple-800/40 text-white'
-          : 'bg-gradient-to-br from-purple-50 via-white to-amber-50 border-purple-200 text-slate-900 shadow-lg'
+          ? 'bg-gradient-to-br from-slate-900 via-blue-950/30 to-slate-950 border-blue-800/40 text-white'
+          : 'bg-gradient-to-br from-blue-50 via-white to-amber-50 border-blue-200 text-slate-900 shadow-lg'
       }`}>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-purple-600 text-white flex items-center justify-center font-black shadow-lg">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-blue-600 text-white flex items-center justify-center font-black shadow-lg">
               <Award className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <span className="text-[10px] font-black uppercase tracking-wider bg-purple-500/20 text-purple-400 px-2.5 py-0.5 rounded-full border border-purple-500/30">
+                <span className="text-[10px] font-black uppercase tracking-wider bg-blue-500/20 text-blue-400 px-2.5 py-0.5 rounded-full border border-blue-500/30">
                   Target Achievement & Retention Hub
                 </span>
                 <span className="text-[10px] font-black uppercase bg-amber-500 text-slate-950 px-2 py-0.5 rounded-full">
@@ -496,7 +496,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
               {/* Progress bar container */}
               <div className="w-full h-3.5 bg-slate-950 rounded-full overflow-hidden border border-slate-800 p-0.5">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-purple-600 transition-all duration-1000 shadow-md"
+                  className="h-full rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-blue-600 transition-all duration-1000 shadow-md"
                   style={{ width: `${pct}%` }}
                 />
               </div>
@@ -613,13 +613,13 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <div className="flex items-center space-x-2.5">
-              <div className="w-9 h-9 rounded-xl bg-purple-600/20 text-purple-400 flex items-center justify-center font-bold">
-                <Briefcase className="w-5 h-5 text-purple-400" />
+              <div className="w-9 h-9 rounded-xl bg-blue-600/20 text-blue-400 flex items-center justify-center font-bold">
+                <Briefcase className="w-5 h-5 text-blue-400" />
               </div>
               <h3 className="text-lg font-black tracking-tight">
                 My Custom Professions & Services
               </h3>
-              <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow">
+              <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow">
                 Live in "Other Works" Grid
               </span>
             </div>
@@ -630,7 +630,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
 
           <button
             onClick={() => setShowAddProfessionModal(true)}
-            className="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-black text-xs transition-all flex items-center justify-center space-x-1.5 shadow-md shrink-0 cursor-pointer"
+            className="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs transition-all flex items-center justify-center space-x-1.5 shadow-md shrink-0 cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>Add New Custom Profession</span>
@@ -639,7 +639,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
 
         {/* Current Active Profession Badge */}
         <div className={`p-4 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
-          isDark ? 'bg-slate-950/90 border-slate-800' : 'bg-purple-50/60 border-purple-200'
+          isDark ? 'bg-slate-950/90 border-slate-800' : 'bg-blue-50/60 border-blue-200'
         }`}>
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold">
@@ -673,7 +673,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
                   key={cp.id}
                   className={`p-4 rounded-2xl border flex flex-col justify-between transition-all ${
                     isCurrentlyUsed
-                      ? 'border-purple-500 bg-purple-950/20 ring-1 ring-purple-500/40'
+                      ? 'border-blue-500 bg-blue-950/20 ring-1 ring-blue-500/40'
                       : isDark
                       ? 'bg-slate-950 border-slate-800 hover:border-slate-700'
                       : 'bg-slate-50 border-slate-200'
@@ -682,7 +682,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
                   <div className="space-y-2.5">
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-purple-400 block">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-blue-400 block">
                           Other Works • Custom Trade
                         </span>
                         <h4 className="font-black text-sm text-white truncate mt-0.5">{cp.title}</h4>
@@ -704,7 +704,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
 
                     <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-800">
                       <span className="text-slate-400">Upfront Price:</span>
-                      <span className="font-black text-purple-400">₹{cp.price} (Flat Diagnostic)</span>
+                      <span className="font-black text-blue-400">₹{cp.price} (Flat Diagnostic)</span>
                     </div>
 
                     {cp.equipment && (
@@ -723,7 +723,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
                       <button
                         type="button"
                         onClick={() => handleUseProfession(cp.title)}
-                        className="w-full py-2 rounded-xl text-xs font-black bg-purple-600 hover:bg-purple-500 text-white transition-all shadow cursor-pointer"
+                        className="w-full py-2 rounded-xl text-xs font-black bg-blue-600 hover:bg-blue-500 text-white transition-all shadow cursor-pointer"
                       >
                         Use This Profession
                       </button>
@@ -894,8 +894,8 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
 
                 {/* Scheduling Details Card */}
                 {(job.targetDate || job.targetTimeSlot) && (
-                  <div className="p-3 rounded-2xl bg-slate-950/90 border border-purple-500/30 text-xs space-y-1">
-                    <div className="text-[10px] font-black uppercase text-purple-400 flex items-center space-x-1">
+                  <div className="p-3 rounded-2xl bg-slate-950/90 border border-blue-500/30 text-xs space-y-1">
+                    <div className="text-[10px] font-black uppercase text-blue-400 flex items-center space-x-1">
                       <Calendar className="w-3.5 h-3.5" />
                       <span>Customer Scheduled Time Slot:</span>
                     </div>
@@ -1077,7 +1077,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
               isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
             }`}>
               <div className="flex items-center space-x-2.5">
-                <div className="w-8 h-8 rounded-xl bg-purple-600/20 text-purple-400 flex items-center justify-center font-bold">
+                <div className="w-8 h-8 rounded-xl bg-blue-600/20 text-blue-400 flex items-center justify-center font-bold">
                   <Briefcase className="w-4 h-4" />
                 </div>
                 <div>
@@ -1104,7 +1104,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
                   value={customTitle}
                   onChange={(e) => setCustomTitle(e.target.value)}
                   placeholder="e.g. Solar Inverter Specialist, Gardener, Furniture Polisher..."
-                  className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-purple-500 font-bold ${
+                  className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-blue-500 font-bold ${
                     isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
                   }`}
                 />
@@ -1120,7 +1120,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
                   value={customTagline}
                   onChange={(e) => setCustomTagline(e.target.value)}
                   placeholder="e.g. Doorstep solar inverter diagnostics, battery desulfation & pure sine wave testing."
-                  className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-purple-500 ${
+                  className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-blue-500 ${
                     isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
                   }`}
                 />
@@ -1138,7 +1138,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
                     max={5000}
                     value={customPrice}
                     onChange={(e) => setCustomPrice(e.target.value)}
-                    className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-purple-500 font-bold ${
+                    className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-blue-500 font-bold ${
                       isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
                     }`}
                   />
@@ -1153,7 +1153,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
                     value={customEta}
                     onChange={(e) => setCustomEta(e.target.value)}
                     placeholder="e.g. 30 mins"
-                    className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-purple-500 font-bold ${
+                    className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-blue-500 font-bold ${
                       isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
                     }`}
                   />
@@ -1169,7 +1169,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
                   value={customEquipment}
                   onChange={(e) => setCustomEquipment(e.target.value)}
                   placeholder="e.g. Digital multimeter, crimping kit, safety gloves, power drill"
-                  className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-purple-500 ${
+                  className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-blue-500 ${
                     isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
                   }`}
                 />
@@ -1184,7 +1184,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
                   value={customFeatures}
                   onChange={(e) => setCustomFeatures(e.target.value)}
                   placeholder="e.g. Doorstep diagnosis, Genuine parts, 100% damage guarantee"
-                  className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-purple-500 ${
+                  className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-blue-500 ${
                     isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
                   }`}
                 />
@@ -1215,7 +1215,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
                 <button
                   type="submit"
                   disabled={isPublishingProfession}
-                  className="flex-1 py-3 rounded-xl text-xs font-black bg-gradient-to-r from-purple-600 to-indigo-600 hover:brightness-110 text-white shadow-lg flex items-center justify-center space-x-1.5 cursor-pointer"
+                  className="flex-1 py-3 rounded-xl text-xs font-black bg-gradient-to-r from-blue-600 to-indigo-600 hover:brightness-110 text-white shadow-lg flex items-center justify-center space-x-1.5 cursor-pointer"
                 >
                   <Sparkles className="w-4 h-4" />
                   <span>{isPublishingProfession ? 'Publishing...' : 'Save & Publish to Other Works'}</span>
@@ -1290,7 +1290,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
                 </p>
               </div>
 
-              <div className="p-3 rounded-xl bg-purple-950/30 border border-purple-800/40 text-[11px] text-purple-300 leading-snug">
+              <div className="p-3 rounded-xl bg-blue-950/30 border border-blue-800/40 text-[11px] text-blue-300 leading-snug">
                 🔒 <strong>Dispute Protection Hold:</strong> Payout moves immediately to your wallet balance with a standard 24-hour dispute hold window before 1-tap UPI withdrawal.
               </div>
 

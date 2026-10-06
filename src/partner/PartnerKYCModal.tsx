@@ -207,7 +207,7 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
       }`}>
         
         {/* Header */}
-        <div className="bg-gradient-to-r from-amber-500 via-orange-500 to-purple-600 text-slate-950 p-5 sm:p-6 flex items-start justify-between">
+        <div className="bg-gradient-to-r from-amber-500 via-orange-500 to-blue-600 text-slate-950 p-5 sm:p-6 flex items-start justify-between">
           <div className="flex items-center space-x-3.5">
             <div className="w-12 h-12 rounded-2xl bg-slate-950 text-amber-400 flex items-center justify-center shrink-0 shadow-lg">
               <UserCheck className="w-6 h-6" />
@@ -711,7 +711,7 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
                 isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
               }`}>
                 <div className="flex items-center space-x-2">
-                  <Car className="w-4 h-4 text-purple-400" />
+                  <Car className="w-4 h-4 text-blue-400" />
                   <h4 className="text-xs font-black">3. Motor Driving License (DL) Number (if driving)</h4>
                 </div>
                 <input
@@ -719,7 +719,7 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
                   value={dlNumber}
                   onChange={(e) => setDlNumber(e.target.value)}
                   placeholder="e.g. KL-07-2016-0038491 (LMV / Transport)"
-                  className={`w-full text-xs p-2.5 rounded-xl border focus:outline-none focus:border-purple-500 font-mono font-bold ${
+                  className={`w-full text-xs p-2.5 rounded-xl border focus:outline-none focus:border-blue-500 font-mono font-bold ${
                     isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-900'
                   }`}
                 />
@@ -733,7 +733,7 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
             <div className="space-y-4">
               
               {/* Welcome Bonus Card */}
-              <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/20 via-teal-500/20 to-purple-500/20 border border-emerald-500/40 flex items-center justify-between">
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/20 via-teal-500/20 to-blue-500/20 border border-emerald-500/40 flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 rounded-xl bg-emerald-500 text-slate-950 flex items-center justify-center font-black">
                     <Sparkles className="w-5 h-5" />

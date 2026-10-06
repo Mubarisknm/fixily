@@ -345,7 +345,7 @@ export function App() {
           <div className={`fixed top-16 sm:top-20 left-1/2 -translate-x-1/2 z-[100] px-4 py-2.5 rounded-2xl shadow-2xl flex items-center space-x-2.5 animate-bounce transition-all backdrop-blur-md ${
             liveGpsToast.isLive
               ? 'bg-emerald-950/90 text-emerald-200 border border-emerald-500/40 shadow-emerald-900/30'
-              : 'bg-slate-900/90 text-white border border-purple-500/40 shadow-purple-900/30'
+              : 'bg-slate-900/90 text-white border border-blue-500/40 shadow-blue-900/30'
           }`}>
             {liveGpsToast.isLive ? (
               <span className="relative flex h-2.5 w-2.5 shrink-0">
@@ -353,7 +353,7 @@ export function App() {
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
               </span>
             ) : (
-              <MapPin className="w-4 h-4 text-purple-400 shrink-0" />
+              <MapPin className="w-4 h-4 text-blue-400 shrink-0" />
             )}
             <span className="text-xs font-black">{liveGpsToast.message}</span>
           </div>
@@ -362,7 +362,7 @@ export function App() {
         <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 pb-28 w-full max-w-full overflow-x-hidden">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-3">
-              <div className="w-10 h-10 border-4 border-purple-600 border-t-transparent rounded-full animate-spin" />
+              <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
               <p className="text-xs font-bold text-slate-500">Loading Fixily Platform...</p>
             </div>
           ) : (

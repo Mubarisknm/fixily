@@ -105,8 +105,8 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             onClick={handleNavHome}
             className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all active:scale-95 ${
               activeTab === 'customer'
-                ? 'text-purple-600 dark:text-purple-400 font-extrabold'
-                : 'hover:text-purple-500 font-medium'
+                ? 'text-blue-600 dark:text-blue-400 font-extrabold'
+                : 'hover:text-blue-500 font-medium'
             }`}
           >
             <Home className="w-5 h-5 mb-0.5 stroke-[2.2]" />
@@ -118,7 +118,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           {/* Tab 2: Search Services */}
           <button
             onClick={handleNavSearch}
-            className="flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all active:scale-95 hover:text-purple-500 font-medium"
+            className="flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all active:scale-95 hover:text-blue-500 font-medium"
           >
             <Search className="w-5 h-5 mb-0.5 stroke-[2.2]" />
             <span className="text-[10px] leading-tight">
@@ -143,11 +143,11 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           {/* Tab 4: Bookings (With Active Badge) */}
           <button
             onClick={handleNavBookings}
-            className="relative flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all active:scale-95 hover:text-purple-500 font-medium"
+            className="relative flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all active:scale-95 hover:text-blue-500 font-medium"
           >
             <Clock className="w-5 h-5 mb-0.5 stroke-[2.2]" />
             {activeJobsCount > 0 && (
-              <span className="absolute -top-0.5 right-1.5 w-4 h-4 bg-purple-600 text-white text-[9px] font-black rounded-full flex items-center justify-center shadow-sm animate-bounce">
+              <span className="absolute -top-0.5 right-1.5 w-4 h-4 bg-blue-600 text-white text-[9px] font-black rounded-full flex items-center justify-center shadow-sm animate-bounce">
                 {activeJobsCount}
               </span>
             )}
@@ -161,8 +161,8 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             onClick={() => setShowAccountDrawer(true)}
             className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all active:scale-95 ${
               showAccountDrawer || activeTab !== 'customer'
-                ? 'text-purple-600 dark:text-purple-400 font-extrabold'
-                : 'hover:text-purple-500 font-medium'
+                ? 'text-blue-600 dark:text-blue-400 font-extrabold'
+                : 'hover:text-blue-500 font-medium'
             }`}
           >
             <div className="relative">
@@ -198,7 +198,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             {/* Header */}
             <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-2xl bg-purple-600 text-white flex items-center justify-center font-black text-sm">
+                <div className="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-black text-sm">
                   {currentUser ? currentUser.name.charAt(0) : 'F'}
                 </div>
                 <div>
@@ -222,12 +222,12 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             <div className={`w-full my-3 p-3.5 rounded-2xl border transition-all flex flex-col space-y-2.5 ${
               selectedLocation.isLiveGps
                 ? 'bg-emerald-500/10 border-emerald-500/30'
-                : 'bg-purple-500/10 border-purple-500/20'
+                : 'bg-blue-500/10 border-blue-500/20'
             }`}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2.5 text-xs">
                   <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 shadow-md ${
-                    selectedLocation.isLiveGps ? 'bg-emerald-600 text-white' : 'bg-purple-600 text-white'
+                    selectedLocation.isLiveGps ? 'bg-emerald-600 text-white' : 'bg-blue-600 text-white'
                   }`}>
                     {selectedLocation.isLiveGps ? (
                       <Crosshair className="w-4 h-4 animate-spin-slow" />
@@ -244,7 +244,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                         <span className={`text-[10px] font-bold ${
                           selectedLocation.isLiveGps
                             ? 'text-emerald-600 dark:text-emerald-300'
-                            : 'text-purple-600 dark:text-purple-300'
+                            : 'text-blue-600 dark:text-blue-300'
                         }`}>
                           ({selectedLocation.district})
                         </span>
@@ -257,7 +257,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                 </div>
 
                 <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full text-white shadow-sm shrink-0 ${
-                  selectedLocation.isLiveGps ? 'bg-emerald-600' : 'bg-purple-600'
+                  selectedLocation.isLiveGps ? 'bg-emerald-600' : 'bg-blue-600'
                 }`}>
                   {selectedLocation.isLiveGps ? 'Live GPS' : 'Custom'}
                 </span>
@@ -270,7 +270,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                     setShowAccountDrawer(false);
                     onOpenLocationModal?.();
                   }}
-                  className="py-1.5 px-2 rounded-xl bg-purple-600 text-white text-[11px] font-black flex items-center justify-center space-x-1 hover:bg-purple-700 active:scale-95 transition-all cursor-pointer shadow-sm"
+                  className="py-1.5 px-2 rounded-xl bg-blue-600 text-white text-[11px] font-black flex items-center justify-center space-x-1 hover:bg-blue-700 active:scale-95 transition-all cursor-pointer shadow-sm"
                 >
                   <MapPin className="w-3 h-3" />
                   <span>Change on Map</span>
@@ -307,7 +307,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                 }}
                 className={`w-full p-3 rounded-2xl border text-left flex items-center justify-between transition-all ${
                   activeTab === 'customer'
-                    ? 'bg-purple-600 border-purple-500 text-white shadow-md'
+                    ? 'bg-blue-600 border-blue-500 text-white shadow-md'
                     : isDark ? 'bg-slate-800/80 border-slate-700/80' : 'bg-slate-50 border-slate-200'
                 }`}
               >
@@ -315,7 +315,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                   <Home className="w-4 h-4" />
                   <div>
                     <div className="text-xs font-black">Customer Service Portal</div>
-                    <div className={`text-[10px] ${activeTab === 'customer' ? 'text-purple-200' : 'text-slate-400'}`}>
+                    <div className={`text-[10px] ${activeTab === 'customer' ? 'text-blue-200' : 'text-slate-400'}`}>
                       Book verified technicians, car wash &amp; repairs
                     </div>
                   </div>
@@ -335,20 +335,20 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                 }}
                 className={`w-full p-3 rounded-2xl border text-left flex items-center justify-between transition-all ${
                   activeTab === 'partner'
-                    ? 'bg-purple-600 border-purple-500 text-white shadow-md'
+                    ? 'bg-blue-600 border-blue-500 text-white shadow-md'
                     : isDark ? 'bg-slate-800/80 border-slate-700/80' : 'bg-slate-50 border-slate-200'
                 }`}
               >
                 <div className="flex items-center space-x-3">
-                  <Lock className="w-4 h-4 text-purple-400" />
+                  <Lock className="w-4 h-4 text-blue-400" />
                   <div>
                     <div className="text-xs font-black flex items-center space-x-1.5">
                       <span>Gig Partner Portal</span>
-                      <span className="text-[9px] bg-purple-500/20 text-purple-400 px-1.5 py-0.2 rounded font-mono font-bold">
+                      <span className="text-[9px] bg-blue-500/20 text-blue-400 px-1.5 py-0.2 rounded font-mono font-bold">
                         OTP Protected
                       </span>
                     </div>
-                    <div className={`text-[10px] ${activeTab === 'partner' ? 'text-purple-200' : 'text-slate-400'}`}>
+                    <div className={`text-[10px] ${activeTab === 'partner' ? 'text-blue-200' : 'text-slate-400'}`}>
                       Job radar, wallets &amp; KYC onboarding
                     </div>
                   </div>
@@ -368,7 +368,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                 }}
                 className={`w-full p-3 rounded-2xl border text-left flex items-center justify-between transition-all ${
                   activeTab === 'admin'
-                    ? 'bg-purple-600 border-purple-500 text-white shadow-md'
+                    ? 'bg-blue-600 border-blue-500 text-white shadow-md'
                     : isDark ? 'bg-slate-800/80 border-slate-700/80' : 'bg-slate-50 border-slate-200'
                 }`}
               >
@@ -381,7 +381,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                         PIN Protected
                       </span>
                     </div>
-                    <div className={`text-[10px] ${activeTab === 'admin' ? 'text-purple-200' : 'text-slate-400'}`}>
+                    <div className={`text-[10px] ${activeTab === 'admin' ? 'text-blue-200' : 'text-slate-400'}`}>
                       PCC review, escrow holds &amp; GMV metrics
                     </div>
                   </div>
@@ -398,7 +398,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                   isDark ? 'bg-slate-800 border-slate-700' : 'bg-slate-100 border-slate-200'
                 }`}
               >
-                <Globe className="w-4 h-4 text-purple-500" />
+                <Globe className="w-4 h-4 text-blue-500" />
                 <span>{language === 'en' ? 'മലയാളം' : 'English'}</span>
               </button>
 
@@ -415,7 +415,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                   </>
                 ) : (
                   <>
-                    <Moon className="w-4 h-4 text-purple-700 fill-purple-700" />
+                    <Moon className="w-4 h-4 text-blue-700 fill-blue-700" />
                     <span>Night Mode</span>
                   </>
                 )}
@@ -473,7 +473,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                     setShowAccountDrawer(false);
                     onOpenAuthModal('customer');
                   }}
-                  className="w-full py-3 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-black flex items-center justify-center space-x-2 shadow-lg shadow-purple-600/30"
+                  className="w-full py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black flex items-center justify-center space-x-2 shadow-lg shadow-blue-600/30"
                 >
                   <User className="w-4 h-4" />
                   <span>{t('login_btn')} (10-Digit Phone OTP)</span>
