@@ -61,7 +61,6 @@ const FREELANCE_TRADES = [
   { value: 'Network, WiFi & Optical Fiber Tech', label: '🌐 Home WiFi Router, LAN & Optical Fiber Tech' },
   { value: 'Tailor, Saree Draping & Alterations', label: '🪡 Doorstep Tailor, Saree Draping & Alterations' },
   { value: 'Event Photographer & Videographer', label: '📸 Event Photographer, Videographer & Drone Pilot' },
-  { value: 'Coconut Tree Climber & Palm Caretaker', label: '🥥 Trained Coconut Tree Climber (Safety Harness) & Palm Caretaker' },
   { value: 'Monsoon Roof Leak & Tarpaulin Specialist', label: '🌧️ Monsoon Roof Leak Repair & Tarpaulin Sheet Specialist' },
   { value: 'Motorized Brush Cutter & Weed Specialist', label: '🌾 Motorized Brush Cutter, Grass Cutting & Compound Weed Clearing' },
   { value: 'Hospital Escort & Elderly Companion', label: '🏥 Senior Citizen Hospital Escort & Doctor Appointment Companion' },

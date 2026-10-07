@@ -79,6 +79,10 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
 
   const handleNavBookings = () => {
     setActiveTab('customer');
+    if (!currentUser) {
+      onOpenAuthModal('customer');
+      return;
+    }
     const ordersEl = document.getElementById('active-orders-section');
     if (ordersEl) {
       ordersEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -198,21 +202,34 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             {/* Header */}
             <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-black text-sm">
-                  {currentUser ? currentUser.name.charAt(0) : 'F'}
-                </div>
+                {currentUser?.avatar ? (
+                  <img
+                    src={currentUser.avatar}
+                    alt={currentUser.name}
+                    className="w-11 h-11 rounded-2xl object-cover ring-2 ring-blue-500 shadow-md"
+                  />
+                ) : (
+                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-black text-sm shadow-md">
+                    {currentUser ? currentUser.name.charAt(0) : 'F'}
+                  </div>
+                )}
                 <div>
                   <h3 className="font-extrabold text-sm">
                     {currentUser ? currentUser.name : 'Fykzi Kerala User'}
                   </h3>
                   <p className="text-xs text-slate-400">
-                    {currentUser ? currentUser.phone : 'Doorstep Verified Services'}
+                    {currentUser ? (currentUser.email || currentUser.phone) : 'Doorstep Verified Services'}
                   </p>
+                  {currentUser && (
+                    <span className="inline-block text-[10px] text-emerald-500 font-bold">
+                      ✓ {currentUser.authProvider === 'google' ? 'Google Verified' : currentUser.authProvider === 'email' ? 'Email Verified' : 'OTP Verified'}
+                    </span>
+                  )}
                 </div>
               </div>
               <button
                 onClick={() => setShowAccountDrawer(false)}
-                className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"
+                className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -462,10 +479,10 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                     setShowAccountDrawer(false);
                     onLogout();
                   }}
-                  className="w-full py-3 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 text-xs font-black flex items-center justify-center space-x-2"
+                  className="w-full py-3 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 text-xs font-black flex items-center justify-center space-x-2 cursor-pointer transition-colors"
                 >
                   <LogOut className="w-4 h-4" />
-                  <span>{t('logout_btn')} ({currentUser.phone})</span>
+                  <span>{t('logout_btn')} ({currentUser.name.split(' ')[0]})</span>
                 </button>
               ) : (
                 <button
@@ -473,10 +490,10 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                     setShowAccountDrawer(false);
                     onOpenAuthModal('customer');
                   }}
-                  className="w-full py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black flex items-center justify-center space-x-2 shadow-lg shadow-blue-600/30"
+                  className="w-full py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black flex items-center justify-center space-x-2 shadow-lg shadow-blue-600/30 cursor-pointer active:scale-95 transition-all"
                 >
                   <User className="w-4 h-4" />
-                  <span>{t('login_btn')} (10-Digit Phone OTP)</span>
+                  <span>{t('login_btn')} (Google / Email / Mobile)</span>
                 </button>
               )}
             </div>

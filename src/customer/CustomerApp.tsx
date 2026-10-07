@@ -50,7 +50,7 @@ import {
   HelpCircle,
   ExternalLink
 } from 'lucide-react';
-import { ServiceItem, KochiLocation, BookingJob, ThemeMode, GigPartner, AppLanguage } from '../types';
+import { ServiceItem, KochiLocation, BookingJob, ThemeMode, GigPartner, AppLanguage, UserSession, UserRole } from '../types';
 import { LiveMap } from '../components/LiveMap';
 import { EmergencyModal } from '../components/EmergencyModal';
 import { CancellationPolicyModal } from '../components/CancellationPolicyModal';
@@ -72,6 +72,8 @@ interface CustomerAppProps {
   onOpenCancellationPolicy?: () => void;
   onOpenDispute?: (job: BookingJob) => void;
   onOpenInvoice?: (job: BookingJob) => void;
+  currentUser?: UserSession | null;
+  onOpenAuthModal?: (role: UserRole) => void;
 }
 
 // Fallback SVG Generator for bulletproof image rendering under all network conditions
@@ -155,7 +157,9 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
   language = 'en',
   onOpenCancellationPolicy,
   onOpenDispute,
-  onOpenInvoice
+  onOpenInvoice,
+  currentUser,
+  onOpenAuthModal
 }) => {
   const isDark = theme === 'dark';
   const { t } = useTranslation(language);
@@ -191,10 +195,10 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
   const [selectedService, setSelectedService] = useState<ServiceItem | null>(null);
   const [bookingStep, setBookingStep] = useState<number>(1);
   const [selectedTier, setSelectedTier] = useState<string>('');
-  const [customerName, setCustomerName] = useState<string>('Mathew Thomas');
-  const [customerPhone, setCustomerPhone] = useState<string>('+91 98950 12345');
+  const [customerName, setCustomerName] = useState<string>(() => currentUser?.name || 'Mathew Thomas');
+  const [customerPhone, setCustomerPhone] = useState<string>(() => currentUser?.phone || '+91 98950 12345');
   const [address, setAddress] = useState<string>(`Asset Homes Enclave, ${selectedLocation.name}`);
-  const [vehicleDetails, setVehicleDetails] = useState<string>('Honda City (KL-07-CC-4091)');
+  const [vehicleDetails, setVehicleDetails] = useState<string>('');
   const [paymentMethod, setPaymentMethod] = useState<'UPI' | 'COD'>('COD');
   const [includeInsurance, setIncludeInsurance] = useState<boolean>(true);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -548,7 +552,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
           return Boolean(service.createdByPartnerId) || service.category === 'Other Works' || service.category === 'Other Services';
         }
         if (otherServicesSubFilter === 'agro') {
-          return service.category === 'Agro & Palm Tree Care' || service.category === 'Garden & Compound Maintenance' || service.title.toLowerCase().includes('coconut') || service.title.toLowerCase().includes('weed');
+          return service.category === 'Agro & Palm Tree Care' || service.category === 'Garden & Compound Maintenance' || service.title.toLowerCase().includes('weed') || service.title.toLowerCase().includes('grass');
         }
         if (otherServicesSubFilter === 'monsoon') {
           return service.category === 'Monsoon & Roof Protection' || service.title.toLowerCase().includes('roof') || service.title.toLowerCase().includes('waterproof');
@@ -817,15 +821,19 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
         </div>
       )}
 
-      {/* 1. Welcoming Hero Banner */}
-      <div className={`relative overflow-hidden rounded-3xl p-6 sm:p-8 border shadow-lg transition-all duration-300 ${
+      {/* 1. Welcoming Hero Banner with 3D Depth */}
+      <div className={`relative overflow-hidden rounded-3xl p-6 sm:p-8 border shadow-xl transition-all duration-300 card-3d-interactive preserve-3d ${
         isDark
-          ? 'bg-gradient-to-br from-slate-900 via-slate-900 to-blue-950/40 border-slate-800 text-white'
-          : 'bg-gradient-to-br from-white via-blue-50/40 to-emerald-50/20 border-blue-100 text-slate-900 shadow-sm'
+          ? 'bg-gradient-to-br from-slate-900 via-[#0F172A] to-blue-950/50 border-slate-800 text-white shadow-[0_20px_50px_rgba(0,0,0,0.5)]'
+          : 'bg-gradient-to-br from-white via-blue-50/50 to-indigo-50/30 border-blue-100 text-slate-900 shadow-[0_20px_50px_rgba(37,99,235,0.08)]'
       }`}>
+        {/* Floating Ambient Glowing Orb */}
+        <div className="absolute -top-16 -right-16 w-52 h-52 bg-blue-600/20 rounded-full blur-3xl pointer-events-none animate-pulse-glow" />
+        <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none" />
+
         <div className="relative z-10 max-w-3xl space-y-4">
           
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-bold bg-blue-600/10 text-blue-600 dark:text-blue-400 border border-blue-600/20">
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-bold bg-blue-600/10 text-blue-600 dark:text-blue-400 border border-blue-600/20 shadow-sm badge-3d-glow">
             <span>⚡ {t('hero_badge')} • {selectedLocation.name}</span>
           </div>
 
@@ -855,14 +863,14 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="p-1.5 mr-1 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full text-slate-400"
+                className="p-1.5 mr-1 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full text-slate-400 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             )}
             <button
               onClick={() => {}}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-bold shrink-0 transition-colors shadow-sm"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-bold shrink-0 transition-colors shadow-sm cursor-pointer"
             >
               Search
             </button>
@@ -874,7 +882,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             {[
               { label: '🚨 20m Mechanic', query: 'mechanic' },
               { label: '👨‍✈️ Thuna Driver', query: 'driver' },
-              { label: '🥥 Coconut Climber', query: 'coconut' },
+              { label: '🧹 Deep Cleaning', query: 'cleaning' },
               { label: '🌧️ Roof Leak Fix', query: 'roof' },
               { label: '🏥 Senior Care Escort', query: 'hospital' },
               { label: '❄️ AC Cleaning', query: 'ac' },
@@ -883,7 +891,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
               <button
                 key={chip.label}
                 onClick={() => setSearchQuery(chip.query)}
-                className={`text-xs px-2.5 py-1 rounded-full font-semibold border transition-all ${
+                className={`text-xs px-2.5 py-1 rounded-full font-semibold border transition-all card-3d-interactive cursor-pointer ${
                   searchQuery === chip.query
                     ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
                     : isDark
@@ -998,9 +1006,9 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
         <div className="absolute -right-10 -bottom-10 w-72 h-72 bg-gradient-to-tr from-blue-600/20 to-emerald-500/20 rounded-full blur-3xl pointer-events-none" />
       </div>
 
-      {/* Rate & Review Freelancer Prompt (Customer Feedback) */}
-      {completedJobsNeedingFeedback.length > 0 && (
-        <div className={`rounded-2xl p-4 sm:p-5 border shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${
+      {/* Rate & Review Freelancer Prompt (Customer Feedback - Only when logged in) */}
+      {currentUser && completedJobsNeedingFeedback.length > 0 && (
+        <div className={`rounded-2xl p-4 sm:p-5 border shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 card-3d-interactive ${
           isDark
             ? 'bg-gradient-to-r from-amber-950/40 via-slate-900 to-blue-950/40 border-amber-500/30 text-white'
             : 'bg-gradient-to-r from-amber-50 via-white to-blue-50 border-amber-200 text-slate-900'
@@ -1040,8 +1048,8 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
         </div>
       )}
 
-      {/* 3. Comprehensive Active Orders & Live Status Hub */}
-      {myActiveJobs.length > 0 && (
+      {/* 3. Comprehensive Active Orders & Live Status Hub (Shown ONLY when user is logged in) */}
+      {currentUser && myActiveJobs.length > 0 && (
         <div id="active-orders-section" className="space-y-4 scroll-mt-20">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-black flex items-center space-x-2">
@@ -1258,9 +1266,9 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
         </div>
       )}
 
-      {/* 3.5. Easy Rebooking of Favorite Previous Providers */}
-      {allCompletedJobs.length > 0 && (
-        <div className={`rounded-3xl p-5 border shadow-sm space-y-3 ${
+      {/* 3.5. Easy Rebooking of Favorite Previous Providers (Shown only when logged in) */}
+      {currentUser && allCompletedJobs.length > 0 && (
+        <div className={`rounded-3xl p-5 border shadow-sm space-y-3 card-3d-interactive ${
           isDark ? 'bg-slate-900/60 border-slate-800' : 'bg-slate-50 border-slate-200'
         }`}>
           <div className="flex items-center justify-between">
@@ -1414,7 +1422,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
               {[
                 { id: 'all', label: 'All Other Works', icon: '🌐' },
                 { id: 'worker-custom', label: 'Worker Custom Trades', icon: '👤', tag: 'Partner Added' },
-                { id: 'agro', label: 'Coconut & Farm', icon: '🥥', tag: 'Essential' },
+                { id: 'agro', label: 'Compound & Weed Clearing', icon: '🌾', tag: 'Essential' },
                 { id: 'monsoon', label: 'Monsoon Roof Fix', icon: '🌧️', tag: 'Monsoon' },
                 { id: 'elderly', label: 'Senior Care Escort', icon: '🏥', tag: 'Family' },
                 { id: 'cleaning', label: 'Cleaning & Property', icon: '✨' },
@@ -1643,15 +1651,15 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 perspective-1000">
             {filteredServices.map((service) => (
               <div
                 key={service.id}
                 onClick={() => handleStartBooking(service)}
-                className={`group cursor-pointer rounded-2xl border transition-all duration-300 overflow-hidden flex flex-col justify-between ${
+                className={`group cursor-pointer rounded-3xl border transition-all duration-300 overflow-hidden flex flex-col justify-between card-3d-interactive preserve-3d ${
                   isDark
-                    ? 'bg-slate-900/90 border-slate-800/90 hover:border-blue-500/80 text-white shadow-md hover:-translate-y-1 hover:shadow-xl'
-                    : 'bg-white border-slate-200/90 hover:border-blue-300 text-slate-900 shadow-sm hover:shadow-xl hover:-translate-y-1'
+                    ? 'bg-slate-900/90 border-slate-800/90 hover:border-blue-500/80 text-white shadow-md'
+                    : 'bg-white border-slate-200/90 hover:border-blue-300 text-slate-900 shadow-sm'
                 }`}
               >
                 {/* Photo Header */}
@@ -1844,17 +1852,17 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             </p>
           </div>
 
-          <div className={`p-4 rounded-2xl border ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}>
+          <div className={`p-4 rounded-2xl border card-3d-interactive ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}>
             <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-bold mb-2.5">
               <Camera className="w-5 h-5" />
             </div>
             <h4 className="font-extrabold text-xs">4-Angle Photo Inspection</h4>
             <p className="text-[11px] text-slate-400 mt-1">
-              Complete photographic pre-inspection before working on your car or appliances.
+              Complete photographic pre-inspection before working on your vehicle, premises, or appliances.
             </p>
           </div>
 
-          <div className={`p-4 rounded-2xl border ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}>
+          <div className={`p-4 rounded-2xl border card-3d-interactive ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}>
             <div className="w-9 h-9 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center font-bold mb-2.5">
               <CreditCard className="w-5 h-5" />
             </div>
@@ -1945,20 +1953,44 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                     )}
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-black uppercase tracking-wider mb-1.5 text-slate-400">
-                      Vehicle or Appliance Details
-                    </label>
-                    <input
-                      type="text"
-                      value={vehicleDetails}
-                      onChange={(e) => setVehicleDetails(e.target.value)}
-                      placeholder="e.g. Honda City / Daikin 1.5T AC"
-                      className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-blue-500 ${
-                        isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
-                      }`}
-                    />
-                  </div>
+                  {(() => {
+                    const sTitle = (selectedService?.title || '').toLowerCase();
+                    const sCat = (selectedService?.category || '').toLowerCase();
+                    const isVehicle = sCat.includes('driver') || sCat.includes('mechanic') || sCat.includes('vehicle') || sTitle.includes('car') || sTitle.includes('driver') || sTitle.includes('breakdown') || sTitle.includes('bike');
+                    const isAppliance = sCat.includes('appliance') || sTitle.includes('ac') || sTitle.includes('washing') || sTitle.includes('fridge') || sTitle.includes('cooler');
+                    const isElectricalOrPlumbing = sCat.includes('electrical') || sCat.includes('plumbing') || sTitle.includes('wire') || sTitle.includes('pipe') || sTitle.includes('pump');
+
+                    return (
+                      <div>
+                        <label className="block text-xs font-black uppercase tracking-wider mb-1.5 text-slate-400">
+                          {isVehicle
+                            ? '🚗 Vehicle Details & Reg. No. (Optional)'
+                            : isAppliance
+                            ? '⚙️ Appliance Brand & Model (Optional)'
+                            : isElectricalOrPlumbing
+                            ? '🔧 Problem Area / Equipment Notes (Optional)'
+                            : '🏠 Specific Task / Premises Notes (Optional)'}
+                        </label>
+                        <input
+                          type="text"
+                          value={vehicleDetails}
+                          onChange={(e) => setVehicleDetails(e.target.value)}
+                          placeholder={
+                            isVehicle
+                              ? 'e.g. Maruti Swift (KL-07-CC-4091)'
+                              : isAppliance
+                              ? 'e.g. Daikin 1.5 Ton Split AC / IFB Front Load'
+                              : isElectricalOrPlumbing
+                              ? 'e.g. Master bedroom MCB trip / 1HP Kirloskar Pump'
+                              : 'e.g. Living room switchboard / Terrace tile leakage'
+                          }
+                          className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-blue-500 font-bold ${
+                            isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+                          }`}
+                        />
+                      </div>
+                    );
+                  })()}
                 </div>
               )}
 

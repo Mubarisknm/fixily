@@ -528,27 +528,6 @@ export const SERVICES = [
     isNewService: true
   },
   {
-    id: 'coconut-tree-climber',
-    phase: 1,
-    category: 'Agro & Palm Tree Care',
-    title: 'Trained Coconut Tree Climber & Palm Trimming',
-    tagline: 'Certified climbers with safety harness for coconut harvesting & crown cleaning.',
-    badge: 'Kerala Essential',
-    icon: 'Sparkles',
-    imageUrl: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=600&auto=format&fit=crop&q=80',
-    eta: '30 mins',
-    isInstant: true,
-    priceType: 'tiered',
-    tiers: [
-      { name: '1 - 3 Coconut Trees (Harvest & Frond Clean)', price: 299, duration: '45 mins' },
-      { name: '4 - 8 Coconut Trees (Harvest & Crown Clean)', price: 599, duration: '90 mins' },
-      { name: '10+ Trees Full Compound Harvesting', price: 999, duration: '2.5 hrs' }
-    ],
-    features: ['Mechanical safety harness device (zero fall risk)', 'Dead frond removal & crown beetle inspection', 'Tender coconut harvesting & branch lowering'],
-    rating: 4.9,
-    reviewsCount: 34
-  },
-  {
     id: 'monsoon-roof-waterproofing',
     phase: 1,
     category: 'Monsoon & Roof Protection',
@@ -768,7 +747,7 @@ export const MOCK_PARTNERS = [
     id: 'p-107',
     name: 'Manoj Soman',
     phone: '+91 98471 22334',
-    role: 'Trained Coconut Tree Climber & Monsoon Roofer',
+    role: 'Monsoon Roofer & Waterproofing Specialist',
     rating: 4.9,
     jobsCompleted: 48,
     reviewsCount: 28,
@@ -795,8 +774,8 @@ export const MOCK_PARTNERS = [
         id: 'rev-8',
         customerName: 'K. R. Nambiar',
         rating: 5,
-        comment: 'Manoj cleaned 6 coconut trees and fixed our roof tiles before the monsoon rain. Very skilled and safe work!',
-        serviceTitle: 'Trained Coconut Tree Climber & Palm Trimming',
+        comment: 'Manoj fixed our damaged roof tiles and sealed all leakages before the heavy rains. Very skilled and safe work!',
+        serviceTitle: 'Monsoon Roof Leakage Proofing & Tarpaulin Sheet Fixing',
         createdAt: '2026-10-04'
       }
     ],
@@ -813,7 +792,7 @@ export const MOCK_PARTNERS = [
       damageLiabilityAgreed: true,
       liabilityAgreementTimestamp: '2026-04-10T10:00:00Z'
     },
-    vehicle: 'Tree Harness Safety Gear & Tarpaulin Toolbag',
+    vehicle: 'Roof Safety Harness & Tarpaulin Toolbag',
     walletBalance: 3200,
     escrowBalance: 400,
     withdrawableBalance: 2800,
@@ -823,14 +802,14 @@ export const MOCK_PARTNERS = [
     customProfessions: [
       {
         id: 'cp-107',
-        title: 'Trained Coconut Tree Climber & Palm Trimming',
-        category: 'Agro & Palm Tree Care',
-        tagline: 'Mechanical safety harness climber for coconut harvesting and frond trimming.',
+        title: 'Roof Tile Alignment & Waterproofing Sealing',
+        category: 'Monsoon & Roof Protection',
+        tagline: 'Emergency roof tarpaulin fixing and sealant application.',
         priceType: 'tiered',
-        price: 299,
+        price: 349,
         eta: '30 mins',
-        features: ['Zero fall risk harness', 'Crown beetle cleaning', 'Tender coconut harvesting'],
-        equipment: 'Mechanical tree climber safety device, curved sickle, rope pulley',
+        features: ['Roof crack silicone sealing', 'Tile realignment', 'Gutter cleaning'],
+        equipment: 'Ladder, safety harness, waterproof silicone sealant gun',
         isActive: true
       }
     ]

@@ -4,10 +4,13 @@ export type UserRole = 'customer' | 'partner' | 'admin';
 
 export interface UserSession {
   id: string;
-  phone: string;
+  phone?: string;
+  email?: string;
   name: string;
   role: UserRole;
   isVerified: boolean;
+  avatar?: string;
+  authProvider?: 'google' | 'email' | 'phone';
   partnerId?: string;
 }
 

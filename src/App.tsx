@@ -380,6 +380,8 @@ export function App() {
                   setIsEmergencyModalOpen={setIsEmergencyModalOpen}
                   language={language}
                   onOpenCancellationPolicy={() => setCancellationPolicyOpen(true)}
+                  currentUser={currentUser}
+                  onOpenAuthModal={handleOpenAuthModal}
                 />
               )}
 
