@@ -25,7 +25,7 @@ import {
 import { KochiLocation, ThemeMode, AppLanguage, UserSession, UserRole } from '../types';
 import { useTranslation } from '../utils/translations';
 import { KeralaMapLocationModal } from './KeralaMapLocationModal';
-import { FyksoLogo } from './FyksoLogo';
+import { FykziLogo } from './FykziLogo';
 
 interface HeaderProps {
   activeTab: 'customer' | 'partner' | 'admin';
@@ -156,9 +156,9 @@ export const Header: React.FC<HeaderProps> = ({
             <div
               onClick={() => setActiveTab('customer')}
               className="cursor-pointer group shrink-0"
-              title="Fykso Kerala — Home"
+              title="Fykzi Kerala — Home"
             >
-              <FyksoLogo isDark={isDark} size="md" variant="full" />
+              <FykziLogo isDark={isDark} size="md" variant="full" />
             </div>
 
             {/* Active District / Location Selector */}

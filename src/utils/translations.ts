@@ -1,4 +1,4 @@
-// Malayalam (മലയാളം) & English Translations for Fykso Kerala
+// Malayalam (മലയാളം) & English Translations for Fykzi Kerala
 import { AppLanguage } from '../types';
 
 export const translations: Record<AppLanguage, Record<string, string>> = {
@@ -22,7 +22,7 @@ export const translations: Record<AppLanguage, Record<string, string>> = {
     pest_control: 'Pest Control',
     transparent_pricing: 'Transparent Upfront Pricing',
     no_hidden_charges: '₹0 Hidden Charges Guaranteed',
-    pcc_verified: 'PCC Document Checked by Fykso',
+    pcc_verified: 'PCC Document Checked by Fykzi',
     damage_guarantee: '100% Damage Liability Guarantee',
     pay_after_service: 'Pay After Service (Cash / UPI)',
     instant_upi: 'Instant UPI (GPay / PhonePe / Paytm)',
@@ -44,7 +44,7 @@ export const translations: Record<AppLanguage, Record<string, string>> = {
     status_cancelled: 'Cancelled',
     cancellation_policy: 'Cancellation & Refund Policy',
     free_cancellation_notice: '100% Free cancellation before provider dispatch. Instant refund to source.',
-    area_not_serviced: 'Fykso is not available in this district/town yet. We are expanding across Kerala soon!',
+    area_not_serviced: 'Fykzi is not available in this district/town yet. We are expanding across Kerala soon!',
     notify_me_whatsapp: 'Notify Me on WhatsApp When Launched',
     completion_otp_label: 'Customer Work Completion OTP',
     completion_otp_desc: 'Share this 4-digit OTP with your service pro ONLY after you inspect and are 100% satisfied with the work.',
@@ -121,7 +121,7 @@ export const translations: Record<AppLanguage, Record<string, string>> = {
     status_cancelled: 'റദ്ദാക്കി',
     cancellation_policy: 'റദ്ദാക്കലും റീഫണ്ട് വ്യവസ്ഥകളും',
     free_cancellation_notice: 'യാത്ര തിരിക്കുന്നതിന് മുൻപ് 100% സൗജന്യമായി റദ്ദാക്കാം. തുക ഉടനടി തിരികെ ലഭിക്കും.',
-    area_not_serviced: 'നിങ്ങളുടെ പ്രദേശത്ത് ഫിക്സോ സർവീസ് ഉടൻ ലഭ്യമാകും!',
+    area_not_serviced: 'നിങ്ങളുടെ പ്രദേശത്ത് ഫിക്സി സർവീസ് ഉടൻ ലഭ്യമാകും!',
     notify_me_whatsapp: 'സർവീസ് ആരംഭിക്കുമ്പോൾ WhatsApp-ൽ അറിയിക്കുക',
     completion_otp_label: 'ജോലി പൂർത്തീകരണ ഒ.ടി.പി (Completion OTP)',
     completion_otp_desc: 'ജോലി പൂർണ്ണമായി പരിശോധിച്ചു തൃപ്തിയായ ശേഷം മാത്രം ഈ 4 അക്ക ഒ.ടി.പി തൊഴിലാളിക്ക് നൽകുക.',

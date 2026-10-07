@@ -107,7 +107,7 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
   const [dlNumber, setDlNumber] = useState<string>('KL-07-2016-0038491');
 
   // Step 3: Payout Banking & Activation
-  const [upiId, setUpiId] = useState<string>('rahul.fykso@okicici');
+  const [upiId, setUpiId] = useState<string>('rahul.fykzi@okicici');
   const [agreeAllowancePolicy, setAgreeAllowancePolicy] = useState<boolean>(true);
   const [agreeDamageLiability, setAgreeDamageLiability] = useState<boolean>(true);
 
@@ -165,7 +165,7 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
     }
 
     if (!agreeDamageLiability) {
-      alert('You must accept the Damage Responsibility & Service Liability Agreement to activate your Fykso partner profile');
+      alert('You must accept the Damage Responsibility & Service Liability Agreement to activate your Fykzi partner profile');
       setStep(3);
       return;
     }
@@ -228,7 +228,7 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
                 Partner KYC & Profile Setup
               </h2>
               <p className="text-xs text-blue-100 font-medium">
-                Register as a certified Fykso service partner with instant photo upload, custom trade, & Kerala Police Thuna PCC.
+                Register as a certified Fykzi service partner with instant photo upload, custom trade, & Kerala Police Thuna PCC.
               </p>
             </div>
           </div>
@@ -626,7 +626,7 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
                 </div>
               </div>
 
-              {/* 2. Police Clearance Certificate (PCC) checked by Fykso */}
+              {/* 2. Police Clearance Certificate (PCC) checked by Fykzi */}
               <div className={`p-4 rounded-2xl border space-y-3 ${
                 isDark ? 'bg-slate-950 border-emerald-900/40' : 'bg-emerald-50/50 border-emerald-200'
               }`}>
@@ -637,13 +637,13 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
                     </div>
                     <div>
                       <div className="flex items-center space-x-1.5">
-                        <h4 className="text-xs font-black">2. Police Clearance Certificate (PCC) - Checked by Fykso</h4>
+                        <h4 className="text-xs font-black">2. Police Clearance Certificate (PCC) - Checked by Fykzi</h4>
                         <span className="text-[9px] bg-emerald-600 text-white px-1.5 py-0.2 rounded font-black">
                           Trust Check
                         </span>
                       </div>
                       <p className="text-[10px] text-slate-400">
-                        PCC document independently reviewed by Fykso. Fykso is a private platform, not an official police partner.
+                        PCC document independently reviewed by Fykzi. Fykzi is a private platform, not an official police partner.
                       </p>
                     </div>
                   </div>
@@ -802,16 +802,16 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
                   </p>
                   <ul className="list-disc list-inside space-y-1 text-[10.5px] leading-relaxed">
                     <li>
-                      <strong>100% Operational Risk Assumption:</strong> As an independent freelancer/partner on Fykso, I assume full operational responsibility and care for the customer's property, appliances, materials, and vehicles during service delivery.
+                      <strong>100% Operational Risk Assumption:</strong> As an independent freelancer/partner on Fykzi, I assume full operational responsibility and care for the customer's property, appliances, materials, and vehicles during service delivery.
                     </li>
                     <li>
                       <strong>Damage Rectification:</strong> In the event of any accidental damage, leakage, breakage, or operational failure caused by negligence or improper workmanship, I agree to rectify the issue or bear the direct cost of repair/replacement.
                     </li>
                     <li>
-                      <strong>Fykso Guarantee Deductions:</strong> If Fykso steps in to compensate the customer under the Fykso Trust Guarantee, I authorize the settlement of validated damages against my platform wallet and future payouts.
+                      <strong>Fykzi Guarantee Deductions:</strong> If Fykzi steps in to compensate the customer under the Fykzi Trust Guarantee, I authorize the settlement of validated damages against my platform wallet and future payouts.
                     </li>
                     <li>
-                      <strong>Platform Integrity:</strong> Accepting offline side-work without Fykso safety logging automatically voids partner insurance coverage and verified PCC accreditation.
+                      <strong>Platform Integrity:</strong> Accepting offline side-work without Fykzi safety logging automatically voids partner insurance coverage and verified PCC accreditation.
                     </li>
                   </ul>
                 </div>
@@ -826,7 +826,7 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
                   />
                   <div className="text-xs font-bold">
                     <span className={agreeDamageLiability ? 'text-emerald-400' : 'text-red-400'}>
-                      I acknowledge, agree, and legally accept full damage responsibility and product/service risk as a Fykso Partner *
+                      I acknowledge, agree, and legally accept full damage responsibility and product/service risk as a Fykzi Partner *
                     </span>
                     <p className={`text-[10px] font-normal mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                       Your acceptance timestamp and verified Govt ID ({govtIdType}: {govtIdNumber}) will be recorded upon activation.
@@ -847,9 +847,9 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
                     className="mt-0.5 rounded text-amber-500 focus:ring-amber-400 w-4 h-4 cursor-pointer"
                   />
                   <div className="text-xs">
-                    <span className="font-extrabold text-indigo-400">Fykso Partner Fair Pay Guarantee:</span>
+                    <span className="font-extrabold text-indigo-400">Fykzi Partner Fair Pay Guarantee:</span>
                     <p className={`text-[11px] mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                      I agree to the Fykso code of conduct. I understand that <strong>100% of customer return bus fares and meal batta</strong> are paid directly to me with zero platform deductions.
+                      I agree to the Fykzi code of conduct. I understand that <strong>100% of customer return bus fares and meal batta</strong> are paid directly to me with zero platform deductions.
                     </p>
                   </div>
                 </label>

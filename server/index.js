@@ -14,7 +14,7 @@ app.use(express.json());
 
 // Health check endpoint for Render & Cloudflare uptime monitoring
 app.get('/api/health', (req, res) => {
-  res.json({ success: true, status: 'Fykso Backend Active', timestamp: new Date().toISOString() });
+  res.json({ success: true, status: 'Fykzi Backend Active', timestamp: new Date().toISOString() });
 });
 
 // State holders
@@ -168,7 +168,7 @@ app.post('/api/partners', (req, res) => {
 
   const newPartner = {
     id: `p-${Date.now().toString().slice(-4)}`,
-    name: name || 'Fykso Verified Partner',
+    name: name || 'Fykzi Verified Partner',
     phone: phone || '+91 98470 00000',
     role: role || 'Freelance Service Partner',
     rating: 5.0,
@@ -526,5 +526,5 @@ app.get('/api/stats', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Fykso Backend API running on port ${PORT}`);
+  console.log(`Fykzi Backend API running on port ${PORT}`);
 });

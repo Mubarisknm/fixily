@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ShieldCheck, Phone, Mail, MapPin, MessageSquare, Lock, Heart, FileText, CheckCircle2, X } from 'lucide-react';
 import { ThemeMode, AppLanguage } from '../types';
 import { useTranslation } from '../utils/translations';
-import { FyksoLogo } from './FyksoLogo';
+import { FykziLogo } from './FykziLogo';
 
 interface LegalFooterProps {
   theme: ThemeMode;
@@ -36,9 +36,9 @@ export const LegalFooter: React.FC<LegalFooterProps> = ({
             
             {/* Col 1: Brand & Kerala Trust */}
             <div className="space-y-3">
-              <FyksoLogo isDark={isDark} size="md" variant="full" />
+              <FykziLogo isDark={isDark} size="md" variant="full" />
               <p className="text-xs leading-relaxed">
-                Kerala's premier doorstep service platform. Certified freelance specialists with police clearance (PCC) documents checked by Fykso and 100% damage liability guarantee.
+                Kerala's premier doorstep service platform. Certified freelance specialists with police clearance (PCC) documents checked by Fykzi and 100% damage liability guarantee.
               </p>
               <div className="flex items-center space-x-2 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
                 <ShieldCheck className="w-4 h-4" />
@@ -111,7 +111,7 @@ export const LegalFooter: React.FC<LegalFooterProps> = ({
                 </div>
                 <div className="flex items-center space-x-2">
                   <Mail className="w-4 h-4 text-blue-600 shrink-0" />
-                  <span>grievance@fykso.in (Grievance Officer: Deepa Nair)</span>
+                  <span>grievance@fykzi.in (Grievance Officer: Deepa Nair)</span>
                 </div>
               </div>
             </div>
@@ -147,7 +147,7 @@ export const LegalFooter: React.FC<LegalFooterProps> = ({
           {/* Bottom Bar */}
           <div className="pt-8 border-t border-slate-200 dark:border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
             <div className="text-center sm:text-left">
-              © {new Date().getFullYear()} Fykso Technologies Pvt Ltd. All rights reserved. • Built for Kerala.
+              © {new Date().getFullYear()} Fykzi Technologies Pvt Ltd. All rights reserved. • Built for Kerala.
             </div>
 
             <div className="flex items-center space-x-4 text-[11px]">
@@ -169,7 +169,7 @@ export const LegalFooter: React.FC<LegalFooterProps> = ({
             isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
           }`}>
             <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
-              <h3 className="font-black text-lg">Fykso Privacy Policy &amp; DPDP Act Compliance</h3>
+              <h3 className="font-black text-lg">Fykzi Privacy Policy &amp; DPDP Act Compliance</h3>
               <button
                 onClick={() => setActiveModal(null)}
                 className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -181,12 +181,12 @@ export const LegalFooter: React.FC<LegalFooterProps> = ({
             <div className="mt-4 space-y-3 text-xs leading-relaxed text-slate-300 dark:text-slate-300">
               <h4 className="font-bold text-white text-sm">1. Digital Personal Data Protection (DPDP) Act 2023</h4>
               <p>
-                Fykso strictly operates as a Data Fiduciary under India's DPDP Act 2023. We collect only minimal customer data required to dispatch and complete doorstep services.
+                Fykzi strictly operates as a Data Fiduciary under India's DPDP Act 2023. We collect only minimal customer data required to dispatch and complete doorstep services.
               </p>
 
               <h4 className="font-bold text-white text-sm">2. Mandatory Aadhaar Masking</h4>
               <p>
-                In compliance with UIDAI regulations and the DPDP Act, Fykso never stores raw Aadhaar numbers. All partner Aadhaar documents are masked (showing only the last 4 digits: e.g. •••• •••• 9012) and stored in encrypted vaults.
+                In compliance with UIDAI regulations and the DPDP Act, Fykzi never stores raw Aadhaar numbers. All partner Aadhaar documents are masked (showing only the last 4 digits: e.g. •••• •••• 9012) and stored in encrypted vaults.
               </p>
 
               <h4 className="font-bold text-white text-sm">3. Customer Privacy &amp; Anti-Burglary Protection</h4>
@@ -196,7 +196,7 @@ export const LegalFooter: React.FC<LegalFooterProps> = ({
 
               <h4 className="font-bold text-white text-sm">4. Masked Calling &amp; Data Deletion</h4>
               <p>
-                Phone numbers are connected through masked relays. You may request permanent deletion of your account and service records at any time by emailing grievance@fykso.in.
+                Phone numbers are connected through masked relays. You may request permanent deletion of your account and service records at any time by emailing grievance@fykzi.in.
               </p>
             </div>
 
@@ -229,12 +229,12 @@ export const LegalFooter: React.FC<LegalFooterProps> = ({
             <div className="mt-4 space-y-3 text-xs leading-relaxed text-slate-300 dark:text-slate-300">
               <h4 className="font-bold text-white text-sm">1. Service Provider Relationship</h4>
               <p>
-                Fykso connects independent freelance service professionals with customers across Kerala. All registered professionals undergo Police Clearance Certificate (PCC) verification checks and skill validation.
+                Fykzi connects independent freelance service professionals with customers across Kerala. All registered professionals undergo Police Clearance Certificate (PCC) verification checks and skill validation.
               </p>
 
               <h4 className="font-bold text-white text-sm">2. 100% Damage Liability Guarantee</h4>
               <p>
-                All providers contractually agree to full liability for accidental damage caused during service execution. Fykso holds partner earnings in a 24-hour safety escrow and provides damage claims coverage up to ₹10,000.
+                All providers contractually agree to full liability for accidental damage caused during service execution. Fykzi holds partner earnings in a 24-hour safety escrow and provides damage claims coverage up to ₹10,000.
               </p>
 
               <h4 className="font-bold text-white text-sm">3. Customer Completion OTP Protection</h4>

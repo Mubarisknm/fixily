@@ -215,7 +215,7 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
           <div style="margin-top: 6px; display: inline-block; padding: 2px 6px; border-radius: 9999px; font-size: 10px; font-weight: 700; ${
             loc.isServiced !== false ? 'background: #dcfce7; color: #166534;' : 'background: #fef3c7; color: #92400e;'
           }">
-            ${loc.isServiced !== false ? '● Active Fykso Hub' : '○ Launching Soon'}
+            ${loc.isServiced !== false ? '● Active Fykzi Hub' : '○ Launching Soon'}
           </div>
         </div>
       `;
@@ -351,7 +351,7 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
     }
   };
 
-  // Confirm and set location for the entire Fykso app
+  // Confirm and set location for the entire Fykzi app
   const handleConfirmLocation = () => {
     const finalLocation: KochiLocation = {
       ...pinnedLocation,
@@ -364,10 +364,10 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
 
     // Save to localStorage so custom remote area persists
     try {
-      const stored = localStorage.getItem('fykso_custom_locations');
+      const stored = localStorage.getItem('fykzi_custom_locations') || localStorage.getItem('fykso_custom_locations');
       const existing = stored ? JSON.parse(stored) : [];
       if (!existing.some((l: KochiLocation) => l.id === finalLocation.id)) {
-        localStorage.setItem('fykso_custom_locations', JSON.stringify([finalLocation, ...existing]));
+        localStorage.setItem('fykzi_custom_locations', JSON.stringify([finalLocation, ...existing]));
       }
     } catch (e) {
       // LocalStorage fallback
@@ -713,8 +713,8 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
                   <Sparkles className="w-4 h-4" />
                   <span>
                     {language === 'ml'
-                      ? 'നിങ്ങളുടെ ഗ്രാമമോ എസ്റ്റേറ്റോ ഫിക്സോയിൽ ചേർക്കുക'
-                      : 'Add Your Village, Estate or Hamlet to Fykso Kerala'}
+                      ? 'നിങ്ങളുടെ ഗ്രാമമോ എസ്റ്റേറ്റോ ഫിക്സിയിൽ ചേർക്കുക'
+                      : 'Add Your Village, Estate or Hamlet to Fykzi Kerala'}
                   </span>
                 </div>
 
@@ -1029,8 +1029,8 @@ export const KeralaMapLocationModal: React.FC<KeralaMapLocationModalProps> = ({
             <Info className="w-3.5 h-3.5 text-blue-500 shrink-0" />
             <span>
               {language === 'ml'
-                ? 'ഫിക്സോ കേരളത്തിലെ 14 ജില്ലകളിലെ ഗ്രാമങ്ങളിലും സേവനം എത്തിക്കുന്നു'
-                : 'Fykso delivers doorstep verified services across all 14 districts & villages'}
+                ? 'ഫിക്സി കേരളത്തിലെ 14 ജില്ലകളിലെ ഗ്രാമങ്ങളിലും സേവനം എത്തിക്കുന്നു'
+                : 'Fykzi delivers doorstep verified services across all 14 districts & villages'}
             </span>
           </div>
 

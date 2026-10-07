@@ -203,7 +203,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                 </div>
                 <div>
                   <h3 className="font-extrabold text-sm">
-                    {currentUser ? currentUser.name : 'Fykso Kerala User'}
+                    {currentUser ? currentUser.name : 'Fykzi Kerala User'}
                   </h3>
                   <p className="text-xs text-slate-400">
                     {currentUser ? currentUser.phone : 'Doorstep Verified Services'}
@@ -425,7 +425,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             {/* Help & Policies Links */}
             <div className="pt-4 border-t border-slate-200 dark:border-slate-800 mt-4 space-y-2">
               <a
-                href="https://wa.me/919895000112?text=Hello%20Fykso%20Support,%20I%20am%20using%20the%20mobile%20app."
+                href="https://wa.me/919895000112?text=Hello%20Fykzi%20Support,%20I%20am%20using%20the%20mobile%20app."
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full p-2.5 rounded-xl bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-600 dark:text-emerald-400 text-xs font-bold flex items-center justify-between"

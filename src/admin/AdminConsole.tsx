@@ -77,7 +77,7 @@ export const AdminConsole: React.FC<AdminConsoleProps> = ({
             </span>
             <span className="text-xs text-slate-400">Multi-City Operations</span>
           </div>
-          <h1 className="text-2xl font-black text-white mt-1">Fykso Admin Dispatch & Compliance Hub</h1>
+          <h1 className="text-2xl font-black text-white mt-1">Fykzi Admin Dispatch & Compliance Hub</h1>
           <p className="text-xs text-slate-300 mt-0.5">
             Real-time provider dispatch radar, Kerala Police Thuna PCC repository, & unit economics audit.
           </p>

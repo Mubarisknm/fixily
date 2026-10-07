@@ -1,5 +1,5 @@
 -- ==========================================================
--- Fykso On-Demand Platform - Supabase PostgreSQL Schema
+-- Fykzi On-Demand Platform - Supabase PostgreSQL Schema
 -- Run this script in your Supabase SQL Editor ($0 Free Tier)
 -- ==========================================================
 

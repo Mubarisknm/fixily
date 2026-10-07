@@ -137,7 +137,7 @@ const getFallbackImage = (title: string) => {
     <circle cx="300" cy="170" r="65" fill="rgba(255,255,255,0.12)"/>
     <text x="300" y="190" font-size="65" text-anchor="middle" dominant-baseline="middle">${iconText}</text>
     <text x="300" y="290" font-size="22" font-family="sans-serif" font-weight="bold" fill="#ffffff" text-anchor="middle">${safeTitle}</text>
-    <text x="300" y="325" font-size="13" font-family="sans-serif" fill="#a78bfa" text-anchor="middle">Fykso Verified Service • Kerala</text>
+    <text x="300" y="325" font-size="13" font-family="sans-serif" fill="#a78bfa" text-anchor="middle">Fykzi Verified Service • Kerala</text>
   </svg>`;
 
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
@@ -719,7 +719,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       setIsCancelling(false);
       setCancellingJob(null);
       onRefreshJobs();
-      alert(`✅ Order #${cancellingJob.id} cancelled. 100% refund applied according to Fykso Kerala policy.`);
+      alert(`✅ Order #${cancellingJob.id} cancelled. 100% refund applied according to Fykzi Kerala policy.`);
     } catch (err) {
       setIsCancelling(false);
       alert('Failed to cancel job. Please try again.');
@@ -805,7 +805,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
               </div>
             )}
             <a
-              href={`https://wa.me/919895000112?text=Hello%20Fykso%20Support,%20is%20service%20available%20in%20${encodeURIComponent(selectedLocation.name)}?`}
+              href={`https://wa.me/919895000112?text=Hello%20Fykzi%20Support,%20is%20service%20available%20in%20${encodeURIComponent(selectedLocation.name)}?`}
               target="_blank"
               rel="noopener noreferrer"
               className="px-4 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-all flex items-center justify-center space-x-1 shrink-0"
@@ -1165,7 +1165,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                           <h4 className="text-xs font-black">{job.assignedPartnerName}</h4>
                           <span className="text-[10px] text-emerald-500 font-extrabold flex items-center space-x-1">
                             <ShieldCheck className="w-3 h-3" />
-                            <span>PCC Document Checked by Fykso</span>
+                            <span>PCC Document Checked by Fykzi</span>
                           </span>
                         </div>
                       </div>
@@ -1241,7 +1241,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                     </button>
 
                     <a
-                      href={`https://wa.me/919895000112?text=Hello%20Fykso%20Support,%20I%20am%20tracking%20Order%20%23${job.id}%20(${encodeURIComponent(job.serviceTitle)}).`}
+                      href={`https://wa.me/919895000112?text=Hello%20Fykzi%20Support,%20I%20am%20tracking%20Order%20%23${job.id}%20(${encodeURIComponent(job.serviceTitle)}).`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="ml-auto text-xs text-emerald-500 font-bold hover:underline flex items-center space-x-1"
@@ -1810,16 +1810,16 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
         )}
       </div>
 
-      {/* 6. Why Kochi Trusts Fykso (Trust & Assurance Section) */}
+      {/* 6. Why Kochi Trusts Fykzi (Trust & Assurance Section) */}
       <div className={`rounded-3xl p-6 sm:p-8 border shadow-sm transition-colors ${
         isDark ? 'bg-slate-900/60 border-slate-800' : 'bg-slate-50/80 border-slate-200'
       }`}>
         <div className="text-center max-w-xl mx-auto mb-6">
           <span className="text-xs font-extrabold text-blue-600 uppercase tracking-widest">
-            Fykso Guarantee
+            Fykzi Guarantee
           </span>
           <h3 className={`text-xl font-black mt-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>
-            Why Customers Trust Fykso at Their Doorstep
+            Why Customers Trust Fykzi at Their Doorstep
           </h3>
         </div>
 
@@ -1828,9 +1828,9 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             <div className="w-9 h-9 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center font-bold mb-2.5">
               <ShieldCheck className="w-5 h-5" />
             </div>
-            <h4 className="font-extrabold text-xs">PCC Checked by Fykso</h4>
+            <h4 className="font-extrabold text-xs">PCC Checked by Fykzi</h4>
             <p className="text-[11px] text-slate-400 mt-1">
-              Every driver and doorstep pro has their PCC independently checked by Fykso to confirm zero criminal background.
+              Every driver and doorstep pro has their PCC independently checked by Fykzi to confirm zero criminal background.
             </p>
           </div>
 
@@ -1878,7 +1878,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             }`}>
               <div>
                 <span className="text-[10px] font-black uppercase tracking-wider text-blue-600">
-                  Step {bookingStep} of 3 • Fykso Booking
+                  Step {bookingStep} of 3 • Fykzi Booking
                 </span>
                 <h3 className="text-base font-black">{selectedService.title}</h3>
               </div>
@@ -2809,11 +2809,11 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
 
       {/* 15. Floating 24/7 Kerala WhatsApp Helpline Widget */}
       <a
-        href="https://wa.me/919895000112?text=Hello%20Fykso%20Support,%20I%20am%20inquiring%20about%20doorstep%20services%20in%20Kerala."
+        href="https://wa.me/919895000112?text=Hello%20Fykzi%20Support,%20I%20am%20inquiring%20about%20doorstep%20services%20in%20Kerala."
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-40 bg-emerald-600 hover:bg-emerald-500 text-white p-3.5 sm:px-4 sm:py-3 rounded-full shadow-2xl flex items-center space-x-2 hover:scale-105 transition-all group cursor-pointer border border-emerald-400/40"
-        title="Fykso Kerala 24/7 WhatsApp Helpline"
+        title="Fykzi Kerala 24/7 WhatsApp Helpline"
       >
         <MessageSquare className="w-5 h-5 fill-current" />
         <span className="hidden sm:inline text-xs font-black">WhatsApp Help (+91 98950 00112)</span>

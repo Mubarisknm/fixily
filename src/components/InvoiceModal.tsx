@@ -31,7 +31,7 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({
   };
 
   const handleShareWhatsApp = () => {
-    const text = `*Fykso Kerala Service Invoice - ${invoiceNumber}*%0A*Service:* ${job.serviceTitle}%0A*Total Amount:* ₹${job.pricing.totalPaid}%0A*Status:* Completed & Verified%0A*Provider:* ${job.assignedPartnerName || 'Fykso Verified Pro'}%0A%0AThank you for choosing Fykso!`;
+    const text = `*Fykzi Kerala Service Invoice - ${invoiceNumber}*%0A*Service:* ${job.serviceTitle}%0A*Total Amount:* ₹${job.pricing.totalPaid}%0A*Status:* Completed & Verified%0A*Provider:* ${job.assignedPartnerName || 'Fykzi Verified Pro'}%0A%0AThank you for choosing Fykzi!`;
     window.open(`https://wa.me/?text=${text}`, '_blank');
   };
 
@@ -83,11 +83,11 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({
           <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
             <div>
               <div className="flex items-center space-x-1.5">
-                <span className="text-xl font-black text-blue-600">Fykso</span>
+                <span className="text-xl font-black text-blue-600">Fykzi</span>
                 <span className="text-xs font-extrabold uppercase text-slate-400">Kerala</span>
               </div>
               <p className="text-[11px] text-slate-400 mt-1">
-                Fykso On-Demand Technologies Pvt Ltd<br />
+                Fykzi On-Demand Technologies Pvt Ltd<br />
                 Carnival Infopark Phase II, Kakkanad<br />
                 Kochi, Kerala — 682030<br />
                 GSTIN: 32AABCF8912K1Z9
@@ -118,11 +118,11 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({
                 Service Professional
               </span>
               <div className="font-extrabold text-sm flex items-center space-x-1">
-                <span>{job.assignedPartnerName || 'Fykso Certified Freelance Pro'}</span>
+                <span>{job.assignedPartnerName || 'Fykzi Certified Freelance Pro'}</span>
                 <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
               </div>
               <div className="text-blue-600 dark:text-blue-400 font-semibold text-[11px] mt-0.5">
-                ✓ PCC Document Checked by Fykso
+                ✓ PCC Document Checked by Fykzi
               </div>
               <div className="text-slate-400 text-[11px] mt-0.5">
                 Completion OTP: <strong>Verified</strong>
@@ -194,7 +194,7 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({
               <span>Customer Satisfaction Confirmed • 100% Damage Liability Guaranteed</span>
             </div>
             <p>
-              This is a digitally generated tax invoice from Fykso Technologies Pvt Ltd. For dispute queries or warranty claims, contact grievance@fykso.in or call +91 484 290 1234.
+              This is a digitally generated tax invoice from Fykzi Technologies Pvt Ltd. For dispute queries or warranty claims, contact grievance@fykzi.in or call +91 484 290 1234.
             </p>
           </div>
 
