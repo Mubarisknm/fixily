@@ -117,15 +117,15 @@ const HERO_SHOWCASE_SLIDES: HeroShowcaseSlide[] = [
 
 const EXPERTISE_CATEGORIES = [
   { id: 'all', label: 'All Services', icon: '🌟', color: 'bg-blue-500/10 text-blue-500 border-blue-500/20' },
-  { id: 'Electrical Services', label: 'Electrician', icon: '⚡', color: 'bg-amber-500/10 text-amber-500 border-amber-500/20' },
-  { id: 'Plumbing & Water Management', label: 'Plumber', icon: '🚰', color: 'bg-sky-500/10 text-sky-500 border-sky-500/20' },
-  { id: 'Mechanic & Roadside Assistance', label: 'Mechanic', icon: '🔧', color: 'bg-orange-500/10 text-orange-500 border-orange-500/20' },
-  { id: 'Appliance Care & Servicing', label: 'AC Repair', icon: '❄️', color: 'bg-cyan-500/10 text-cyan-500 border-cyan-500/20' },
-  { id: 'Driver', label: 'Acting Driver', icon: '👨‍✈️', color: 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20' },
-  { id: 'Vehicle Care', label: 'Car Spa', icon: '🚗', color: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' },
-  { id: 'Deep Cleaning & Housekeeping', label: 'Deep Clean', icon: '🧹', color: 'bg-teal-500/10 text-teal-500 border-teal-500/20' },
-  { id: 'Carpenter & Locksmith', label: 'Carpenter', icon: '🔨', color: 'bg-amber-600/10 text-amber-600 border-amber-600/20' },
-  { id: 'Other Services', label: 'Other Works', icon: '🛠️', color: 'bg-purple-500/10 text-purple-500 border-purple-500/20' }
+  { id: 'Driver', label: 'Acting Driver', icon: '👨‍✈️', color: 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20', badgeTitle: 'TOP RATED DRIVERS & CHAUFFEURS' },
+  { id: 'Electrical Services', label: 'Electrician', icon: '⚡', color: 'bg-amber-500/10 text-amber-500 border-amber-500/20', badgeTitle: 'TOP RATED ELECTRICIANS & WIRING PROS' },
+  { id: 'Mechanic & Roadside Assistance', label: 'Mechanic', icon: '🔧', color: 'bg-orange-500/10 text-orange-500 border-orange-500/20', badgeTitle: 'TOP RATED MECHANICS & RESCUE PROS' },
+  { id: 'Appliance Care & Servicing', label: 'AC Repair', icon: '❄️', color: 'bg-cyan-500/10 text-cyan-500 border-cyan-500/20', badgeTitle: 'TOP RATED AC & APPLIANCE TECHNICIANS' },
+  { id: 'Plumbing & Water Management', label: 'Plumber', icon: '🚰', color: 'bg-sky-500/10 text-sky-500 border-sky-500/20', badgeTitle: 'TOP RATED PLUMBERS & PIPELINE EXPERTS' },
+  { id: 'Vehicle Care', label: 'Car Spa', icon: '🚗', color: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20', badgeTitle: 'TOP RATED CAR SPA & DETAILING SPECIALISTS' },
+  { id: 'Deep Cleaning & Housekeeping', label: 'Deep Clean', icon: '🧹', color: 'bg-teal-500/10 text-teal-500 border-teal-500/20', badgeTitle: 'TOP RATED HOUSEKEEPING & DEEP CLEANERS' },
+  { id: 'Carpenter & Locksmith', label: 'Carpenter', icon: '🔨', color: 'bg-amber-600/10 text-amber-600 border-amber-600/20', badgeTitle: 'TOP RATED CARPENTERS & LOCKSMITHS' },
+  { id: 'Other Services', label: 'Other Works', icon: '🛠️', color: 'bg-purple-500/10 text-purple-500 border-purple-500/20', badgeTitle: 'TOP RATED CUSTOM TRADE FREELANCERS' }
 ];
 
 export const CustomerApp: React.FC<CustomerAppProps> = ({
@@ -197,7 +197,6 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
   const [vehicleDetails, setVehicleDetails] = useState<string>('');
   const [paymentMethod, setPaymentMethod] = useState<'UPI' | 'COD'>('COD');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [activeTrackJob, setActiveTrackJob] = useState<BookingJob | null>(null);
 
   // Rescheduling & Cancellation Modals
   const [reschedulingJob, setReschedulingJob] = useState<BookingJob | null>(null);
@@ -237,15 +236,83 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
     return 'F';
   }, [currentUser]);
 
-  // Top Verified Pros ranking for the "• TOP TECHNICIANS •" row
-  const topTechniciansList = useMemo(() => {
+  // Trade-specific helper to match and rank top technicians for any category / search query
+  const getMatchedTechniciansForCategory = (category: string, query: string) => {
     if (!partners || partners.length === 0) return [];
-    return [...partners].sort((a, b) => {
+    const q = (query || '').toLowerCase().trim();
+    const cat = (category || '').toLowerCase().trim();
+
+    return partners.filter((p) => {
+      const role = (p.role || '').toLowerCase();
+      const name = (p.name || '').toLowerCase();
+
+      // If user typed a search query
+      if (q) {
+        if (name.includes(q) || role.includes(q)) return true;
+        if (q.includes('driver') && (role.includes('driver') || role.includes('chauffeur'))) return true;
+        if (q.includes('mechanic') && (role.includes('mechanic') || role.includes('breakdown'))) return true;
+        if (q.includes('electric') && (role.includes('electric') || role.includes('wiring'))) return true;
+        if (q.includes('plumb') && (role.includes('plumb') || role.includes('pipe'))) return true;
+        if (q.includes('ac') && (role.includes('ac') || role.includes('appliance'))) return true;
+        if (q.includes('clean') && (role.includes('clean') || role.includes('housekeep'))) return true;
+      }
+
+      // If category tab is selected
+      if (cat === 'driver' || cat.includes('driver')) {
+        return role.includes('driver') || role.includes('chauffeur');
+      }
+      if (cat.includes('mechanic') || cat.includes('roadside')) {
+        return role.includes('mechanic') || role.includes('breakdown') || role.includes('auto');
+      }
+      if (cat.includes('electric')) {
+        return role.includes('electrician') || role.includes('wiring') || role.includes('electrical');
+      }
+      if (cat.includes('plumb')) {
+        return role.includes('plumber') || role.includes('pipeline') || role.includes('plumbing');
+      }
+      if (cat.includes('appliance') || cat.includes('ac')) {
+        return role.includes('ac') || role.includes('appliance') || role.includes('technician');
+      }
+      if (cat.includes('vehicle') || cat.includes('car')) {
+        return role.includes('car') || role.includes('detailing') || role.includes('wash') || role.includes('mechanic');
+      }
+      if (cat.includes('clean')) {
+        return role.includes('clean') || role.includes('sanitiz') || role.includes('housekeep');
+      }
+      if (cat.includes('carpenter')) {
+        return role.includes('carpenter') || role.includes('wood') || role.includes('lock');
+      }
+      if (cat.includes('other')) {
+        return Boolean(p.customProfessions && p.customProfessions.length > 0) || role.includes('solar') || role.includes('garden') || role.includes('custom') || role.includes('freelance');
+      }
+
+      return false;
+    }).sort((a, b) => {
+      // Online first, then Top Rated Pro, then rating descending
       if (a.isOnline !== b.isOnline) return a.isOnline ? -1 : 1;
       if (a.isTopRated !== b.isTopRated) return a.isTopRated ? -1 : 1;
       return (b.rating || 4.5) - (a.rating || 4.5);
     });
-  }, [partners]);
+  };
+
+  // Trade-specific Top Rated Technicians when a particular category is active or search query is present
+  const activeTradeTechnicians = useMemo(() => {
+    // When on 'all' with no search query, return empty so main grid is minimal!
+    if (selectedCategoryTab === 'all' && !searchQuery.trim()) {
+      return [];
+    }
+    return getMatchedTechniciansForCategory(selectedCategoryTab, searchQuery);
+  }, [partners, selectedCategoryTab, searchQuery]);
+
+  // Active Category Banner Title
+  const activeCategoryBadgeTitle = useMemo(() => {
+    const matched = EXPERTISE_CATEGORIES.find(c => c.id === selectedCategoryTab);
+    if (matched && matched.badgeTitle) return matched.badgeTitle;
+    if (searchQuery.trim()) {
+      return `TOP RATED SPECIALISTS FOR "${searchQuery.toUpperCase()}"`;
+    }
+    return 'TOP RATED VERIFIED SPECIALISTS';
+  }, [selectedCategoryTab, searchQuery]);
 
   // Filter Services by Category and Search Query
   const filteredServices = useMemo(() => {
@@ -264,7 +331,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
     }
 
     if (selectedCategoryTab === 'all') {
-      return services.slice(0, 10);
+      return services.slice(0, 8);
     }
 
     if (selectedCategoryTab === 'Other Services') {
@@ -276,11 +343,23 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
     return services.filter(s => s.category === selectedCategoryTab);
   }, [services, selectedCategoryTab, searchQuery]);
 
+  // Matching technicians for the currently selected service (used inside Booking Modal)
+  const serviceMatchingTechnicians = useMemo(() => {
+    if (!selectedService) return [];
+    return getMatchedTechniciansForCategory(selectedService.category, selectedService.title);
+  }, [selectedService, partners]);
+
   const handleStartBooking = (service: ServiceItem) => {
     setSelectedService(service);
     setSelectedTier(service.tiers ? service.tiers[0].name : service.title);
     setBookingStep(1);
-    setPreferredPartner(null);
+    // Auto-select the top-rated specialist if direct booking or default to nearest
+    const matching = getMatchedTechniciansForCategory(service.category, service.title);
+    if (matching.length > 0 && matching[0].isOnline) {
+      setPreferredPartner(matching[0]);
+    } else {
+      setPreferredPartner(null);
+    }
   };
 
   const handleStartDirectBooking = (partner: GigPartner, service?: ServiceItem) => {
@@ -316,80 +395,18 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
         paymentMethod
       });
       setIsSubmitting(false);
-      const partnerNotice = preferredPartner ? ` Assigned directly to ${preferredPartner.name}!` : '';
+      const partnerNotice = preferredPartner ? ` Assigned directly to top-rated pro ${preferredPartner.name} (★ ${preferredPartner.rating})!` : '';
       setSelectedService(null);
       setPreferredPartner(null);
       onRefreshJobs();
-      alert(`🎉 Booking Confirmed!${partnerNotice} Scheduled for ${targetDate} (${finalSlot}). The freelancer will review and confirm availability.`);
+      alert(`🎉 Booking Confirmed!${partnerNotice} Scheduled for ${targetDate} (${finalSlot}). The specialist will confirm availability immediately.`);
     } catch (err) {
       setIsSubmitting(false);
       alert('Booking failed. Please try again.');
     }
   };
 
-  const handleFeedbackSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!feedbackJob) return;
-    if (!feedbackComment.trim()) {
-      alert('Please provide a brief review comment');
-      return;
-    }
-    setIsSubmittingFeedback(true);
-    try {
-      await api.submitJobFeedback(feedbackJob.id, {
-        rating: feedbackRating,
-        comment: feedbackComment.trim(),
-        serviceQualityRating: feedbackServiceQuality,
-        punctualityRating: feedbackPunctuality,
-        zeroDamageConfirmed: !feedbackDamageOccurred
-      });
-      setIsSubmittingFeedback(false);
-      setFeedbackJob(null);
-      setFeedbackComment('');
-      setFeedbackDamageOccurred(false);
-      setFeedbackDamageNotes('');
-      onRefreshJobs();
-      alert('⭐ Thank you! Your verified feedback has been submitted.');
-    } catch (err) {
-      setIsSubmittingFeedback(false);
-      alert('Failed to submit feedback.');
-    }
-  };
-
-  const handleRescheduleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!reschedulingJob) return;
-    setIsRescheduling(true);
-    try {
-      await api.rescheduleJob(reschedulingJob.id, newRescheduleDate, newRescheduleSlot);
-      setIsRescheduling(false);
-      setReschedulingJob(null);
-      onRefreshJobs();
-      alert(`✅ Job #${reschedulingJob.id} rescheduled to ${newRescheduleDate} (${newRescheduleSlot})!`);
-    } catch (err) {
-      setIsRescheduling(false);
-      alert('Failed to reschedule job.');
-    }
-  };
-
-  const handleCancelSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!cancellingJob) return;
-    setIsCancelling(true);
-    try {
-      await api.cancelJob(cancellingJob.id, cancellationReasonInput);
-      setIsCancelling(false);
-      setCancellingJob(null);
-      onRefreshJobs();
-      alert(`✅ Order #${cancellingJob.id} cancelled.`);
-    } catch (err) {
-      setIsCancelling(false);
-      alert('Failed to cancel job.');
-    }
-  };
-
   const myActiveJobs = jobs.filter(j => j.status !== 'CANCELLED');
-  const completedJobsNeedingFeedback = jobs.filter(j => j.status === 'COMPLETED' && !j.customerFeedback);
 
   return (
     <div className="space-y-6 pb-24 w-full max-w-full overflow-x-hidden">
@@ -464,7 +481,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder='Search "Electrician", "Mechanic", "Plumber", "AC Repair"...'
+          placeholder='Search "Driver", "Electrician", "Mechanic", "AC Repair"...'
           className="w-full bg-transparent text-xs sm:text-sm font-semibold focus:outline-none placeholder:text-slate-400"
         />
         {searchQuery && (
@@ -538,7 +555,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       {/* 3. HERO TEAM SHOWCASE CAROUSEL BANNER ("FYKZI. WE FIX, YOU RELAX")       */}
       {/* ========================================================================= */}
       <div className="relative overflow-hidden rounded-3xl border shadow-xl transition-all duration-500 bg-slate-950 border-slate-800 text-white">
-        <div className="relative h-44 sm:h-56 overflow-hidden">
+        <div className="relative h-44 sm:h-52 overflow-hidden">
           <img
             src={HERO_SHOWCASE_SLIDES[activeHeroSlide].imageUrl}
             alt={HERO_SHOWCASE_SLIDES[activeHeroSlide].title}
@@ -601,89 +618,17 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       </div>
 
       {/* ========================================================================= */}
-      {/* 4. "• TOP TECHNICIANS •" HORIZONTAL PRO CARDS (Matching Reference Style)   */}
+      {/* 4. "OUR EXPERTISE" CATEGORY GRID (Clean Minimalist Hub)                    */}
       {/* ========================================================================= */}
-      <div className="space-y-3">
-        {/* Pill Badge Header */}
-        <div className="flex justify-center">
-          <div className="inline-flex items-center space-x-2 px-4 py-1 rounded-full text-xs font-black tracking-wider uppercase bg-amber-500/15 text-amber-500 dark:text-amber-400 border border-amber-500/30 shadow-sm">
-            <span>• TOP TECHNICIANS •</span>
-          </div>
-        </div>
-
-        {/* Horizontal Slider of Pro Cards */}
-        <div className="flex items-center space-x-3 overflow-x-auto pb-2 scrollbar-none">
-          {topTechniciansList.map((pro, index) => {
-            const initial = pro.name.charAt(0).toUpperCase();
-            const colors = [
-              'bg-teal-600 text-white',
-              'bg-cyan-600 text-white',
-              'bg-blue-600 text-white',
-              'bg-indigo-600 text-white',
-              'bg-emerald-600 text-white'
-            ];
-            const avatarColor = colors[index % colors.length];
-
-            return (
-              <div
-                key={pro.id}
-                className={`w-40 sm:w-44 shrink-0 rounded-3xl p-4 border shadow-md flex flex-col justify-between transition-all card-3d-interactive ${
-                  isDark
-                    ? 'bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 border-slate-800'
-                    : 'bg-gradient-to-b from-slate-50 via-white to-slate-50 border-slate-200'
-                }`}
-              >
-                <div className="space-y-2.5">
-                  {/* Pro Circle Initial */}
-                  <div className={`w-11 h-11 rounded-2xl flex items-center justify-center font-black text-base shadow-md ${avatarColor}`}>
-                    {initial}
-                  </div>
-
-                  <div>
-                    <h4 className="font-black text-xs sm:text-sm text-slate-900 dark:text-white truncate">
-                      {pro.name}
-                    </h4>
-                    <span className="text-[11px] font-bold text-teal-600 dark:text-teal-400 block truncate lowercase">
-                      {pro.role.split(' ')[0]} {pro.role.split(' ')[1] || ''}
-                    </span>
-                  </div>
-
-                  {/* Status Indicator */}
-                  <div className="flex items-center space-x-1.5 text-[10px] text-slate-400 pt-1 border-t border-slate-200 dark:border-slate-800">
-                    <span className={`w-1.5 h-1.5 rounded-full ${pro.isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-slate-500'}`} />
-                    <span>{pro.isOnline ? 'Available Now' : 'Currently offline'}</span>
-                  </div>
-                </div>
-
-                {/* Bottom Action Button */}
-                <button
-                  onClick={() => handleStartDirectBooking(pro)}
-                  className={`mt-3 w-full py-2 rounded-xl text-[11px] font-black transition-all cursor-pointer ${
-                    pro.isOnline
-                      ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-md'
-                      : isDark ? 'bg-slate-800 text-slate-400 hover:text-white' : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
-                  }`}
-                >
-                  {pro.isOnline ? '⚡ Book Now' : '📅 Schedule'}
-                </button>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* ========================================================================= */}
-      {/* 5. "OUR EXPERTISE" CATEGORY GRID (Matching Reference Style)                */}
-      {/* ========================================================================= */}
-      <div id="our-expertise-section" className="space-y-3 pt-2">
+      <div id="our-expertise-section" className="space-y-3 pt-1">
         <div className="text-center">
-          <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">
+          <h3 className="text-xs sm:text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">
             OUR EXPERTISE
           </h3>
         </div>
 
         {/* Clean Minimalist Category Cards Grid */}
-        <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-10 gap-2">
+        <div className="grid grid-cols-5 sm:grid-cols-5 md:grid-cols-10 gap-2">
           {EXPERTISE_CATEGORIES.map((cat) => {
             const isSelected = selectedCategoryTab === cat.id;
             return (
@@ -710,16 +655,97 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       </div>
 
       {/* ========================================================================= */}
+      {/* 5. PARTICULAR TRADE TOP-RATED TECHNICIANS ROW (e.g. Drivers shown first)  */}
+      {/* ========================================================================= */}
+      {activeTradeTechnicians.length > 0 && (
+        <div className="space-y-3 pt-2 animate-in fade-in slide-in-from-top-2 duration-300">
+          
+          {/* Trade-Specific Pill Badge Header */}
+          <div className="flex items-center justify-between">
+            <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full text-xs font-black tracking-wider uppercase bg-amber-500/15 text-amber-500 dark:text-amber-400 border border-amber-500/30 shadow-sm">
+              <span>• {activeCategoryBadgeTitle} •</span>
+            </div>
+            <span className="text-[11px] font-bold text-slate-400">
+              {activeTradeTechnicians.length} Top Rated in Area
+            </span>
+          </div>
+
+          {/* Horizontal Slider of Top Rated Pros for THIS Selected Trade */}
+          <div className="flex items-center space-x-3 overflow-x-auto pb-2 scrollbar-none">
+            {activeTradeTechnicians.map((pro, index) => {
+              const initial = pro.name.charAt(0).toUpperCase();
+              const colors = [
+                'bg-blue-600 text-white',
+                'bg-indigo-600 text-white',
+                'bg-emerald-600 text-white',
+                'bg-teal-600 text-white',
+                'bg-cyan-600 text-white'
+              ];
+              const avatarColor = colors[index % colors.length];
+
+              return (
+                <div
+                  key={pro.id}
+                  className={`w-44 sm:w-48 shrink-0 rounded-3xl p-4 border shadow-md flex flex-col justify-between transition-all card-3d-interactive ${
+                    isDark
+                      ? 'bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 border-slate-800'
+                      : 'bg-gradient-to-b from-slate-50 via-white to-slate-50 border-slate-200'
+                  }`}
+                >
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      {/* Pro Circle Initial */}
+                      <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-base shadow-md ${avatarColor}`}>
+                        {initial}
+                      </div>
+
+                      <span className="bg-amber-400/20 text-amber-500 border border-amber-400/30 text-[10px] font-black px-2 py-0.5 rounded-full flex items-center space-x-1">
+                        <Star className="w-3 h-3 fill-amber-400" />
+                        <span>{pro.rating}</span>
+                      </span>
+                    </div>
+
+                    <div>
+                      <h4 className="font-black text-xs sm:text-sm text-slate-900 dark:text-white truncate">
+                        {pro.name}
+                      </h4>
+                      <span className="text-[11px] font-bold text-blue-500 dark:text-blue-400 block truncate lowercase">
+                        {pro.role}
+                      </span>
+                    </div>
+
+                    {/* Status Indicator */}
+                    <div className="flex items-center space-x-1.5 text-[10px] text-slate-400 pt-1 border-t border-slate-200 dark:border-slate-800">
+                      <span className={`w-1.5 h-1.5 rounded-full ${pro.isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-slate-500'}`} />
+                      <span>{pro.isOnline ? 'Available Now' : 'Currently offline'}</span>
+                    </div>
+                  </div>
+
+                  {/* Bottom Action Button */}
+                  <button
+                    onClick={() => handleStartDirectBooking(pro)}
+                    className="mt-3 w-full py-2 rounded-xl text-[11px] font-black bg-blue-600 hover:bg-blue-500 text-white shadow-md transition-all cursor-pointer flex items-center justify-center space-x-1"
+                  >
+                    <span>⚡ Book {pro.name.split(' ')[0]}</span>
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
       {/* 6. SERVICE CARDS LISTING FOR SELECTED EXPERTISE                            */}
       {/* ========================================================================= */}
-      <div className="space-y-3 pt-2">
+      <div className="space-y-3 pt-1">
         <div className="flex items-center justify-between">
           <h4 className="text-xs font-black uppercase tracking-wider text-slate-400">
             {selectedCategoryTab === 'all'
               ? 'Featured Doorstep Services'
-              : selectedCategoryTab}
+              : `${selectedCategoryTab} Services`}
           </h4>
-          <span className="text-xs font-bold text-slate-400">{filteredServices.length} Available</span>
+          <span className="text-xs font-bold text-slate-400">{filteredServices.length} Ready</span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
@@ -742,7 +768,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                     )}
                   </div>
                   <span className="text-xl p-2 bg-slate-800/10 rounded-2xl shrink-0">
-                    {service.icon === 'Wrench' ? '🔧' : service.icon === 'Droplet' ? '💧' : service.icon === 'ShieldCheck' ? '🛡️' : '⚡'}
+                    {service.icon === 'Wrench' ? '🔧' : service.icon === 'Droplet' ? '💧' : service.icon === 'ShieldCheck' ? '🛡️' : service.icon === 'Navigation' ? '👨‍✈️' : '⚡'}
                   </span>
                 </div>
 
@@ -798,6 +824,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                   <div>
                     <span className="text-[10px] font-black uppercase tracking-wider text-blue-500">Order #{job.id}</span>
                     <h4 className="text-sm font-black text-white">{job.serviceTitle}</h4>
+                    <p className="text-xs text-slate-400">Scheduled: {job.scheduledTime}</p>
                   </div>
                   <span className="text-xs font-black px-2.5 py-1 rounded-full bg-emerald-500 text-slate-950">
                     {job.status.replace('_', ' ')}
@@ -830,9 +857,9 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
           {[
             { step: '1', title: 'Choose Service', desc: 'Select from 10+ essential trades or type custom works.' },
-            { step: '2', title: 'AI Radar Match', desc: 'Nearby verified PCC specialist is assigned in 15 mins.' },
+            { step: '2', title: 'Top Pro Matched', desc: 'Top-rated verified specialist in your area is assigned in 15 mins.' },
             { step: '3', title: '4-Angle Pre-Check', desc: 'Photos taken before starting ensure 100% zero dispute.' },
-            { step: '4', title: '4-Digit OTP', desc: 'Pay and confirm completion only when satisfied.' }
+            { step: '4', title: '4-Digit OTP', desc: 'Pay and confirm completion only when fully satisfied.' }
           ].map((s) => (
             <div key={s.step} className="p-3 rounded-2xl bg-slate-950/40 border border-slate-800/80 space-y-1">
               <span className="text-[10px] font-black w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center">
@@ -846,7 +873,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       </div>
 
       {/* ========================================================================= */}
-      {/* 9. BOOKING MODAL                                                           */}
+      {/* 9. BOOKING MODAL (With Top-Rated Specialist Selection)                    */}
       {/* ========================================================================= */}
       {selectedService && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
@@ -860,12 +887,53 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                 <span className="text-[10px] font-bold text-blue-500 uppercase tracking-wider">Booking Service</span>
                 <h3 className="text-base font-black">{selectedService.title}</h3>
               </div>
-              <button onClick={() => setSelectedService(null)} className="text-slate-400 hover:text-white p-1">
+              <button onClick={() => setSelectedService(null)} className="text-slate-400 hover:text-white p-1 cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="p-5 space-y-4 max-h-[75vh] overflow-y-auto text-xs">
+              
+              {/* Top Rated Specialist Picker in Checkout */}
+              {serviceMatchingTechnicians.length > 0 && (
+                <div className="space-y-2">
+                  <label className="block text-[10px] font-black uppercase text-slate-300">
+                    Top Rated Specialists in your Area (Select Preferred Pro)
+                  </label>
+                  <div className="flex items-center space-x-2 overflow-x-auto pb-1.5 scrollbar-none">
+                    <button
+                      type="button"
+                      onClick={() => setPreferredPartner(null)}
+                      className={`p-2.5 rounded-2xl border text-xs font-bold shrink-0 transition-all cursor-pointer ${
+                        preferredPartner === null
+                          ? 'bg-blue-600 text-white border-blue-600 shadow'
+                          : isDark ? 'bg-slate-950 border-slate-800 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'
+                      }`}
+                    >
+                      ⚡ Auto-Assign Nearest Pro
+                    </button>
+                    {serviceMatchingTechnicians.map(p => (
+                      <button
+                        key={p.id}
+                        type="button"
+                        onClick={() => setPreferredPartner(p)}
+                        className={`p-2.5 rounded-2xl border text-xs font-bold shrink-0 flex items-center space-x-2 transition-all cursor-pointer ${
+                          preferredPartner?.id === p.id
+                            ? 'bg-blue-600 text-white border-blue-600 shadow'
+                            : isDark ? 'bg-slate-950 border-slate-800 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'
+                        }`}
+                      >
+                        <div className="w-5 h-5 rounded-full bg-emerald-500 text-slate-950 font-black text-[10px] flex items-center justify-center">
+                          {p.name.charAt(0)}
+                        </div>
+                        <span>{p.name.split(' ')[0]}</span>
+                        <span className="text-amber-400">★ {p.rating}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div>
                 <label className="block text-[10px] font-bold uppercase text-slate-400 mb-1">Your Full Name *</label>
                 <input
@@ -918,7 +986,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                 <button
                   type="button"
                   onClick={() => setSelectedService(null)}
-                  className="flex-1 py-3 rounded-xl border border-slate-700 text-slate-300 font-bold"
+                  className="flex-1 py-3 rounded-xl border border-slate-700 text-slate-300 font-bold cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -926,7 +994,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                   type="button"
                   onClick={handleConfirmBooking}
                   disabled={isSubmitting}
-                  className="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black shadow-lg"
+                  className="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black shadow-lg cursor-pointer"
                 >
                   {isSubmitting ? 'Confirming...' : 'Confirm Doorstep Booking'}
                 </button>
