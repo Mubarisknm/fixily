@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Car,
   ShieldCheck,
@@ -75,6 +75,182 @@ interface CustomerAppProps {
   currentUser?: UserSession | null;
   onOpenAuthModal?: (role: UserRole) => void;
 }
+
+interface HeroShowcaseSlide {
+  id: string;
+  title: string;
+  titleMl: string;
+  category: string;
+  tagline: string;
+  badge: string;
+  badgeColor: string;
+  rating: number;
+  reviewsCount: number;
+  startingPrice: number;
+  eta: string;
+  imageUrl: string;
+  accentGradient: string;
+  icon: string;
+}
+
+const HERO_SHOWCASE_SLIDES: HeroShowcaseSlide[] = [
+  {
+    id: 'hero-mechanic',
+    title: '24/7 Emergency Breakdown & Mobile Mechanic',
+    titleMl: '24/7 അടിയന്തര ബ്രേക്ക്ഡൗൺ മെക്കാനിക്',
+    category: 'Mechanic & Roadside Assistance',
+    tagline: 'Rapid 15-20 min onsite roadside rescue for 2-wheelers & 4-wheelers across Kerala.',
+    badge: '⚡ 20m Fast Response',
+    badgeColor: 'bg-amber-500 text-slate-950',
+    rating: 4.9,
+    reviewsCount: 384,
+    startingPrice: 349,
+    eta: '15-20 mins',
+    imageUrl: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=1200&q=80',
+    accentGradient: 'from-amber-500/30 via-orange-600/20 to-transparent',
+    icon: '🔧'
+  },
+  {
+    id: 'hero-car-spa',
+    title: 'Doorstep Eco Foam Spa & Car Detailing',
+    titleMl: 'വീട്ടുപടിക്കൽ കാർ വാഷ് & ഡീറ്റെയിലിംഗ്',
+    category: 'Vehicle Care',
+    tagline: 'High-pressure foam wash, interior vacuuming & premium ceramic wax gloss.',
+    badge: '✨ Eco High-Gloss',
+    badgeColor: 'bg-emerald-500 text-white',
+    rating: 4.8,
+    reviewsCount: 295,
+    startingPrice: 499,
+    eta: 'Today Slot',
+    imageUrl: 'https://images.unsplash.com/photo-1607860108855-64acf2078ed9?auto=format&fit=crop&w=1200&q=80',
+    accentGradient: 'from-emerald-500/30 via-teal-600/20 to-transparent',
+    icon: '🚗'
+  },
+  {
+    id: 'hero-driver',
+    title: 'Thuna Chauffeur & Acting Driver',
+    titleMl: 'തുണ ആക്ടിംഗ് ഡ്രൈവർ & കാബ് സർവീസ്',
+    category: 'Driver',
+    tagline: 'Police verified, background-checked professional drivers for hourly or outstation trips.',
+    badge: '🛡️ PCC Verified Pros',
+    badgeColor: 'bg-blue-600 text-white',
+    rating: 4.9,
+    reviewsCount: 420,
+    startingPrice: 399,
+    eta: '30 mins',
+    imageUrl: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&w=1200&q=80',
+    accentGradient: 'from-blue-600/30 via-indigo-600/20 to-transparent',
+    icon: '👨‍✈️'
+  },
+  {
+    id: 'hero-ac-jet',
+    title: 'AC Foam Jet Deep Clean & Gas Refill',
+    titleMl: 'എസി ഫോം ജെറ്റ് സർവീസിംഗ് & ഗ്യാസ് റീഫിൽ',
+    category: 'Appliance Care & Servicing',
+    tagline: '2x deeper cooling power wash with antimicrobial coil disinfection & leak testing.',
+    badge: '❄️ 2x Cooling Power',
+    badgeColor: 'bg-cyan-500 text-slate-950',
+    rating: 4.9,
+    reviewsCount: 512,
+    startingPrice: 499,
+    eta: '45 mins',
+    imageUrl: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=1200&q=80',
+    accentGradient: 'from-cyan-500/30 via-blue-600/20 to-transparent',
+    icon: '❄️'
+  },
+  {
+    id: 'hero-electrician',
+    title: 'Master Electrician & Power Diagnostics',
+    titleMl: 'മാസ്റ്റർ ഇലക്ട്രീഷ്യൻ & വയറിംഗ് സർവീസ്',
+    category: 'Electrical Services',
+    tagline: 'Short-circuit isolation, inverter setups, DB panel upgrades & heavy appliance wiring.',
+    badge: '⚡ Certified Techs',
+    badgeColor: 'bg-amber-500 text-slate-950',
+    rating: 4.8,
+    reviewsCount: 340,
+    startingPrice: 249,
+    eta: '25 mins',
+    imageUrl: 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=1200&q=80',
+    accentGradient: 'from-yellow-500/30 via-amber-600/20 to-transparent',
+    icon: '⚡'
+  },
+  {
+    id: 'hero-plumber',
+    title: 'Emergency Leakage & Pipe Maintenance',
+    titleMl: 'പ്ലംബിംഗ് & പൈപ്പ് ചോർച്ച പരിഹാരം',
+    category: 'Plumbing & Water Management',
+    tagline: 'Concealed pipe leak detection, pump installation, pressure testing & bathroom fixes.',
+    badge: '🚰 Fast Water Relief',
+    badgeColor: 'bg-sky-600 text-white',
+    rating: 4.8,
+    reviewsCount: 280,
+    startingPrice: 299,
+    eta: '30 mins',
+    imageUrl: 'https://images.unsplash.com/photo-1581094288338-2314dddb7ece?auto=format&fit=crop&w=1200&q=80',
+    accentGradient: 'from-sky-500/30 via-blue-600/20 to-transparent',
+    icon: '🔧'
+  },
+  {
+    id: 'hero-cleaning',
+    title: 'Full Home Deep Sanitization & Cleaning',
+    titleMl: 'ഫുൾ ഹോം ഡീപ് സാനിറ്റൈസേഷൻ & ക്ലീനിംഗ്',
+    category: 'Deep Cleaning & Housekeeping',
+    tagline: 'Hospital-grade surface sanitization, tile scrubbing, kitchen de-greasing and sofa wash.',
+    badge: '✨ 100% Germ Shield',
+    badgeColor: 'bg-teal-500 text-white',
+    rating: 4.9,
+    reviewsCount: 310,
+    startingPrice: 899,
+    eta: 'Today Slot',
+    imageUrl: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1200&q=80',
+    accentGradient: 'from-teal-500/30 via-emerald-600/20 to-transparent',
+    icon: '🧹'
+  }
+];
+
+// Visual icon & glowing gradient mapper for comfortable card rendering
+const getServiceVisualIcon = (service: ServiceItem) => {
+  const c = (service.category || '').toLowerCase();
+  const t = (service.title || '').toLowerCase();
+
+  if (c.includes('mechanic') || t.includes('mechanic') || t.includes('breakdown')) {
+    return { icon: '🔧', gradient: 'from-amber-500 to-orange-600', textGradient: 'text-amber-500' };
+  }
+  if (c.includes('vehicle') || c.includes('car') || t.includes('car wash') || t.includes('detailing')) {
+    return { icon: '🚗', gradient: 'from-emerald-500 to-teal-600', textGradient: 'text-emerald-500' };
+  }
+  if (c.includes('driver') || t.includes('driver') || t.includes('chauffeur') || t.includes('taxi')) {
+    return { icon: '👨‍✈️', gradient: 'from-blue-600 to-indigo-600', textGradient: 'text-blue-500' };
+  }
+  if (c.includes('electrical') || t.includes('electric') || t.includes('inverter') || t.includes('wiring')) {
+    return { icon: '⚡', gradient: 'from-amber-400 to-yellow-600', textGradient: 'text-amber-400' };
+  }
+  if (c.includes('plumbing') || c.includes('water') || t.includes('plumb') || t.includes('pipe') || t.includes('leak')) {
+    return { icon: '🚰', gradient: 'from-sky-500 to-blue-600', textGradient: 'text-sky-500' };
+  }
+  if (c.includes('appliance') || t.includes('ac') || t.includes('refrigerator') || t.includes('washing')) {
+    return { icon: '❄️', gradient: 'from-cyan-500 to-blue-600', textGradient: 'text-cyan-500' };
+  }
+  if (c.includes('cleaning') || t.includes('clean') || t.includes('sanitiz') || t.includes('housekeep')) {
+    return { icon: '✨', gradient: 'from-teal-500 to-emerald-600', textGradient: 'text-teal-500' };
+  }
+  if (c.includes('carpenter') || t.includes('wood') || t.includes('lock') || t.includes('furniture')) {
+    return { icon: '🔨', gradient: 'from-amber-600 to-orange-700', textGradient: 'text-amber-600' };
+  }
+  if (c.includes('security') || c.includes('cctv') || t.includes('cctv') || t.includes('camera')) {
+    return { icon: '📹', gradient: 'from-indigo-500 to-purple-600', textGradient: 'text-indigo-500' };
+  }
+  if (c.includes('grooming') || c.includes('salon') || t.includes('salon') || t.includes('hair') || t.includes('spa')) {
+    return { icon: '✂️', gradient: 'from-pink-500 to-rose-600', textGradient: 'text-pink-500' };
+  }
+  if (c.includes('health') || t.includes('nurse') || t.includes('elder') || t.includes('hospital')) {
+    return { icon: '🩺', gradient: 'from-rose-500 to-red-600', textGradient: 'text-rose-500' };
+  }
+  if (t.includes('paint') || t.includes('waterproof')) {
+    return { icon: '🎨', gradient: 'from-purple-500 to-pink-600', textGradient: 'text-purple-500' };
+  }
+  return { icon: service.icon || '🛠️', gradient: 'from-blue-600 to-indigo-600', textGradient: 'text-blue-500' };
+};
 
 // Fallback SVG Generator for bulletproof image rendering under all network conditions
 const getFallbackImage = (title: string) => {
@@ -171,6 +347,19 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategoryTab, setSelectedCategoryTab] = useState<string>('all');
   const [otherServicesSubFilter, setOtherServicesSubFilter] = useState<string>('all');
+
+  // 3D Shuffling Hero Showcase State
+  const [activeHeroSlide, setActiveHeroSlide] = useState<number>(0);
+  const [isHeroAutoPlay, setIsHeroAutoPlay] = useState<boolean>(true);
+
+  // Auto-shuffle hero slide every 3.5 seconds
+  useEffect(() => {
+    if (!isHeroAutoPlay) return;
+    const timer = setInterval(() => {
+      setActiveHeroSlide((prev) => (prev + 1) % HERO_SHOWCASE_SLIDES.length);
+    }, 3500);
+    return () => clearInterval(timer);
+  }, [isHeroAutoPlay]);
 
   // Scheduling Search State
   const [targetDate, setTargetDate] = useState<string>(() => new Date().toISOString().split('T')[0]);
@@ -821,183 +1010,326 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
         </div>
       )}
 
-      {/* 1. Welcoming Hero Banner with 3D Depth */}
-      <div className={`relative overflow-hidden rounded-3xl p-6 sm:p-8 border shadow-xl transition-all duration-300 card-3d-interactive preserve-3d ${
+      {/* 1. Welcoming Hero Banner with 3D Shuffling Showcase & Top Search */}
+      <div className={`relative overflow-hidden rounded-3xl p-5 sm:p-7 border shadow-xl transition-all duration-300 card-3d-interactive preserve-3d ${
         isDark
-          ? 'bg-gradient-to-br from-slate-900 via-[#0F172A] to-blue-950/50 border-slate-800 text-white shadow-[0_20px_50px_rgba(0,0,0,0.5)]'
-          : 'bg-gradient-to-br from-white via-blue-50/50 to-indigo-50/30 border-blue-100 text-slate-900 shadow-[0_20px_50px_rgba(37,99,235,0.08)]'
+          ? 'bg-gradient-to-br from-slate-900 via-[#0F172A] to-blue-950/60 border-slate-800 text-white shadow-[0_20px_50px_rgba(0,0,0,0.5)]'
+          : 'bg-gradient-to-br from-white via-blue-50/60 to-indigo-50/40 border-blue-100 text-slate-900 shadow-[0_20px_50px_rgba(37,99,235,0.08)]'
       }`}>
         {/* Floating Ambient Glowing Orb */}
-        <div className="absolute -top-16 -right-16 w-52 h-52 bg-blue-600/20 rounded-full blur-3xl pointer-events-none animate-pulse-glow" />
-        <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -top-16 -right-16 w-64 h-64 bg-blue-600/20 rounded-full blur-3xl pointer-events-none animate-pulse-glow" />
+        <div className="absolute -bottom-16 -left-16 w-52 h-52 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="relative z-10 max-w-3xl space-y-4">
+        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
           
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-bold bg-blue-600/10 text-blue-600 dark:text-blue-400 border border-blue-600/20 shadow-sm badge-3d-glow">
-            <span>⚡ {t('hero_badge')} • {selectedLocation.name}</span>
-          </div>
-
-          <h1 className="text-2xl sm:text-4xl font-black tracking-tight leading-tight">
-            {t('hero_title')}
-          </h1>
-
-          <p className={`text-sm sm:text-base font-medium max-w-2xl leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
-            {t('hero_sub')}
-          </p>
-
-          {/* Interactive Search Bar */}
-          <div className={`relative flex items-center rounded-2xl border p-1.5 shadow-md max-w-xl transition-all ${
-            isDark
-              ? 'bg-slate-950/90 border-slate-700/80 focus-within:border-blue-500 ring-blue-500/20'
-              : 'bg-white border-slate-200 focus-within:border-blue-500 ring-blue-500/10'
-          }`}>
-            <Search className="w-5 h-5 text-blue-600 ml-3 mr-2 shrink-0" />
-            <input
-              id="service-search-input"
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search 'Mechanic', 'Car Wash', 'Driver', 'AC Service'..."
-              className="w-full bg-transparent text-sm font-semibold focus:outline-none placeholder:text-slate-400 py-2"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="p-1.5 mr-1 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full text-slate-400 cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            )}
-            <button
-              onClick={() => {}}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-bold shrink-0 transition-colors shadow-sm cursor-pointer"
-            >
-              Search
-            </button>
-          </div>
-
-          {/* Quick Trending Chips */}
-          <div className="flex flex-wrap items-center gap-2 pt-1">
-            <span className="text-xs font-bold text-slate-400">Popular:</span>
-            {[
-              { label: '🚨 20m Mechanic', query: 'mechanic' },
-              { label: '👨‍✈️ Thuna Driver', query: 'driver' },
-              { label: '🧹 Deep Cleaning', query: 'cleaning' },
-              { label: '🌧️ Roof Leak Fix', query: 'roof' },
-              { label: '🏥 Senior Care Escort', query: 'hospital' },
-              { label: '❄️ AC Cleaning', query: 'ac' },
-              { label: '⚡ Electrician', query: 'electrician' }
-            ].map(chip => (
-              <button
-                key={chip.label}
-                onClick={() => setSearchQuery(chip.query)}
-                className={`text-xs px-2.5 py-1 rounded-full font-semibold border transition-all card-3d-interactive cursor-pointer ${
-                  searchQuery === chip.query
-                    ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
-                    : isDark
-                    ? 'bg-slate-800/80 border-slate-700 text-slate-300 hover:bg-slate-700'
-                    : 'bg-white border-slate-200 text-slate-700 hover:bg-blue-50 hover:border-blue-200'
-                }`}
-              >
-                {chip.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Scheduling Bar (Date & Custom Time Slots) */}
-          <div className={`p-3.5 rounded-2xl border space-y-2.5 max-w-xl transition-all ${
-            isDark ? 'bg-slate-950/80 border-slate-800' : 'bg-white/90 border-blue-100 shadow-sm'
-          }`}>
-            <div className="flex items-center justify-between text-xs font-black">
-              <span className="flex items-center space-x-1.5 text-blue-600 dark:text-blue-400">
-                <Calendar className="w-3.5 h-3.5" />
-                <span>Search with Scheduling & Custom Time Slots</span>
-              </span>
-              <span className="text-[10px] text-emerald-500 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                Worker Confirms Availability
-              </span>
+          {/* Left Column: Headline, Search, Quick Filters & Scheduling (Span 7) */}
+          <div className="lg:col-span-7 space-y-4">
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-bold bg-blue-600/10 text-blue-600 dark:text-blue-400 border border-blue-600/20 shadow-sm badge-3d-glow">
+              <span>⚡ {t('hero_badge')} • {selectedLocation.name}</span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-              <div>
-                <label className="block text-[10px] font-bold uppercase text-slate-400 mb-1">
-                  Target Service Date
-                </label>
-                <div className="flex items-center space-x-1.5">
-                  <input
-                    type="date"
-                    value={targetDate}
-                    onChange={(e) => setTargetDate(e.target.value)}
+            <h1 className="text-2xl sm:text-4xl font-black tracking-tight leading-tight">
+              {t('hero_title')}
+            </h1>
+
+            <p className={`text-xs sm:text-sm font-medium max-w-xl leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+              {t('hero_sub')}
+            </p>
+
+            {/* Interactive Search Bar */}
+            <div className={`relative flex items-center rounded-2xl border p-1.5 shadow-md max-w-xl transition-all ${
+              isDark
+                ? 'bg-slate-950/90 border-slate-700/80 focus-within:border-blue-500 ring-blue-500/20'
+                : 'bg-white border-slate-200 focus-within:border-blue-500 ring-blue-500/10'
+            }`}>
+              <Search className="w-5 h-5 text-blue-600 ml-3 mr-2 shrink-0" />
+              <input
+                id="service-search-input"
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search 'Mechanic', 'Car Wash', 'Driver', 'AC Service'..."
+                className="w-full bg-transparent text-sm font-semibold focus:outline-none placeholder:text-slate-400 py-2"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="p-1.5 mr-1 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full text-slate-400 cursor-pointer"
+                  title="Clear search"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+              <button
+                onClick={() => {}}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-bold shrink-0 transition-colors shadow-sm cursor-pointer"
+              >
+                Search
+              </button>
+            </div>
+
+            {/* Quick Trending Chips */}
+            <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+              <span className="text-[11px] font-bold text-slate-400">Popular:</span>
+              {[
+                { label: '🚨 20m Mechanic', query: 'mechanic' },
+                { label: '👨‍✈️ Thuna Driver', query: 'driver' },
+                { label: '❄️ AC Cleaning', query: 'ac' },
+                { label: '⚡ Electrician', query: 'electrician' },
+                { label: '🚰 Plumber', query: 'plumber' },
+                { label: '🧹 Deep Cleaning', query: 'cleaning' },
+                { label: '🌧️ Roof Leak', query: 'roof' }
+              ].map(chip => (
+                <button
+                  key={chip.label}
+                  onClick={() => setSearchQuery(chip.query)}
+                  className={`text-[11px] px-2.5 py-1 rounded-full font-semibold border transition-all card-3d-interactive cursor-pointer ${
+                    searchQuery === chip.query
+                      ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
+                      : isDark
+                      ? 'bg-slate-800/80 border-slate-700 text-slate-300 hover:bg-slate-700'
+                      : 'bg-white border-slate-200 text-slate-700 hover:bg-blue-50 hover:border-blue-200'
+                  }`}
+                >
+                  {chip.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Scheduling Bar (Date & Custom Time Slots) */}
+            <div className={`p-3 rounded-2xl border space-y-2 max-w-xl transition-all ${
+              isDark ? 'bg-slate-950/80 border-slate-800' : 'bg-white/90 border-blue-100 shadow-sm'
+            }`}>
+              <div className="flex items-center justify-between text-xs font-black">
+                <span className="flex items-center space-x-1.5 text-blue-600 dark:text-blue-400">
+                  <Calendar className="w-3.5 h-3.5" />
+                  <span>Search with Scheduling & Custom Time Slots</span>
+                </span>
+                <span className="text-[10px] text-emerald-500 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                  Worker Confirms Availability
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                <div>
+                  <label className="block text-[10px] font-bold uppercase text-slate-400 mb-1">
+                    Target Service Date
+                  </label>
+                  <div className="flex items-center space-x-1.5">
+                    <input
+                      type="date"
+                      value={targetDate}
+                      onChange={(e) => setTargetDate(e.target.value)}
+                      className={`w-full p-2 rounded-xl border text-xs font-bold focus:outline-none focus:border-blue-500 ${
+                        isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-200 text-slate-900'
+                      }`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setTargetDate(new Date().toISOString().split('T')[0])}
+                      className={`px-2 py-2 rounded-xl text-[10px] font-bold border transition-colors shrink-0 ${
+                        targetDate === new Date().toISOString().split('T')[0]
+                          ? 'bg-blue-600 text-white border-blue-600'
+                          : isDark ? 'border-slate-700 text-slate-300' : 'border-slate-200 text-slate-700'
+                      }`}
+                    >
+                      Today
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const tomorrow = new Date();
+                        tomorrow.setDate(tomorrow.getDate() + 1);
+                        setTargetDate(tomorrow.toISOString().split('T')[0]);
+                      }}
+                      className="px-2 py-2 rounded-xl text-[10px] font-bold border transition-colors shrink-0 border-slate-200 dark:border-slate-700"
+                    >
+                      Tmrw
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold uppercase text-slate-400 mb-1">
+                    Preferred Time Slot
+                  </label>
+                  <select
+                    value={targetTimeSlot}
+                    onChange={(e) => {
+                      setTargetTimeSlot(e.target.value);
+                      if (e.target.value === 'CUSTOM') {
+                        setIsCustomSlot(true);
+                      } else {
+                        setIsCustomSlot(false);
+                      }
+                    }}
                     className={`w-full p-2 rounded-xl border text-xs font-bold focus:outline-none focus:border-blue-500 ${
                       isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-200 text-slate-900'
                     }`}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setTargetDate(new Date().toISOString().split('T')[0])}
-                    className={`px-2 py-2 rounded-xl text-[10px] font-bold border transition-colors shrink-0 ${
-                      targetDate === new Date().toISOString().split('T')[0]
-                        ? 'bg-blue-600 text-white border-blue-600'
-                        : isDark ? 'border-slate-700 text-slate-300' : 'border-slate-200 text-slate-700'
-                    }`}
                   >
-                    Today
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const tomorrow = new Date();
-                      tomorrow.setDate(tomorrow.getDate() + 1);
-                      setTargetDate(tomorrow.toISOString().split('T')[0]);
-                    }}
-                    className="px-2 py-2 rounded-xl text-[10px] font-bold border transition-colors shrink-0 border-slate-200 dark:border-slate-700"
-                  >
-                    Tmrw
-                  </button>
+                    <option value="Immediate Emergency Dispatch (15-20 Mins)">⚡ Immediate (15-20 Mins Dispatch)</option>
+                    <option value="Morning: 09:00 AM - 12:00 PM">Morning: 09:00 AM - 12:00 PM</option>
+                    <option value="Afternoon: 01:00 PM - 04:00 PM">Afternoon: 01:00 PM - 04:00 PM</option>
+                    <option value="Evening: 05:00 PM - 08:00 PM">Evening: 05:00 PM - 08:00 PM</option>
+                    <option value="Night: 08:00 PM - 10:00 PM">Night: 08:00 PM - 10:00 PM</option>
+                    <option value="CUSTOM">Custom Time Slot...</option>
+                  </select>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[10px] font-bold uppercase text-slate-400 mb-1">
-                  Preferred Time Slot
-                </label>
-                <select
-                  value={targetTimeSlot}
-                  onChange={(e) => {
-                    setTargetTimeSlot(e.target.value);
-                    if (e.target.value === 'CUSTOM') {
-                      setIsCustomSlot(true);
-                    } else {
-                      setIsCustomSlot(false);
-                    }
-                  }}
-                  className={`w-full p-2 rounded-xl border text-xs font-bold focus:outline-none focus:border-blue-500 ${
-                    isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-slate-50 border-slate-200 text-slate-900'
-                  }`}
-                >
-                  <option value="Immediate Emergency Dispatch (15-20 Mins)">⚡ Immediate (15-20 Mins Dispatch)</option>
-                  <option value="Morning: 09:00 AM - 12:00 PM">Morning: 09:00 AM - 12:00 PM</option>
-                  <option value="Afternoon: 01:00 PM - 04:00 PM">Afternoon: 01:00 PM - 04:00 PM</option>
-                  <option value="Evening: 05:00 PM - 08:00 PM">Evening: 05:00 PM - 08:00 PM</option>
-                  <option value="Night: 08:00 PM - 10:00 PM">Night: 08:00 PM - 10:00 PM</option>
-                  <option value="CUSTOM">Custom Time Slot...</option>
-                </select>
-              </div>
+              {isCustomSlot && (
+                <div className="pt-1">
+                  <input
+                    type="text"
+                    value={customTimeInput}
+                    onChange={(e) => setCustomTimeInput(e.target.value)}
+                    placeholder="e.g. 03:30 PM - 05:30 PM or Specific Window"
+                    className={`w-full p-2 rounded-xl border text-xs font-bold focus:outline-none focus:border-blue-500 ${
+                      isDark ? 'bg-slate-900 border-blue-500/50 text-white' : 'bg-white border-blue-400 text-slate-900'
+                    }`}
+                  />
+                </div>
+              )}
             </div>
+          </div>
 
-            {isCustomSlot && (
-              <div className="pt-1">
-                <input
-                  type="text"
-                  value={customTimeInput}
-                  onChange={(e) => setCustomTimeInput(e.target.value)}
-                  placeholder="e.g. 03:30 PM - 05:30 PM or Specific Window"
-                  className={`w-full p-2 rounded-xl border text-xs font-bold focus:outline-none focus:border-blue-500 ${
-                    isDark ? 'bg-slate-900 border-blue-500/50 text-white' : 'bg-white border-blue-400 text-slate-900'
-                  }`}
-                />
-              </div>
-            )}
+          {/* Right Column: 3D Shuffling Visual Showcase (Span 5) */}
+          <div className="lg:col-span-5 relative">
+            <div
+              className="relative group"
+              onMouseEnter={() => setIsHeroAutoPlay(false)}
+              onMouseLeave={() => setIsHeroAutoPlay(true)}
+            >
+              {/* Active Slide Card */}
+              {(() => {
+                const currentSlide = HERO_SHOWCASE_SLIDES[activeHeroSlide];
+                return (
+                  <div
+                    className={`relative overflow-hidden rounded-3xl border shadow-2xl transition-all duration-500 card-3d-interactive preserve-3d ${
+                      isDark
+                        ? 'bg-slate-950 border-slate-700/80 shadow-[0_20px_45px_rgba(0,0,0,0.7)]'
+                        : 'bg-white border-slate-200 shadow-[0_20px_45px_rgba(37,99,235,0.15)]'
+                    }`}
+                  >
+                    {/* 3D Image Banner with Overlay */}
+                    <div className="relative h-56 sm:h-64 overflow-hidden bg-slate-950">
+                      <img
+                        key={currentSlide.id}
+                        src={currentSlide.imageUrl}
+                        alt={currentSlide.title}
+                        className="w-full h-full object-cover transform hover:scale-105 transition-all duration-700"
+                        loading="eager"
+                      />
+
+                      {/* Gradient Ambient Overlays */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent pointer-events-none" />
+                      <div className={`absolute inset-0 bg-gradient-to-tr ${currentSlide.accentGradient} pointer-events-none`} />
+
+                      {/* Top Badges */}
+                      <div className="absolute top-3 left-3 flex items-center space-x-2">
+                        <span className={`text-[10px] font-black px-2.5 py-1 rounded-full shadow-md flex items-center space-x-1 ${currentSlide.badgeColor}`}>
+                          <span>{currentSlide.badge}</span>
+                        </span>
+                      </div>
+
+                      <div className="absolute top-3 right-3 flex items-center space-x-1.5">
+                        <span className="bg-slate-950/80 backdrop-blur text-amber-300 text-[10px] font-extrabold px-2.5 py-1 rounded-full flex items-center space-x-1 shadow border border-amber-300/30">
+                          <Star className="w-3 h-3 fill-amber-300 text-amber-300" />
+                          <span>{currentSlide.rating}</span>
+                          <span className="text-slate-400 font-normal">({currentSlide.reviewsCount})</span>
+                        </span>
+                      </div>
+
+                      {/* Left / Right Shuffle Controls */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveHeroSlide((prev) => (prev === 0 ? HERO_SHOWCASE_SLIDES.length - 1 : prev - 1));
+                        }}
+                        className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-950/70 hover:bg-slate-900 text-white backdrop-blur flex items-center justify-center transition-all opacity-80 hover:opacity-100 shadow border border-white/10 cursor-pointer"
+                        title="Previous slide"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </button>
+
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveHeroSlide((prev) => (prev + 1) % HERO_SHOWCASE_SLIDES.length);
+                        }}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-950/70 hover:bg-slate-900 text-white backdrop-blur flex items-center justify-center transition-all opacity-80 hover:opacity-100 shadow border border-white/10 cursor-pointer"
+                        title="Next slide"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+
+                      {/* Bottom Info on Image */}
+                      <div className="absolute bottom-3 left-3 right-3 text-white">
+                        <div className="flex items-center space-x-1.5 mb-0.5">
+                          <span className="text-lg">{currentSlide.icon}</span>
+                          <span className="text-[11px] font-bold text-blue-300 uppercase tracking-wider">{currentSlide.category}</span>
+                        </div>
+                        <h3 className="font-black text-base sm:text-lg leading-snug drop-shadow-md">
+                          {currentSlide.title}
+                        </h3>
+                        {currentSlide.titleMl && (
+                          <p className="text-xs text-slate-300 font-medium line-clamp-1">
+                            {currentSlide.titleMl}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Card Footer with Pricing & Quick Book CTA */}
+                    <div className="p-3.5 flex items-center justify-between gap-2 border-t border-slate-100 dark:border-slate-800">
+                      <div>
+                        <span className="text-[10px] text-slate-400 block font-semibold">Starts from</span>
+                        <div className="flex items-baseline space-x-1">
+                          <span className="text-base font-black text-blue-600 dark:text-blue-400">
+                            ₹{currentSlide.startingPrice}
+                          </span>
+                          <span className="text-[10px] text-slate-400 font-medium">• ETA {currentSlide.eta}</span>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => {
+                          const matched = services.find(
+                            s => s.category === currentSlide.category || s.title.toLowerCase().includes(currentSlide.category.toLowerCase())
+                          ) || services[0];
+                          if (matched) handleStartBooking(matched);
+                        }}
+                        className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-black shadow-lg flex items-center space-x-1.5 transition-all transform hover:scale-105 cursor-pointer"
+                      >
+                        <span>Quick Book</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                    {/* Shuffling Indicator Dots */}
+                    <div className="px-3.5 pb-2.5 flex items-center justify-between">
+                      <div className="flex items-center space-x-1.5">
+                        {HERO_SHOWCASE_SLIDES.map((slide, idx) => (
+                          <button
+                            key={slide.id}
+                            onClick={() => setActiveHeroSlide(idx)}
+                            className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                              idx === activeHeroSlide
+                                ? 'w-6 bg-blue-600 dark:bg-blue-400'
+                                : 'w-1.5 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400'
+                            }`}
+                            title={slide.title}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-[10px] font-bold text-slate-400">
+                        {activeHeroSlide + 1} of {HERO_SHOWCASE_SLIDES.length} • Auto 3D
+                      </span>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
           </div>
 
         </div>
@@ -1651,98 +1983,106 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 perspective-1000">
-            {filteredServices.map((service) => (
-              <div
-                key={service.id}
-                onClick={() => handleStartBooking(service)}
-                className={`group cursor-pointer rounded-3xl border transition-all duration-300 overflow-hidden flex flex-col justify-between card-3d-interactive preserve-3d ${
-                  isDark
-                    ? 'bg-slate-900/90 border-slate-800/90 hover:border-blue-500/80 text-white shadow-md'
-                    : 'bg-white border-slate-200/90 hover:border-blue-300 text-slate-900 shadow-sm'
-                }`}
-              >
-                {/* Photo Header */}
-                <div className="relative aspect-[16/10] overflow-hidden bg-slate-950">
-                  <img
-                    src={service.imageUrl || getFallbackImage(service.title)}
-                    onError={(e) => {
-                      e.currentTarget.src = getFallbackImage(service.title);
-                    }}
-                    alt={service.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
-                  />
-                  
-                  {/* Overlay gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-black/30 pointer-events-none" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 perspective-1000">
+            {filteredServices.map((service) => {
+              const visual = getServiceVisualIcon(service);
+              return (
+                <div
+                  key={service.id}
+                  onClick={() => handleStartBooking(service)}
+                  className={`group cursor-pointer rounded-3xl border transition-all duration-300 p-5 flex flex-col justify-between card-3d-interactive preserve-3d ${
+                    isDark
+                      ? 'bg-slate-900/90 border-slate-800/90 hover:border-blue-500/80 text-white shadow-md hover:shadow-xl'
+                      : 'bg-white border-slate-200/90 hover:border-blue-300 text-slate-900 shadow-sm hover:shadow-md'
+                  }`}
+                >
+                  <div className="space-y-3">
+                    {/* Header Row: 3D Category Icon Box + Status Badges */}
+                    <div className="flex items-start justify-between gap-2">
+                      <div className={`w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-tr ${visual.gradient} text-white flex items-center justify-center shrink-0 shadow-lg text-2xl group-hover:scale-110 transition-transform duration-300`}>
+                        <span>{visual.icon}</span>
+                      </div>
 
-                  {/* Top Badges */}
-                  <div className="absolute top-2.5 left-2.5 flex items-center space-x-1.5">
-                    {service.isInstant && (
-                      <span className="bg-slate-950/85 backdrop-blur-md text-amber-300 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full flex items-center space-x-1 shadow">
-                        <Zap className="w-3 h-3 fill-amber-300" />
-                        <span>Instant</span>
-                      </span>
-                    )}
-                  </div>
+                      <div className="flex flex-col items-end space-y-1">
+                        {service.isInstant && (
+                          <span className="bg-amber-500/15 text-amber-500 dark:text-amber-400 border border-amber-500/30 text-[10px] font-extrabold px-2 py-0.5 rounded-full flex items-center space-x-1 shadow-sm">
+                            <Zap className="w-3 h-3 fill-amber-400 text-amber-400" />
+                            <span>Instant</span>
+                          </span>
+                        )}
+                        {service.createdByPartnerName ? (
+                          <span className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-sm flex items-center space-x-1">
+                            <span>👤 {service.createdByPartnerName.split(' ')[0]}'s Custom</span>
+                          </span>
+                        ) : service.category === 'Mechanic & Roadside Assistance' ? (
+                          <span className="bg-amber-500 text-slate-950 text-[9px] font-black px-2 py-0.5 rounded-full shadow-sm">
+                            ⚡ 20m Rescue
+                          </span>
+                        ) : service.category === 'Driver' ? (
+                          <span className="bg-blue-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-sm flex items-center space-x-1">
+                            <ShieldCheck className="w-3 h-3" />
+                            <span>PCC Checked</span>
+                          </span>
+                        ) : (
+                          <span className="bg-slate-100 dark:bg-slate-800 text-blue-600 dark:text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-500/20">
+                            {service.eta}
+                          </span>
+                        )}
+                      </div>
+                    </div>
 
-                  {/* Right Badges */}
-                  <div className="absolute top-2.5 right-2.5">
-                    {service.createdByPartnerName ? (
-                      <span className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow flex items-center space-x-1">
-                        <span>👤 {service.createdByPartnerName.split(' ')[0]}'s Custom Work</span>
+                    {/* Rating and Reviews */}
+                    <div className="flex items-center space-x-2 pt-0.5">
+                      <div className="flex items-center space-x-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded-lg text-xs font-bold border border-amber-500/20">
+                        <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                        <span>{service.rating}</span>
+                      </div>
+                      <span className="text-[11px] text-slate-400">({service.reviewsCount} reviews)</span>
+                      <span className="text-[10px] font-bold text-slate-300 dark:text-slate-600">•</span>
+                      <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 truncate max-w-[120px]">
+                        {service.category.split('&')[0]}
                       </span>
-                    ) : service.category === 'Mechanic & Roadside Assistance' ? (
-                      <span className="bg-amber-500 text-slate-950 text-[10px] font-black px-2.5 py-0.5 rounded-full shadow">
-                        ⚡ 20m Rescue
-                      </span>
-                    ) : service.category === 'Driver' ? (
-                      <span className="bg-blue-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow flex items-center space-x-1">
-                        <ShieldCheck className="w-3 h-3" />
-                        <span>PCC Checked</span>
-                      </span>
-                    ) : service.category === 'Other Works' || service.category === 'Other Services' ? (
-                      <span className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow flex items-center space-x-1">
-                        <span>🛠️ Custom Trade</span>
-                      </span>
-                    ) : (
-                      <span className="bg-slate-950/70 backdrop-blur text-blue-300 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                        {service.eta}
-                      </span>
-                    )}
-                  </div>
+                    </div>
 
-                  {/* Rating pill on image bottom */}
-                  <div className="absolute bottom-2.5 left-2.5 flex items-center space-x-1.5 bg-slate-950/80 backdrop-blur px-2 py-0.5 rounded-lg text-[11px] font-bold text-white shadow">
-                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                    <span>{service.rating}</span>
-                    <span className="text-slate-400 text-[10px]">({service.reviewsCount})</span>
-                  </div>
-                </div>
+                    {/* Service Titles */}
+                    <div>
+                      <h4 className={`font-black text-base leading-snug line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                        {service.title}
+                      </h4>
+                      {service.malayalamTitle && (
+                        <p className="text-[11px] text-slate-400 font-medium line-clamp-1 mt-0.5">
+                          {service.malayalamTitle}
+                        </p>
+                      )}
 
-                {/* Card Body */}
-                <div className="p-4 space-y-2 flex-1 flex flex-col justify-between">
-                  <div>
-                    <h4 className={`font-black text-sm leading-snug line-clamp-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                      {service.title}
-                    </h4>
+                      {service.createdByPartnerName && (
+                        <div className="mt-1 flex items-center space-x-1">
+                          <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 inline-flex items-center space-x-1">
+                            <span>👤 Added by Pro: {service.createdByPartnerName}</span>
+                          </span>
+                        </div>
+                      )}
 
-                    {service.createdByPartnerName && (
-                      <div className="mt-1 flex items-center space-x-1">
-                        <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 inline-flex items-center space-x-1">
-                          <span>👤 Added by Pro: {service.createdByPartnerName}</span>
-                        </span>
+                      <p className={`text-xs mt-1.5 line-clamp-2 leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                        {service.tagline}
+                      </p>
+                    </div>
+
+                    {/* Key features bullets if available */}
+                    {service.features && service.features.length > 0 && (
+                      <div className="space-y-1 pt-1">
+                        {service.features.slice(0, 2).map((feat, idx) => (
+                          <div key={idx} className="flex items-center space-x-1.5 text-[11px] text-slate-500 dark:text-slate-400">
+                            <CheckCircle2 className="w-3 h-3 text-emerald-500 shrink-0" />
+                            <span className="truncate">{feat}</span>
+                          </div>
+                        ))}
                       </div>
                     )}
-
-                    <p className={`text-xs mt-1 line-clamp-2 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                      {service.tagline}
-                    </p>
                   </div>
 
-                  {/* Upfront Transparent Pricing and Action */}
-                  <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
+                  {/* Upfront Transparent Pricing and Action Button */}
+                  <div className="pt-3 mt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2">
                     <div>
                       <span className="text-[10px] text-slate-400 block font-semibold">
                         {service.tiers ? 'Starts at' : 'Diagnostic Visit'}
@@ -1752,26 +2092,26 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                           ₹{service.tiers ? service.tiers[0].price : service.basePrice || service.diagnosticFee || service.estPrice}
                         </span>
                         {service.priceRangeNotice && (
-                          <span className="text-[9px] text-slate-400 font-semibold truncate max-w-[110px]" title={service.priceRangeNotice}>
+                          <span className="text-[9px] text-slate-400 font-semibold truncate max-w-[90px]" title={service.priceRangeNotice}>
                             • {service.priceRangeNotice}
                           </span>
                         )}
                       </div>
                       <span className="text-[9px] text-emerald-500 font-extrabold block">
-                        ✓ {service.sparePartsNotice || 'Transparent Estimate Guarantee'}
+                        ✓ {service.sparePartsNotice || 'Transparent Estimate'}
                       </span>
                     </div>
 
                     <button
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow transition-all duration-200 flex items-center space-x-1 group-hover:scale-105 shrink-0"
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold shadow transition-all duration-200 flex items-center space-x-1 group-hover:scale-105 shrink-0 cursor-pointer"
                     >
                       <span>Book</span>
                       <ChevronRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
 
