@@ -181,22 +181,16 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           </button>
         </nav>
 
-        {/* Elevated Floating FIX NOW Action Button (Next to Profile Icon with Radar Action Rings) */}
-        <div className="relative shrink-0 pointer-events-auto">
-          {/* Action Radar Wave Rings */}
-          <span className="absolute inset-0 rounded-full bg-teal-500/40 animate-radar-wave pointer-events-none" />
-          <span className="absolute inset-0 rounded-full bg-emerald-400/30 animate-radar-wave-delayed pointer-events-none" />
-
-          <button
-            onClick={handleFixNowClick}
-            className="relative w-14 h-14 rounded-full bg-gradient-to-br from-[#0F766E] to-[#0D6E6E] hover:from-[#115E59] hover:to-[#094F4F] text-white font-black flex flex-col items-center justify-center shadow-2xl shadow-teal-950/60 border-2 border-white dark:border-slate-800 transition-all hover:scale-105 active:scale-90 cursor-pointer action-pressable"
-            title="Instant Service Rescue - FIX NOW"
-          >
-            <span className="font-black text-[11px] leading-none text-white tracking-wider text-center drop-shadow-sm">
-              FIX<br /><span className="text-[10px] mt-0.5 inline-block">NOW</span>
-            </span>
-          </button>
-        </div>
+        {/* Elevated Floating FIX NOW Action Button (Next to Profile Icon) */}
+        <button
+          onClick={handleFixNowClick}
+          className="w-14 h-14 rounded-full bg-[#0D6E6E] hover:bg-[#0B5C5C] text-white font-black flex flex-col items-center justify-center shadow-xl shadow-teal-950/40 border-2 border-white dark:border-slate-800 pointer-events-auto transition-all hover:scale-105 active:scale-95 cursor-pointer shrink-0"
+          title="Instant Service Rescue - FIX NOW"
+        >
+          <span className="font-black text-[11px] leading-none text-white tracking-wider text-center">
+            FIX<br /><span className="text-[10px] mt-0.5 inline-block">NOW</span>
+          </span>
+        </button>
       </div>
 
       {/* Mobile Account & Quick Controls Drawer */}

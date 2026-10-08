@@ -116,16 +116,16 @@ const HERO_SHOWCASE_SLIDES: HeroShowcaseSlide[] = [
 ];
 
 const EXPERTISE_CATEGORIES = [
-  { id: 'all', label: 'All Services', icon: '🌟', color: 'bg-blue-500/10 text-blue-500 border-blue-500/20' },
-  { id: 'Driver', label: 'Acting Driver', icon: '👨‍✈️', color: 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20', badgeTitle: 'TOP RATED DRIVERS & CHAUFFEURS' },
-  { id: 'Electrical Services', label: 'Electrician', icon: '⚡', color: 'bg-amber-500/10 text-amber-500 border-amber-500/20', badgeTitle: 'TOP RATED ELECTRICIANS & WIRING PROS' },
-  { id: 'Mechanic & Roadside Assistance', label: 'Mechanic', icon: '🔧', color: 'bg-orange-500/10 text-orange-500 border-orange-500/20', badgeTitle: 'TOP RATED MECHANICS & RESCUE PROS' },
-  { id: 'Appliance Care & Servicing', label: 'AC Repair', icon: '❄️', color: 'bg-cyan-500/10 text-cyan-500 border-cyan-500/20', badgeTitle: 'TOP RATED AC & APPLIANCE TECHNICIANS' },
-  { id: 'Plumbing & Water Management', label: 'Plumber', icon: '🚰', color: 'bg-sky-500/10 text-sky-500 border-sky-500/20', badgeTitle: 'TOP RATED PLUMBERS & PIPELINE EXPERTS' },
-  { id: 'Vehicle Care', label: 'Car Spa', icon: '🚗', color: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20', badgeTitle: 'TOP RATED CAR SPA & DETAILING SPECIALISTS' },
-  { id: 'Deep Cleaning & Housekeeping', label: 'Deep Clean', icon: '🧹', color: 'bg-teal-500/10 text-teal-500 border-teal-500/20', badgeTitle: 'TOP RATED HOUSEKEEPING & DEEP CLEANERS' },
-  { id: 'Carpenter & Locksmith', label: 'Carpenter', icon: '🔨', color: 'bg-amber-600/10 text-amber-600 border-amber-600/20', badgeTitle: 'TOP RATED CARPENTERS & LOCKSMITHS' },
-  { id: 'Other Services', label: 'Other Works', icon: '🛠️', color: 'bg-purple-500/10 text-purple-500 border-purple-500/20', badgeTitle: 'TOP RATED CUSTOM TRADE FREELANCERS' }
+  { id: 'all', label: 'All Services', icon: '🌟', actionClass: 'action-icon-star', color: 'bg-blue-500/10 text-blue-500 border-blue-500/20' },
+  { id: 'Driver', label: 'Acting Driver', icon: '👨‍✈️', actionClass: 'action-icon-driver', color: 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20', badgeTitle: 'TOP RATED DRIVERS & CHAUFFEURS' },
+  { id: 'Electrical Services', label: 'Electrician', icon: '⚡', actionClass: 'action-icon-electrician', color: 'bg-amber-500/10 text-amber-500 border-amber-500/20', badgeTitle: 'TOP RATED ELECTRICIANS & WIRING PROS' },
+  { id: 'Mechanic & Roadside Assistance', label: 'Mechanic', icon: '🔧', actionClass: 'action-icon-mechanic', color: 'bg-orange-500/10 text-orange-500 border-orange-500/20', badgeTitle: 'TOP RATED MECHANICS & RESCUE PROS' },
+  { id: 'Appliance Care & Servicing', label: 'AC Repair', icon: '❄️', actionClass: 'action-icon-ac', color: 'bg-cyan-500/10 text-cyan-500 border-cyan-500/20', badgeTitle: 'TOP RATED AC & APPLIANCE TECHNICIANS' },
+  { id: 'Plumbing & Water Management', label: 'Plumber', icon: '🚰', actionClass: 'action-icon-plumber', color: 'bg-sky-500/10 text-sky-500 border-sky-500/20', badgeTitle: 'TOP RATED PLUMBERS & PIPELINE EXPERTS' },
+  { id: 'Vehicle Care', label: 'Car Spa', icon: '🚗', actionClass: 'action-icon-carspa', color: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20', badgeTitle: 'TOP RATED CAR SPA & DETAILING SPECIALISTS' },
+  { id: 'Deep Cleaning & Housekeeping', label: 'Deep Clean', icon: '🧹', actionClass: 'action-icon-clean', color: 'bg-teal-500/10 text-teal-500 border-teal-500/20', badgeTitle: 'TOP RATED HOUSEKEEPING & DEEP CLEANERS' },
+  { id: 'Carpenter & Locksmith', label: 'Carpenter', icon: '🔨', actionClass: 'action-icon-carpenter', color: 'bg-amber-600/10 text-amber-600 border-amber-600/20', badgeTitle: 'TOP RATED CARPENTERS & LOCKSMITHS' },
+  { id: 'Other Services', label: 'Other Works', icon: '🛠️', actionClass: 'action-icon-tools', color: 'bg-purple-500/10 text-purple-500 border-purple-500/20', badgeTitle: 'TOP RATED CUSTOM TRADE FREELANCERS' }
 ];
 
 export const CustomerApp: React.FC<CustomerAppProps> = ({
@@ -211,46 +211,6 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
   // Invoice & Dispute Modals
   const [activeInvoiceJob, setActiveInvoiceJob] = useState<BookingJob | null>(null);
   const [activeDisputeJob, setActiveDisputeJob] = useState<BookingJob | null>(null);
-
-  // Action Feedback & 3D Interactive Parallax Tilt State
-  const [activeActionId, setActiveActionId] = useState<string | null>(null);
-  const [cardTilt, setCardTilt] = useState<{ [key: string]: { rotateX: number; rotateY: number } }>({});
-
-  const handleCategoryClick = (catId: string) => {
-    setActiveActionId(catId);
-    setSelectedCategoryTab(catId);
-    setSearchQuery('');
-
-    // Clear action spring pop state
-    setTimeout(() => {
-      setActiveActionId(null);
-    }, 450);
-
-    // If a trade is clicked, smoothly position the viewport to trade results
-    if (catId !== 'all') {
-      setTimeout(() => {
-        const targetEl = document.getElementById('trade-specialists-section') || document.getElementById('selected-services-section');
-        if (targetEl) {
-          targetEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-      }, 150);
-    }
-  };
-
-  const handleCardMouseMove = (e: React.MouseEvent<HTMLButtonElement>, id: string) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    const rotateX = ((y - centerY) / centerY) * -14;
-    const rotateY = ((x - centerX) / centerX) * 14;
-    setCardTilt((prev) => ({ ...prev, [id]: { rotateX, rotateY } }));
-  };
-
-  const handleCardMouseLeave = (id: string) => {
-    setCardTilt((prev) => ({ ...prev, [id]: { rotateX: 0, rotateY: 0 } }));
-  };
 
   // Dynamic time-based greeting
   const greetingText = useMemo(() => {
@@ -672,30 +632,20 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
           <span className="text-[11px] font-bold text-slate-400">10 Verified Trades</span>
         </div>
 
-        {/* 3D Animated Category Cards Grid with Interactive Action Effects */}
+        {/* 3D Animated Category Cards Grid */}
         <div className="grid grid-cols-5 sm:grid-cols-5 md:grid-cols-10 gap-2 sm:gap-2.5">
           {EXPERTISE_CATEGORIES.map((cat, idx) => {
             const isSelected = selectedCategoryTab === cat.id;
-            const isActionActive = activeActionId === cat.id;
-            const floatClass = isSelected ? '' : idx % 3 === 0 ? 'animate-3d-float-1' : idx % 3 === 1 ? 'animate-3d-float-2' : 'animate-3d-float-3';
-            const tilt = cardTilt[cat.id];
+            const floatClass = idx % 3 === 0 ? 'animate-3d-float-1' : idx % 3 === 1 ? 'animate-3d-float-2' : 'animate-3d-float-3';
 
             return (
               <button
                 key={cat.id}
-                onClick={() => handleCategoryClick(cat.id)}
-                onMouseMove={(e) => handleCardMouseMove(e, cat.id)}
-                onMouseLeave={() => handleCardMouseLeave(cat.id)}
-                style={
-                  tilt && !isSelected
-                    ? {
-                        transform: `rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg) translateY(-6px) translateZ(12px)`
-                      }
-                    : undefined
-                }
-                className={`p-2.5 sm:p-3 rounded-2xl border text-center transition-all flex flex-col items-center justify-center space-y-1.5 cursor-pointer expertise-3d-card action-pressable ${floatClass} ${
-                  isActionActive ? 'animate-action-pop ring-4 ring-blue-400/50 scale-105' : ''
-                } ${
+                onClick={() => {
+                  setSelectedCategoryTab(cat.id);
+                  setSearchQuery('');
+                }}
+                className={`p-2.5 sm:p-3 rounded-2xl border text-center transition-all flex flex-col items-center justify-center space-y-1.5 cursor-pointer expertise-3d-card ${floatClass} ${
                   isSelected
                     ? 'expertise-3d-selected bg-gradient-to-b from-blue-600 to-blue-700 text-white border-blue-400 ring-2 ring-blue-400/40'
                     : isDark
@@ -706,8 +656,6 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                 {/* 3D Elevated Emoji Icon Container */}
                 <div
                   className={`w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center text-xl sm:text-2xl expertise-3d-icon transition-transform ${
-                    isActionActive ? 'scale-125 rotate-12' : ''
-                  } ${
                     isSelected
                       ? 'bg-white/20 text-white shadow-inner'
                       : isDark
@@ -715,7 +663,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                       : 'bg-slate-100 shadow-sm'
                   }`}
                 >
-                  <span>{cat.icon}</span>
+                  <span className={cat.actionClass}>{cat.icon}</span>
                 </div>
 
                 {/* 3D Elevated Label */}
@@ -739,7 +687,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       {/* 5. PARTICULAR TRADE TOP-RATED TECHNICIANS ROW (e.g. Drivers shown first)  */}
       {/* ========================================================================= */}
       {activeTradeTechnicians.length > 0 && (
-        <div id="trade-specialists-section" className="space-y-3 pt-2 animate-in fade-in slide-in-from-top-2 duration-300">
+        <div className="space-y-3 pt-2 animate-in fade-in slide-in-from-top-2 duration-300">
           
           {/* Trade-Specific Pill Badge Header */}
           <div className="flex items-center justify-between">
@@ -820,7 +768,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       {/* 6. SERVICE CARDS LISTING FOR SELECTED EXPERTISE (Shown on Selection/Search)*/}
       {/* ========================================================================= */}
       {(selectedCategoryTab !== 'all' || searchQuery.trim() !== '') && (
-        <div id="selected-services-section" className="space-y-3 pt-1 animate-in fade-in slide-in-from-top-2 duration-300">
+        <div className="space-y-3 pt-1 animate-in fade-in slide-in-from-top-2 duration-300">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <h4 className="text-xs font-black uppercase tracking-wider text-blue-600 dark:text-blue-400">
