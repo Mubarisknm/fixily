@@ -212,6 +212,46 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
   const [activeInvoiceJob, setActiveInvoiceJob] = useState<BookingJob | null>(null);
   const [activeDisputeJob, setActiveDisputeJob] = useState<BookingJob | null>(null);
 
+  // Action Feedback & 3D Interactive Parallax Tilt State
+  const [activeActionId, setActiveActionId] = useState<string | null>(null);
+  const [cardTilt, setCardTilt] = useState<{ [key: string]: { rotateX: number; rotateY: number } }>({});
+
+  const handleCategoryClick = (catId: string) => {
+    setActiveActionId(catId);
+    setSelectedCategoryTab(catId);
+    setSearchQuery('');
+
+    // Clear action spring pop state
+    setTimeout(() => {
+      setActiveActionId(null);
+    }, 450);
+
+    // If a trade is clicked, smoothly position the viewport to trade results
+    if (catId !== 'all') {
+      setTimeout(() => {
+        const targetEl = document.getElementById('trade-specialists-section') || document.getElementById('selected-services-section');
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }, 150);
+    }
+  };
+
+  const handleCardMouseMove = (e: React.MouseEvent<HTMLButtonElement>, id: string) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = ((y - centerY) / centerY) * -14;
+    const rotateY = ((x - centerX) / centerX) * 14;
+    setCardTilt((prev) => ({ ...prev, [id]: { rotateX, rotateY } }));
+  };
+
+  const handleCardMouseLeave = (id: string) => {
+    setCardTilt((prev) => ({ ...prev, [id]: { rotateX: 0, rotateY: 0 } }));
+  };
+
   // Dynamic time-based greeting
   const greetingText = useMemo(() => {
     const hour = new Date().getHours();
@@ -632,20 +672,30 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
           <span className="text-[11px] font-bold text-slate-400">10 Verified Trades</span>
         </div>
 
-        {/* 3D Animated Category Cards Grid */}
+        {/* 3D Animated Category Cards Grid with Interactive Action Effects */}
         <div className="grid grid-cols-5 sm:grid-cols-5 md:grid-cols-10 gap-2 sm:gap-2.5">
           {EXPERTISE_CATEGORIES.map((cat, idx) => {
             const isSelected = selectedCategoryTab === cat.id;
-            const floatClass = idx % 3 === 0 ? 'animate-3d-float-1' : idx % 3 === 1 ? 'animate-3d-float-2' : 'animate-3d-float-3';
+            const isActionActive = activeActionId === cat.id;
+            const floatClass = isSelected ? '' : idx % 3 === 0 ? 'animate-3d-float-1' : idx % 3 === 1 ? 'animate-3d-float-2' : 'animate-3d-float-3';
+            const tilt = cardTilt[cat.id];
 
             return (
               <button
                 key={cat.id}
-                onClick={() => {
-                  setSelectedCategoryTab(cat.id);
-                  setSearchQuery('');
-                }}
-                className={`p-2.5 sm:p-3 rounded-2xl border text-center transition-all flex flex-col items-center justify-center space-y-1.5 cursor-pointer expertise-3d-card ${floatClass} ${
+                onClick={() => handleCategoryClick(cat.id)}
+                onMouseMove={(e) => handleCardMouseMove(e, cat.id)}
+                onMouseLeave={() => handleCardMouseLeave(cat.id)}
+                style={
+                  tilt && !isSelected
+                    ? {
+                        transform: `rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg) translateY(-6px) translateZ(12px)`
+                      }
+                    : undefined
+                }
+                className={`p-2.5 sm:p-3 rounded-2xl border text-center transition-all flex flex-col items-center justify-center space-y-1.5 cursor-pointer expertise-3d-card action-pressable ${floatClass} ${
+                  isActionActive ? 'animate-action-pop ring-4 ring-blue-400/50 scale-105' : ''
+                } ${
                   isSelected
                     ? 'expertise-3d-selected bg-gradient-to-b from-blue-600 to-blue-700 text-white border-blue-400 ring-2 ring-blue-400/40'
                     : isDark
@@ -656,6 +706,8 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                 {/* 3D Elevated Emoji Icon Container */}
                 <div
                   className={`w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center text-xl sm:text-2xl expertise-3d-icon transition-transform ${
+                    isActionActive ? 'scale-125 rotate-12' : ''
+                  } ${
                     isSelected
                       ? 'bg-white/20 text-white shadow-inner'
                       : isDark
@@ -687,7 +739,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       {/* 5. PARTICULAR TRADE TOP-RATED TECHNICIANS ROW (e.g. Drivers shown first)  */}
       {/* ========================================================================= */}
       {activeTradeTechnicians.length > 0 && (
-        <div className="space-y-3 pt-2 animate-in fade-in slide-in-from-top-2 duration-300">
+        <div id="trade-specialists-section" className="space-y-3 pt-2 animate-in fade-in slide-in-from-top-2 duration-300">
           
           {/* Trade-Specific Pill Badge Header */}
           <div className="flex items-center justify-between">
@@ -768,7 +820,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       {/* 6. SERVICE CARDS LISTING FOR SELECTED EXPERTISE (Shown on Selection/Search)*/}
       {/* ========================================================================= */}
       {(selectedCategoryTab !== 'all' || searchQuery.trim() !== '') && (
-        <div className="space-y-3 pt-1 animate-in fade-in slide-in-from-top-2 duration-300">
+        <div id="selected-services-section" className="space-y-3 pt-1 animate-in fade-in slide-in-from-top-2 duration-300">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <h4 className="text-xs font-black uppercase tracking-wider text-blue-600 dark:text-blue-400">
