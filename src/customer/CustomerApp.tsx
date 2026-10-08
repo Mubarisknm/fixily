@@ -112,6 +112,14 @@ const HERO_SHOWCASE_SLIDES: HeroShowcaseSlide[] = [
     tagline: 'High-pressure foam jet wash, ceramic detailing & battery jumpstart across Kerala',
     badge: '⚡ Instant Dispatch',
     imageUrl: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=1200&q=80'
+  },
+  {
+    id: 'hero-team-4',
+    title: 'ACTING DRIVER.',
+    subtitle: 'SAFE & RELIABLE',
+    tagline: 'Hire background-verified private chauffeurs for city & highway trips',
+    badge: '👨‍✈️ 5-Star Drivers',
+    imageUrl: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&w=1200&q=80'
   }
 ];
 
@@ -167,6 +175,30 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
     }, 4000);
     return () => clearInterval(timer);
   }, [isHeroAutoPlay]);
+
+  // Touch Swipe State for 3D Hero Carousel
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+
+  const handleHeroTouchStart = (e: React.TouchEvent) => {
+    setIsHeroAutoPlay(false);
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  const handleHeroTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX !== null) {
+      const touchEndX = e.changedTouches[0].clientX;
+      const diff = touchStartX - touchEndX;
+      if (diff > 40) {
+        // Swipe Left -> Next
+        setActiveHeroSlide((prev) => (prev + 1) % HERO_SHOWCASE_SLIDES.length);
+      } else if (diff < -40) {
+        // Swipe Right -> Prev
+        setActiveHeroSlide((prev) => (prev === 0 ? HERO_SHOWCASE_SLIDES.length - 1 : prev - 1));
+      }
+    }
+    setTouchStartX(null);
+    setTimeout(() => setIsHeroAutoPlay(true), 5000);
+  };
 
   // Scheduling Search State
   const [targetDate, setTargetDate] = useState<string>(() => new Date().toISOString().split('T')[0]);
@@ -552,65 +584,145 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       )}
 
       {/* ========================================================================= */}
-      {/* 3. HERO TEAM SHOWCASE CAROUSEL BANNER ("FYKZI. WE FIX, YOU RELAX")       */}
+      {/* 3. HERO 3D POPPING & SHUFFLING SHOWCASE DECK ("FYKZI. WE FIX, YOU RELAX") */}
       {/* ========================================================================= */}
-      <div className="relative overflow-hidden rounded-3xl border shadow-xl transition-all duration-500 bg-slate-950 border-slate-800 text-white">
-        <div className="relative h-44 sm:h-52 overflow-hidden">
-          <img
-            src={HERO_SHOWCASE_SLIDES[activeHeroSlide].imageUrl}
-            alt={HERO_SHOWCASE_SLIDES[activeHeroSlide].title}
-            className="w-full h-full object-cover transform hover:scale-105 transition-all duration-700"
-          />
+      <div
+        className="relative pt-1 pb-2 hero-3d-stage select-none"
+        onTouchStart={handleHeroTouchStart}
+        onTouchEnd={handleHeroTouchEnd}
+        onMouseEnter={() => setIsHeroAutoPlay(false)}
+        onMouseLeave={() => setIsHeroAutoPlay(true)}
+      >
+        <div className="relative h-44 sm:h-52 md:h-60 overflow-visible flex items-center justify-center">
+          {HERO_SHOWCASE_SLIDES.map((slide, idx) => {
+            const total = HERO_SHOWCASE_SLIDES.length;
+            let diff = idx - activeHeroSlide;
+            if (diff > total / 2) diff -= total;
+            if (diff < -total / 2) diff += total;
 
-          {/* Smooth Gradient Overlays */}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-slate-950/40 to-transparent" />
+            const isCenter = diff === 0;
+            const isRight = diff === 1;
+            const isLeft = diff === -1;
 
-          {/* Top Badge */}
-          <div className="absolute top-3 left-3">
-            <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-blue-600 text-white shadow">
-              {HERO_SHOWCASE_SLIDES[activeHeroSlide].badge}
-            </span>
-          </div>
+            let transformStyle = '';
+            let zIndex = 10;
+            let opacity = 0;
+            let pointerEvents = 'none';
+            let filter = 'brightness(0.5)';
+            let boxShadow = 'none';
 
-          {/* Banner Content */}
-          <div className="absolute bottom-3 left-4 right-4 text-white">
-            <div className="flex items-baseline space-x-2">
-              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
-                {HERO_SHOWCASE_SLIDES[activeHeroSlide].title}
-              </h1>
-              <span className="text-xs sm:text-sm font-bold text-blue-400 tracking-wider">
-                {HERO_SHOWCASE_SLIDES[activeHeroSlide].subtitle}
-              </span>
-            </div>
-            <p className="text-[11px] sm:text-xs text-slate-300 line-clamp-1 mt-0.5">
-              {HERO_SHOWCASE_SLIDES[activeHeroSlide].tagline}
-            </p>
-          </div>
+            if (isCenter) {
+              transformStyle = 'translateX(0%) scale(1) translateZ(35px) rotateY(0deg)';
+              zIndex = 30;
+              opacity = 1;
+              pointerEvents = 'auto';
+              filter = 'brightness(1)';
+              boxShadow = '0 24px 45px -10px rgba(0,0,0,0.7), 0 0 25px rgba(37, 99, 235, 0.25)';
+            } else if (isRight) {
+              transformStyle = 'translateX(40%) scale(0.86) translateZ(-40px) rotateY(-20deg)';
+              zIndex = 20;
+              opacity = 0.65;
+              pointerEvents = 'auto';
+              filter = 'brightness(0.65) saturate(0.85)';
+              boxShadow = '0 15px 30px -10px rgba(0,0,0,0.5)';
+            } else if (isLeft) {
+              transformStyle = 'translateX(-40%) scale(0.86) translateZ(-40px) rotateY(20deg)';
+              zIndex = 20;
+              opacity = 0.65;
+              pointerEvents = 'auto';
+              filter = 'brightness(0.65) saturate(0.85)';
+              boxShadow = '0 15px 30px -10px rgba(0,0,0,0.5)';
+            } else {
+              transformStyle = diff > 0 
+                ? 'translateX(65%) scale(0.7) translateZ(-100px) rotateY(-35deg)'
+                : 'translateX(-65%) scale(0.7) translateZ(-100px) rotateY(35deg)';
+              zIndex = 10;
+              opacity = 0;
+              pointerEvents = 'none';
+            }
 
-          {/* Left/Right Controls */}
+            return (
+              <div
+                key={slide.id}
+                onClick={() => {
+                  if (!isCenter) setActiveHeroSlide(idx);
+                }}
+                style={{
+                  transform: transformStyle,
+                  zIndex,
+                  opacity,
+                  filter,
+                  boxShadow,
+                  pointerEvents: pointerEvents as any
+                }}
+                className={`absolute w-[88%] sm:w-[82%] md:w-[78%] h-full rounded-3xl overflow-hidden border border-slate-800/80 bg-slate-950 hero-3d-card-item cursor-pointer`}
+              >
+                <img
+                  src={slide.imageUrl}
+                  alt={slide.title}
+                  className="w-full h-full object-cover transform hover:scale-105 transition-all duration-700"
+                />
+
+                {/* Smooth Gradient Overlays */}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-slate-950/30 to-transparent" />
+
+                {/* Top Badge */}
+                <div className="absolute top-3 left-3.5">
+                  <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-blue-600 text-white shadow-md">
+                    {slide.badge}
+                  </span>
+                </div>
+
+                {/* Banner Content */}
+                <div className="absolute bottom-3.5 left-4 right-4 text-white">
+                  <div className="flex items-baseline space-x-2">
+                    <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-white drop-shadow-md">
+                      {slide.title}
+                    </h1>
+                    <span className="text-xs sm:text-sm font-black text-blue-400 tracking-wider drop-shadow">
+                      {slide.subtitle}
+                    </span>
+                  </div>
+                  <p className="text-[11px] sm:text-xs text-slate-300 line-clamp-1 mt-0.5 drop-shadow">
+                    {slide.tagline}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+
+          {/* 3D Arrow Navigation Controls */}
           <button
-            onClick={() => setActiveHeroSlide((prev) => (prev === 0 ? HERO_SHOWCASE_SLIDES.length - 1 : prev - 1))}
-            className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-slate-950/60 hover:bg-slate-900 text-white flex items-center justify-center backdrop-blur cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              setActiveHeroSlide((prev) => (prev === 0 ? HERO_SHOWCASE_SLIDES.length - 1 : prev - 1));
+            }}
+            className="absolute left-1 sm:left-3 z-40 w-8 h-8 rounded-full bg-slate-950/80 hover:bg-blue-600 text-white flex items-center justify-center backdrop-blur shadow-lg border border-slate-800 transition-all cursor-pointer hover:scale-110 active:scale-95"
+            title="Previous Card"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
           <button
-            onClick={() => setActiveHeroSlide((prev) => (prev + 1) % HERO_SHOWCASE_SLIDES.length)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-slate-950/60 hover:bg-slate-900 text-white flex items-center justify-center backdrop-blur cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              setActiveHeroSlide((prev) => (prev + 1) % HERO_SHOWCASE_SLIDES.length);
+            }}
+            className="absolute right-1 sm:right-3 z-40 w-8 h-8 rounded-full bg-slate-950/80 hover:bg-blue-600 text-white flex items-center justify-center backdrop-blur shadow-lg border border-slate-800 transition-all cursor-pointer hover:scale-110 active:scale-95"
+            title="Next Card"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Carousel Dots */}
-        <div className="py-2 px-4 flex items-center justify-center space-x-1.5 bg-slate-950">
+        {/* 3D Carousel Deck Dots Indicator */}
+        <div className="pt-2.5 flex items-center justify-center space-x-2">
           {HERO_SHOWCASE_SLIDES.map((slide, idx) => (
             <button
               key={slide.id}
               onClick={() => setActiveHeroSlide(idx)}
-              className={`h-1 rounded-full transition-all duration-300 ${
-                idx === activeHeroSlide ? 'w-5 bg-blue-500' : 'w-1.5 bg-slate-700'
+              className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                idx === activeHeroSlide ? 'w-6 bg-blue-500 shadow-sm shadow-blue-500' : 'w-2 bg-slate-700 hover:bg-slate-500'
               }`}
             />
           ))}
