@@ -107,12 +107,12 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   return (
     <>
       {/* Floating Minimalist Mobile Bottom Navigation Dock */}
-      <div className="fixed bottom-4 left-3 right-3 sm:left-auto sm:right-auto sm:max-w-md sm:mx-auto z-40 flex items-center justify-between pointer-events-none">
+      <div className="fixed bottom-4 left-3 right-3 sm:left-auto sm:right-auto sm:max-w-md sm:mx-auto z-40 flex items-center justify-center pointer-events-none">
         
         {/* Floating Main Pill Bar */}
         <nav
           aria-label="Mobile Bottom Navigation"
-          className={`flex-1 rounded-full px-3 py-2 border shadow-2xl backdrop-blur-2xl pointer-events-auto transition-all duration-300 flex items-center justify-around mr-2.5 ${
+          className={`w-full max-w-sm sm:max-w-md rounded-full px-4 py-2 border shadow-2xl backdrop-blur-2xl pointer-events-auto transition-all duration-300 flex items-center justify-around ${
             isDark
               ? 'bg-[#0F172A]/90 border-slate-800/90 text-slate-400 shadow-[0_12px_40px_rgba(0,0,0,0.8)]'
               : 'bg-white/95 border-slate-200 text-slate-600 shadow-[0_12px_40px_rgba(37,99,235,0.15)]'
@@ -180,17 +180,6 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             </span>
           </button>
         </nav>
-
-        {/* Elevated Floating FIX NOW Action Button (Next to Profile Icon) */}
-        <button
-          onClick={handleFixNowClick}
-          className="w-14 h-14 rounded-full bg-[#0D6E6E] hover:bg-[#0B5C5C] text-white font-black flex flex-col items-center justify-center shadow-xl shadow-teal-950/40 border-2 border-white dark:border-slate-800 pointer-events-auto transition-all hover:scale-105 active:scale-95 cursor-pointer shrink-0"
-          title="Instant Service Rescue - FIX NOW"
-        >
-          <span className="font-black text-[11px] leading-none text-white tracking-wider text-center">
-            FIX<br /><span className="text-[10px] mt-0.5 inline-block">NOW</span>
-          </span>
-        </button>
       </div>
 
       {/* Mobile Account & Quick Controls Drawer */}
