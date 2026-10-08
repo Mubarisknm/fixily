@@ -22,7 +22,8 @@ import {
   Smartphone,
   Monitor,
   Sparkles,
-  Mail
+  Mail,
+  Bell
 } from 'lucide-react';
 import { KochiLocation, ThemeMode, AppLanguage, UserSession, UserRole } from '../types';
 import { useTranslation } from '../utils/translations';
@@ -90,11 +91,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   const handleSwitchToPartner = () => {
     setShowUserDropdown(false);
-    if (currentUser?.role === 'partner' || currentUser?.role === 'admin') {
-      setActiveTab('partner');
-    } else {
-      onOpenAuthModal('partner');
-    }
+    setActiveTab('partner');
   };
 
   const handleSwitchToAdmin = () => {
@@ -113,10 +110,10 @@ export const Header: React.FC<HeaderProps> = ({
         : 'bg-[#F8FAFC]/90 text-slate-900 border-slate-200/90 shadow-[0_4px_20px_rgba(37,99,235,0.06)]'
     }`}>
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 gap-1.5 sm:gap-4">
+        <div className="flex items-center justify-between h-14 sm:h-16 gap-2">
           
           {/* 1. Left: Brand Logo & Interactive Location Selector */}
-          <div className="flex items-center space-x-1.5 sm:space-x-3 min-w-0">
+          <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
             <div
               onClick={() => setActiveTab('customer')}
               className="cursor-pointer group shrink-0 transition-transform active:scale-95"
@@ -134,7 +131,7 @@ export const Header: React.FC<HeaderProps> = ({
                   setShowLocationModal(true);
                 }
               }}
-              className={`flex items-center space-x-1.5 px-2 py-1.5 sm:px-3 sm:py-1.5 rounded-2xl border text-xs font-bold transition-all shadow-sm cursor-pointer card-3d-interactive shrink-0 max-w-[130px] sm:max-w-[210px] ${
+              className={`flex items-center space-x-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-2xl border text-xs font-bold transition-all shadow-sm cursor-pointer card-3d-interactive shrink-0 max-w-[140px] sm:max-w-[220px] ${
                 selectedLocation.isLiveGps
                   ? isDark
                     ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-200 hover:border-emerald-400'
@@ -160,45 +157,20 @@ export const Header: React.FC<HeaderProps> = ({
                 selectedLocation.isLiveGps ? 'text-emerald-500' : 'text-blue-500'
               }`} />
 
-              <div className="text-left flex flex-col justify-center leading-tight min-w-0">
-                <div className="flex items-center space-x-1">
-                  <span className="truncate font-black text-[11px] sm:text-xs">
-                    {selectedLocation.name.split('(')[0]}
-                  </span>
-                  {selectedLocation.isLiveGps && (
-                    <span className="text-[8px] font-black uppercase px-1 py-0.2 rounded bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 shrink-0">
-                      GPS
-                    </span>
-                  )}
-                </div>
-              </div>
-              <ChevronDown className="w-3 h-3 opacity-60 shrink-0 hidden sm:inline" />
+              <span className="truncate font-black text-[11px] sm:text-xs">
+                {selectedLocation.name.split('(')[0].trim()}
+              </span>
+              <ChevronDown className="w-3 h-3 opacity-60 shrink-0" />
             </button>
-
-            {/* Quick Live GPS Shortcut on Tablet/Desktop */}
-            {!selectedLocation.isLiveGps && onDetectLiveGps && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDetectLiveGps();
-                }}
-                disabled={isDetectingLiveGps}
-                className="hidden lg:flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-black transition-all cursor-pointer shadow-sm active:scale-95"
-                title="Switch to your live GPS location"
-              >
-                <Crosshair className={`w-3 h-3 ${isDetectingLiveGps ? 'animate-spin' : ''}`} />
-                <span>Live GPS</span>
-              </button>
-            )}
           </div>
 
-          {/* 2. Right: Action Controls (Search, Language, Day/Night, Profile) */}
-          <div className="flex items-center space-x-1 sm:space-x-2 shrink-0">
+          {/* 2. Right: Action Controls (Language, Day/Night, SOS, Profile) */}
+          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
             
-            {/* Quick Search Button (Smooth Scroll to Search) */}
+            {/* Quick Search Button (Desktop only) */}
             <button
               onClick={handleQuickSearchClick}
-              className={`p-2 sm:px-2.5 sm:py-1.5 rounded-xl border text-xs font-bold transition-all flex items-center space-x-1 cursor-pointer ${
+              className={`hidden md:flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                 isDark
                   ? 'bg-slate-900/80 border-slate-800 text-slate-300 hover:border-blue-500 hover:text-white'
                   : 'bg-white border-slate-200 text-slate-700 hover:border-blue-300 hover:text-blue-600 shadow-sm'
@@ -206,13 +178,13 @@ export const Header: React.FC<HeaderProps> = ({
               title="Search services, technicians and repairs"
             >
               <Search className="w-3.5 h-3.5 text-blue-500 shrink-0" />
-              <span className="hidden md:inline">Search</span>
+              <span>Search</span>
             </button>
 
             {/* Language Switcher (Malayalam / English) */}
             <button
               onClick={onToggleLanguage}
-              className={`px-2 py-1.5 sm:px-2.5 rounded-xl border text-xs font-black transition-all flex items-center space-x-1 cursor-pointer ${
+              className={`px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-xl border text-xs font-black transition-all flex items-center space-x-1 cursor-pointer shrink-0 ${
                 isDark
                   ? 'bg-slate-900/80 border-slate-800 text-slate-300 hover:border-blue-500'
                   : 'bg-white border-slate-200 text-slate-700 hover:border-blue-300 shadow-sm'
@@ -220,26 +192,13 @@ export const Header: React.FC<HeaderProps> = ({
               title="Toggle English / മലയാളം"
             >
               <Globe className="w-3.5 h-3.5 text-blue-500 shrink-0" />
-              <span className="hidden sm:inline font-bold">{language === 'en' ? 'മലയാളം' : 'English'}</span>
-              <span className="sm:hidden font-black text-[10px]">{language === 'en' ? 'ML' : 'EN'}</span>
+              <span className="font-bold text-[11px]">{language === 'en' ? 'ML' : 'EN'}</span>
             </button>
-
-            {/* SOS Emergency Helpline */}
-            {onOpenEmergency && (
-              <button
-                onClick={onOpenEmergency}
-                className="hidden sm:flex items-center space-x-1 px-2.5 sm:px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-black shadow-md shadow-red-600/30 transition-transform hover:scale-105 active:scale-95 animate-pulse cursor-pointer"
-                title="24/7 Emergency Helplines: Police 112, Ambulance 108, Fire 101"
-              >
-                <Siren className="w-3.5 h-3.5" />
-                <span>SOS</span>
-              </button>
-            )}
 
             {/* Day / Night Theme Toggle */}
             <button
               onClick={onToggleTheme}
-              className={`p-2 sm:px-2.5 sm:py-1.5 rounded-xl border text-xs font-extrabold transition-all shadow-sm flex items-center space-x-1 cursor-pointer ${
+              className={`p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl border text-xs font-extrabold transition-all shadow-sm flex items-center space-x-1 cursor-pointer shrink-0 ${
                 isDark
                   ? 'bg-slate-800 border-slate-700 text-amber-300 hover:bg-slate-700 hover:border-amber-400'
                   : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100 hover:border-blue-200'
@@ -247,52 +206,19 @@ export const Header: React.FC<HeaderProps> = ({
               title={isDark ? "Switch to Day Light Mode" : "Switch to Night Dark Mode"}
             >
               {isDark ? (
-                <>
-                  <Sun className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-                  <span className="hidden lg:inline">Day</span>
-                </>
+                <Sun className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
               ) : (
-                <>
-                  <Moon className="w-3.5 h-3.5 text-blue-600 fill-blue-600" />
-                  <span className="hidden lg:inline">Dark</span>
-                </>
+                <Moon className="w-3.5 h-3.5 text-blue-600 fill-blue-600" />
               )}
             </button>
 
-            {/* Mobile View / Desktop Simulator Switcher (Desktop only) */}
-            {onToggleMobileView && (
-              <button
-                onClick={onToggleMobileView}
-                className={`hidden md:flex items-center space-x-1 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-black transition-all shadow-sm cursor-pointer ${
-                  isMobileView
-                    ? 'bg-blue-600 border-blue-500 text-white shadow-md shadow-blue-600/30'
-                    : isDark
-                      ? 'bg-slate-900 border-slate-800 text-slate-300 hover:border-blue-500 hover:bg-slate-800'
-                      : 'bg-white border-slate-200 text-slate-700 hover:border-blue-300 hover:bg-slate-50'
-                }`}
-                title={isMobileView ? "Switch to Desktop Full View" : "Preview Mobile Phone Simulator"}
-              >
-                {isMobileView ? (
-                  <>
-                    <Monitor className="w-3.5 h-3.5" />
-                    <span>Desktop</span>
-                  </>
-                ) : (
-                  <>
-                    <Smartphone className="w-3.5 h-3.5 text-blue-400" />
-                    <span>Phone View</span>
-                  </>
-                )}
-              </button>
-            )}
-
             {/* User Profile / Google Sign-In Button */}
-            <div className="relative">
+            <div className="relative shrink-0">
               {currentUser ? (
                 <div>
                   <button
                     onClick={() => setShowUserDropdown(!showUserDropdown)}
-                    className={`flex items-center space-x-1.5 sm:space-x-2 px-2 py-1.5 sm:px-3 sm:py-1.5 rounded-2xl border text-xs font-black transition-all card-3d-interactive cursor-pointer ${
+                    className={`flex items-center space-x-1.5 px-2 py-1 sm:px-3 sm:py-1.5 rounded-2xl border text-xs font-black transition-all card-3d-interactive cursor-pointer ${
                       isDark
                         ? 'bg-blue-950/60 border-blue-700/60 text-blue-200 hover:bg-blue-900/50'
                         : 'bg-blue-50 border-blue-200 text-blue-900 hover:bg-blue-100'
@@ -309,10 +235,10 @@ export const Header: React.FC<HeaderProps> = ({
                         {currentUser.name.charAt(0)}
                       </div>
                     )}
-                    <span className="max-w-[55px] sm:max-w-[85px] truncate text-[11px] sm:text-xs">
+                    <span className="max-w-[50px] sm:max-w-[85px] truncate text-[11px] sm:text-xs">
                       {currentUser.name.split(' ')[0]}
                     </span>
-                    <ChevronDown className="w-3 h-3 opacity-60" />
+                    <ChevronDown className="w-3 h-3 opacity-60 hidden sm:inline" />
                   </button>
 
                   {/* 3D Glassmorphic Dropdown Menu */}
@@ -364,7 +290,7 @@ export const Header: React.FC<HeaderProps> = ({
                           }`}
                         >
                           <Lock className="w-3.5 h-3.5 text-blue-400" />
-                          <span>Gig Partner Portal</span>
+                          <span>Partner Portal &amp; Apply</span>
                         </button>
 
                         <button
@@ -398,11 +324,10 @@ export const Header: React.FC<HeaderProps> = ({
               ) : (
                 <button
                   onClick={() => onOpenAuthModal('customer')}
-                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs shadow-md shadow-blue-600/30 transition-all card-3d-interactive cursor-pointer shrink-0"
+                  className="flex items-center space-x-1 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs shadow-md shadow-blue-600/30 transition-all card-3d-interactive cursor-pointer shrink-0"
                 >
                   <User className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">{t('login_btn')}</span>
-                  <span className="sm:hidden text-xs font-black">Login</span>
+                  <span>Login</span>
                 </button>
               )}
             </div>

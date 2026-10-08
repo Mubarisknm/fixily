@@ -17,7 +17,10 @@ import {
   FileText,
   MapPin,
   Sparkles,
-  Crosshair
+  Crosshair,
+  Grid,
+  Zap,
+  Package
 } from 'lucide-react';
 import { ThemeMode, AppLanguage, UserSession, UserRole, KochiLocation } from '../types';
 import { useTranslation } from '../utils/translations';
@@ -66,14 +69,13 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleNavSearch = () => {
+  const handleNavServices = () => {
     setActiveTab('customer');
-    const searchEl = document.getElementById('service-search-input');
-    if (searchEl) {
-      searchEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      searchEl.focus();
+    const expertiseEl = document.getElementById('our-expertise-section') || document.getElementById('service-search-input');
+    if (expertiseEl) {
+      expertiseEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else {
-      window.scrollTo({ top: 200, behavior: 'smooth' });
+      window.scrollTo({ top: 400, behavior: 'smooth' });
     }
   };
 
@@ -91,79 +93,77 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
     }
   };
 
+  const handleFixNowClick = () => {
+    setActiveTab('customer');
+    const searchInput = document.getElementById('service-search-input');
+    if (searchInput) {
+      searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      searchInput.focus();
+    } else {
+      onOpenEmergency();
+    }
+  };
+
   return (
     <>
-      {/* Sticky Bottom Navigation Bar for Mobile View */}
-      <nav
-        aria-label="Mobile Bottom Navigation"
-        className={`fixed bottom-0 left-0 right-0 z-40 transition-colors duration-200 border-t backdrop-blur-xl ${
-          isDark
-            ? 'bg-[#0F172A]/95 border-slate-800/90 text-slate-400'
-            : 'bg-[#F8FAFC]/95 border-slate-200/90 text-slate-600'
-        } shadow-[0_-8px_30px_rgba(0,0,0,0.12)]`}
-      >
-        <div className="max-w-md mx-auto px-3 py-1.5 flex items-center justify-around">
-          
+      {/* Floating Minimalist Mobile Bottom Navigation Dock */}
+      <div className="fixed bottom-4 left-3 right-3 sm:left-auto sm:right-auto sm:max-w-md sm:mx-auto z-40 flex items-center justify-between pointer-events-none">
+        
+        {/* Floating Main Pill Bar */}
+        <nav
+          aria-label="Mobile Bottom Navigation"
+          className={`flex-1 rounded-full px-3 py-2 border shadow-2xl backdrop-blur-2xl pointer-events-auto transition-all duration-300 flex items-center justify-around mr-2.5 ${
+            isDark
+              ? 'bg-[#0F172A]/90 border-slate-800/90 text-slate-400 shadow-[0_12px_40px_rgba(0,0,0,0.8)]'
+              : 'bg-white/95 border-slate-200 text-slate-600 shadow-[0_12px_40px_rgba(37,99,235,0.15)]'
+          }`}
+        >
           {/* Tab 1: Home */}
           <button
             onClick={handleNavHome}
-            className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all active:scale-95 ${
+            className={`flex flex-col items-center justify-center px-3 py-1 rounded-full transition-all active:scale-95 cursor-pointer ${
               activeTab === 'customer'
                 ? 'text-blue-600 dark:text-blue-400 font-extrabold'
                 : 'hover:text-blue-500 font-medium'
             }`}
           >
             <Home className="w-5 h-5 mb-0.5 stroke-[2.2]" />
-            <span className="text-[10px] leading-tight">
+            <span className="text-[10px] leading-tight font-bold">
               {language === 'ml' ? 'ഹോം' : 'Home'}
             </span>
           </button>
 
-          {/* Tab 2: Search Services */}
+          {/* Tab 2: Services / Expertise */}
           <button
-            onClick={handleNavSearch}
-            className="flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all active:scale-95 hover:text-blue-500 font-medium"
+            onClick={handleNavServices}
+            className="flex flex-col items-center justify-center px-3 py-1 rounded-full transition-all active:scale-95 hover:text-blue-500 font-medium cursor-pointer"
           >
-            <Search className="w-5 h-5 mb-0.5 stroke-[2.2]" />
-            <span className="text-[10px] leading-tight">
-              {language === 'ml' ? 'തിരയുക' : 'Search'}
+            <Grid className="w-5 h-5 mb-0.5 stroke-[2.2]" />
+            <span className="text-[10px] leading-tight font-bold">
+              {language === 'ml' ? 'സർവീസുകൾ' : 'Services'}
             </span>
           </button>
 
-          {/* Tab 3: SOS Emergency (Elevated Highlight) */}
-          <button
-            onClick={onOpenEmergency}
-            className="flex flex-col items-center justify-center -mt-4 transition-transform active:scale-90"
-            title="Kerala Emergency SOS 112"
-          >
-            <div className="w-12 h-12 rounded-full bg-red-600 hover:bg-red-700 text-white flex items-center justify-center shadow-lg shadow-red-600/40 border-2 border-white dark:border-slate-900 animate-pulse">
-              <Siren className="w-6 h-6" />
-            </div>
-            <span className="text-[10px] font-black text-red-600 dark:text-red-400 mt-0.5">
-              SOS
-            </span>
-          </button>
-
-          {/* Tab 4: Bookings (With Active Badge) */}
+          {/* Tab 3: Orders (With Active Badge) */}
           <button
             onClick={handleNavBookings}
-            className="relative flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all active:scale-95 hover:text-blue-500 font-medium"
+            className="relative flex flex-col items-center justify-center px-3 py-1 rounded-full transition-all active:scale-95 hover:text-blue-500 font-medium cursor-pointer"
           >
-            <Clock className="w-5 h-5 mb-0.5 stroke-[2.2]" />
+            <Package className="w-5 h-5 mb-0.5 stroke-[2.2]" />
             {activeJobsCount > 0 && (
-              <span className="absolute -top-0.5 right-1.5 w-4 h-4 bg-blue-600 text-white text-[9px] font-black rounded-full flex items-center justify-center shadow-sm animate-bounce">
+              <span className="absolute -top-1 right-2 w-4 h-4 bg-blue-600 text-white text-[9px] font-black rounded-full flex items-center justify-center shadow-sm animate-bounce">
                 {activeJobsCount}
               </span>
             )}
-            <span className="text-[10px] leading-tight">
-              {language === 'ml' ? 'ഓർഡറുകൾ' : 'Orders'}
+            <span className="text-[10px] leading-tight font-bold">
+              {language === 'ml' ? 'ഓർഡർ' : 'Orders'}
             </span>
           </button>
 
-          {/* Tab 5: Account / Roles Drawer */}
+          {/* Tab 4: Profile / Account */}
           <button
             onClick={() => setShowAccountDrawer(true)}
-            className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all active:scale-95 ${
+            className={`flex flex-col items-center justify-center px-3 py-1 rounded-full transition-all active:scale-95 cursor-pointer ${
               showAccountDrawer || activeTab !== 'customer'
                 ? 'text-blue-600 dark:text-blue-400 font-extrabold'
                 : 'hover:text-blue-500 font-medium'
@@ -175,13 +175,23 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                 <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900" />
               )}
             </div>
-            <span className="text-[10px] leading-tight">
-              {language === 'ml' ? 'അക്കൗണ്ട്' : 'Account'}
+            <span className="text-[10px] leading-tight font-bold">
+              {language === 'ml' ? 'പ്രൊഫൈൽ' : 'Profile'}
             </span>
           </button>
+        </nav>
 
-        </div>
-      </nav>
+        {/* Elevated Floating FIX NOW Action Button */}
+        <button
+          onClick={handleFixNowClick}
+          className="w-14 h-14 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-400 text-slate-950 font-black text-[10px] uppercase tracking-wider flex flex-col items-center justify-center shadow-2xl shadow-emerald-500/40 border-2 border-white dark:border-slate-900 pointer-events-auto transition-transform hover:scale-105 active:scale-90 cursor-pointer shrink-0"
+          title="Instant Service Rescue"
+        >
+          <Zap className="w-4 h-4 fill-slate-950" />
+          <span className="font-black text-[9px] leading-tight mt-0.5">FIX NOW</span>
+        </button>
+
+      </div>
 
       {/* Mobile Account & Quick Controls Drawer */}
       {showAccountDrawer && (
@@ -344,11 +354,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
               <button
                 onClick={() => {
                   setShowAccountDrawer(false);
-                  if (currentUser?.role === 'partner' || currentUser?.role === 'admin') {
-                    setActiveTab('partner');
-                  } else {
-                    onOpenAuthModal('partner');
-                  }
+                  setActiveTab('partner');
                 }}
                 className={`w-full p-3 rounded-2xl border text-left flex items-center justify-between transition-all ${
                   activeTab === 'partner'
@@ -360,9 +366,9 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                   <Lock className="w-4 h-4 text-blue-400" />
                   <div>
                     <div className="text-xs font-black flex items-center space-x-1.5">
-                      <span>Gig Partner Portal</span>
+                      <span>Partner Portal &amp; Apply</span>
                       <span className="text-[9px] bg-blue-500/20 text-blue-400 px-1.5 py-0.2 rounded font-mono font-bold">
-                        OTP Protected
+                        Apply in 3 Mins
                       </span>
                     </div>
                     <div className={`text-[10px] ${activeTab === 'partner' ? 'text-blue-200' : 'text-slate-400'}`}>
