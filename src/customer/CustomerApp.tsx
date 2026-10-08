@@ -736,19 +736,31 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       )}
 
       {/* ========================================================================= */}
-      {/* 6. SERVICE CARDS LISTING FOR SELECTED EXPERTISE                            */}
+      {/* 6. SERVICE CARDS LISTING FOR SELECTED EXPERTISE (Shown on Selection/Search)*/}
       {/* ========================================================================= */}
-      <div className="space-y-3 pt-1">
-        <div className="flex items-center justify-between">
-          <h4 className="text-xs font-black uppercase tracking-wider text-slate-400">
-            {selectedCategoryTab === 'all'
-              ? 'Featured Doorstep Services'
-              : `${selectedCategoryTab} Services`}
-          </h4>
-          <span className="text-xs font-bold text-slate-400">{filteredServices.length} Ready</span>
-        </div>
+      {(selectedCategoryTab !== 'all' || searchQuery.trim() !== '') && (
+        <div className="space-y-3 pt-1 animate-in fade-in slide-in-from-top-2 duration-300">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <h4 className="text-xs font-black uppercase tracking-wider text-blue-600 dark:text-blue-400">
+                {searchQuery.trim() !== ''
+                  ? `Search: "${searchQuery}"`
+                  : `${selectedCategoryTab} Services`}
+              </h4>
+              <button
+                onClick={() => {
+                  setSelectedCategoryTab('all');
+                  setSearchQuery('');
+                }}
+                className="text-[10px] font-bold text-slate-400 hover:text-white px-2.5 py-0.5 rounded-full border border-slate-700 bg-slate-800/60 cursor-pointer transition-colors"
+              >
+                ✕ View All
+              </button>
+            </div>
+            <span className="text-xs font-bold text-slate-400">{filteredServices.length} Ready</span>
+          </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
           {filteredServices.map((service) => (
             <div
               key={service.id}
@@ -801,6 +813,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
           ))}
         </div>
       </div>
+      )}
 
       {/* ========================================================================= */}
       {/* 7. ACTIVE ORDERS & LIVE RADAR STATUS (When User is Logged In)             */}

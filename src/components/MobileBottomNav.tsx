@@ -181,16 +181,16 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           </button>
         </nav>
 
-        {/* Elevated Floating FIX NOW Action Button */}
+        {/* Elevated Floating FIX NOW Action Button (Next to Profile Icon) */}
         <button
           onClick={handleFixNowClick}
-          className="w-14 h-14 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-400 text-slate-950 font-black text-[10px] uppercase tracking-wider flex flex-col items-center justify-center shadow-2xl shadow-emerald-500/40 border-2 border-white dark:border-slate-900 pointer-events-auto transition-transform hover:scale-105 active:scale-90 cursor-pointer shrink-0"
-          title="Instant Service Rescue"
+          className="w-14 h-14 rounded-full bg-[#0D6E6E] hover:bg-[#0B5C5C] text-white font-black flex flex-col items-center justify-center shadow-xl shadow-teal-950/40 border-2 border-white dark:border-slate-800 pointer-events-auto transition-all hover:scale-105 active:scale-95 cursor-pointer shrink-0"
+          title="Instant Service Rescue - FIX NOW"
         >
-          <Zap className="w-4 h-4 fill-slate-950" />
-          <span className="font-black text-[9px] leading-tight mt-0.5">FIX NOW</span>
+          <span className="font-black text-[11px] leading-none text-white tracking-wider text-center">
+            FIX<br /><span className="text-[10px] mt-0.5 inline-block">NOW</span>
+          </span>
         </button>
-
       </div>
 
       {/* Mobile Account & Quick Controls Drawer */}
