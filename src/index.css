@@ -98,6 +98,129 @@ html.dark body {
   box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.39);
 }
 
+/* 3D Spatial Perspective Container */
+.expertise-3d-perspective-container {
+  perspective: 1200px;
+  transform-style: preserve-3d;
+}
+
+/* 3D Dimensional Card with Tactile Bevel */
+.expertise-3d-card {
+  transform-style: preserve-3d;
+  transform: translateZ(0);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.3s ease, background-color 0.3s ease;
+  will-change: transform, box-shadow;
+  position: relative;
+  overflow: hidden;
+}
+
+.expertise-3d-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.75s ease;
+  pointer-events: none;
+}
+
+.expertise-3d-card:hover::before {
+  left: 140%;
+}
+
+.expertise-3d-card:hover {
+  transform: translateY(-8px) translateZ(16px) rotateX(8deg) scale(1.04);
+  box-shadow: 0 20px 30px -8px rgba(37, 99, 235, 0.28), 0 0 20px rgba(37, 99, 235, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+}
+
+.dark .expertise-3d-card:hover {
+  box-shadow: 0 20px 30px -8px rgba(37, 99, 235, 0.45), 0 0 25px rgba(37, 99, 235, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+}
+
+.expertise-3d-card:active {
+  transform: translateY(2px) translateZ(4px) scale(0.96);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* 3D Elevated Icon */
+.expertise-3d-icon {
+  transform: translateZ(16px);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.12));
+  will-change: transform;
+}
+
+.expertise-3d-card:hover .expertise-3d-icon {
+  transform: translateZ(32px) scale(1.24) rotate(-4deg);
+  filter: drop-shadow(0 10px 14px rgba(37, 99, 235, 0.35));
+}
+
+/* 3D Elevated Label */
+.expertise-3d-label {
+  transform: translateZ(10px);
+  transition: transform 0.3s ease;
+}
+
+.expertise-3d-card:hover .expertise-3d-label {
+  transform: translateZ(20px);
+}
+
+/* Selected 3D Active State */
+.expertise-3d-selected {
+  transform: translateY(-6px) translateZ(22px) scale(1.05) !important;
+  box-shadow: 0 18px 32px -6px rgba(37, 99, 235, 0.5), 0 4px 0 0 #1D4ED8, 0 0 25px rgba(37, 99, 235, 0.3) !important;
+  border-color: #3B82F6 !important;
+}
+
+.dark .expertise-3d-selected {
+  box-shadow: 0 18px 32px -6px rgba(37, 99, 235, 0.65), 0 4px 0 0 #1E40AF, 0 0 30px rgba(37, 99, 235, 0.4) !important;
+}
+
+/* Weightless Staggered 3D Floating Keyframes */
+@keyframes float-3d-a {
+  0%, 100% {
+    transform: translateY(0px) rotateX(0deg) translateZ(0px);
+  }
+  50% {
+    transform: translateY(-4px) rotateX(3deg) translateZ(6px);
+  }
+}
+
+@keyframes float-3d-b {
+  0%, 100% {
+    transform: translateY(0px) rotateX(0deg) translateZ(0px);
+  }
+  50% {
+    transform: translateY(-5px) rotateX(-3deg) translateZ(8px);
+  }
+}
+
+@keyframes float-3d-c {
+  0%, 100% {
+    transform: translateY(0px) rotateX(0deg) translateZ(0px);
+  }
+  50% {
+    transform: translateY(-3.5px) rotateX(2deg) translateZ(5px);
+  }
+}
+
+.animate-3d-float-1 {
+  animation: float-3d-a 4.2s ease-in-out infinite;
+}
+
+.animate-3d-float-2 {
+  animation: float-3d-b 5.1s ease-in-out infinite;
+  animation-delay: 0.7s;
+}
+
+.animate-3d-float-3 {
+  animation: float-3d-c 4.6s ease-in-out infinite;
+  animation-delay: 1.4s;
+}
+
 /* Subtle float keyframes for 3D elements */
 @keyframes float-subtle {
   0%, 100% {
@@ -126,4 +249,5 @@ html.dark body {
 .animate-pulse-glow {
   animation: pulse-glow 3s ease-in-out infinite;
 }
+
 

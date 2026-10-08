@@ -618,19 +618,26 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       </div>
 
       {/* ========================================================================= */}
-      {/* 4. "OUR EXPERTISE" CATEGORY GRID (Clean Minimalist Hub)                    */}
+      {/* 4. "OUR EXPERTISE" CATEGORY GRID (Interactive 3D Spatial Hub)             */}
       {/* ========================================================================= */}
-      <div id="our-expertise-section" className="space-y-3 pt-1">
-        <div className="text-center">
-          <h3 className="text-xs sm:text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">
-            OUR EXPERTISE
-          </h3>
+      <div id="our-expertise-section" className="space-y-3 pt-2 expertise-3d-perspective-container">
+        <div className="flex items-center justify-between px-1">
+          <div className="flex items-center space-x-2">
+            <span className="w-2 h-2 rounded-full bg-blue-500 animate-ping" />
+            <h3 className="text-xs sm:text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white flex items-center gap-1.5">
+              <span>OUR EXPERTISE</span>
+              <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+            </h3>
+          </div>
+          <span className="text-[11px] font-bold text-slate-400">10 Verified Trades</span>
         </div>
 
-        {/* Clean Minimalist Category Cards Grid */}
-        <div className="grid grid-cols-5 sm:grid-cols-5 md:grid-cols-10 gap-2">
-          {EXPERTISE_CATEGORIES.map((cat) => {
+        {/* 3D Animated Category Cards Grid */}
+        <div className="grid grid-cols-5 sm:grid-cols-5 md:grid-cols-10 gap-2 sm:gap-2.5">
+          {EXPERTISE_CATEGORIES.map((cat, idx) => {
             const isSelected = selectedCategoryTab === cat.id;
+            const floatClass = idx % 3 === 0 ? 'animate-3d-float-1' : idx % 3 === 1 ? 'animate-3d-float-2' : 'animate-3d-float-3';
+
             return (
               <button
                 key={cat.id}
@@ -638,16 +645,38 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                   setSelectedCategoryTab(cat.id);
                   setSearchQuery('');
                 }}
-                className={`p-2.5 rounded-2xl border text-center transition-all flex flex-col items-center justify-center space-y-1 cursor-pointer card-3d-interactive ${
+                className={`p-2.5 sm:p-3 rounded-2xl border text-center transition-all flex flex-col items-center justify-center space-y-1.5 cursor-pointer expertise-3d-card ${floatClass} ${
                   isSelected
-                    ? 'bg-blue-600 text-white border-blue-500 shadow-md ring-2 ring-blue-600/30'
+                    ? 'expertise-3d-selected bg-gradient-to-b from-blue-600 to-blue-700 text-white border-blue-400 ring-2 ring-blue-400/40'
                     : isDark
-                    ? 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700'
-                    : 'bg-white border-slate-200 text-slate-700 hover:border-blue-200 hover:bg-blue-50/50 shadow-sm'
+                    ? 'bg-[#0F172A]/90 border-slate-800 text-slate-200 hover:border-blue-500/50 hover:bg-slate-850 shadow-md shadow-slate-950/50'
+                    : 'bg-white border-slate-200/90 text-slate-700 hover:border-blue-300 hover:bg-blue-50/60 shadow-md shadow-slate-200/60'
                 }`}
               >
-                <span className="text-xl">{cat.icon}</span>
-                <span className="text-[10px] font-black truncate w-full">{cat.label}</span>
+                {/* 3D Elevated Emoji Icon Container */}
+                <div
+                  className={`w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center text-xl sm:text-2xl expertise-3d-icon transition-transform ${
+                    isSelected
+                      ? 'bg-white/20 text-white shadow-inner'
+                      : isDark
+                      ? 'bg-slate-800/80 shadow-inner'
+                      : 'bg-slate-100 shadow-sm'
+                  }`}
+                >
+                  <span>{cat.icon}</span>
+                </div>
+
+                {/* 3D Elevated Label */}
+                <span className={`text-[10px] sm:text-[11px] font-black truncate w-full expertise-3d-label ${
+                  isSelected ? 'text-white' : ''
+                }`}>
+                  {cat.label}
+                </span>
+
+                {/* Subtle Active Indicator Beacon */}
+                {isSelected && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shadow-sm shadow-amber-400 animate-pulse" />
+                )}
               </button>
             );
           })}
