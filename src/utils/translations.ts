@@ -77,7 +77,10 @@ export const translations: Record<AppLanguage, Record<string, string>> = {
     rural_villages: 'Rural Villages',
     high_range_hills: 'High-Range Hills',
     coastal_areas: 'Coastal Areas',
-    towns_urban: 'Towns & Cities'
+    towns_urban: 'Towns & Cities',
+    how_it_works_badge: 'Simple 4-Step Process',
+    how_it_works_title: 'How Fykzi Works',
+    how_it_works_sub: 'From instant GPS dispatch and background-verified pros to ₹0 advance payment and 100% damage warranty.'
   },
   ml: {
     brand_tagline: 'കേരളത്തിലെ വിശ്വസനീയ ഡോർസ്റ്റെപ്പ് സർവീസുകളും റോഡ്‌സൈഡ് സഹായവും',
@@ -116,7 +119,7 @@ export const translations: Record<AppLanguage, Record<string, string>> = {
     status_booked: 'ബുക്കിംഗ് സ്വീകരിച്ചു',
     status_assigned: 'തൊഴിലാളിയെ നിയോഗിച്ചു',
     status_on_the_way: 'തൊഴിലാളി വരുന്നുണ്ട്',
-    status_in_progress: 'ജോലി നടക്കുന്നു',
+    status_in_progress: 'നടക്കുന്നു',
     status_completed: 'പൂർത്തിയായി',
     status_cancelled: 'റദ്ദാക്കി',
     cancellation_policy: 'റദ്ദാക്കലും റീഫണ്ട് വ്യവസ്ഥകളും',
@@ -154,7 +157,10 @@ export const translations: Record<AppLanguage, Record<string, string>> = {
     rural_villages: 'ഗ്രാമങ്ങൾ',
     high_range_hills: 'ഹൈറേഞ്ച് & മലയോരം',
     coastal_areas: 'തീരദേശം & കായലോരം',
-    towns_urban: 'നഗരങ്ങൾ'
+    towns_urban: 'നഗരങ്ങൾ',
+    how_it_works_badge: 'ലളിതമായ 4 ഘട്ടങ്ങൾ',
+    how_it_works_title: 'ഫിക്സി എങ്ങനെ പ്രവർത്തിക്കുന്നു?',
+    how_it_works_sub: 'നിങ്ങളുടെ ലൊക്കേഷൻ പിൻ ചെയ്യുന്നത് മുതൽ ജോലി കണ്ട് തൃപ്തിപ്പെട്ട് പണം നൽകുന്നത് വരെയുള്ള സുരക്ഷിത പ്രക്രിയ.'
   }
 };
 

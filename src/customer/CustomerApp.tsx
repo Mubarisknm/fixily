@@ -1024,8 +1024,20 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
           
           {/* Left Column: Headline, Search, Quick Filters & Scheduling (Span 7) */}
           <div className="lg:col-span-7 space-y-4">
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-bold bg-blue-600/10 text-blue-600 dark:text-blue-400 border border-blue-600/20 shadow-sm badge-3d-glow">
-              <span>⚡ {t('hero_badge')} • {selectedLocation.name}</span>
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-bold bg-blue-600/10 text-blue-600 dark:text-blue-400 border border-blue-600/20 shadow-sm badge-3d-glow">
+                <span>⚡ {t('hero_badge')} • {selectedLocation.name}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  const el = document.getElementById('how-it-works-section');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="inline-flex items-center space-x-1 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-all cursor-pointer shadow-sm"
+              >
+                <span>💡 {language === 'ml' ? 'പ്രവർത്തനം അറിയൂ (4 ഘട്ടങ്ങൾ)' : 'How It Works (4 Steps)'}</span>
+              </button>
             </div>
 
             <h1 className="text-2xl sm:text-4xl font-black tracking-tight leading-tight">
@@ -2156,6 +2168,209 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             </button>
           </div>
         )}
+      </div>
+
+      {/* 5. How Fykzi Works (Interactive 4-Step Journey) */}
+      <div id="how-it-works-section" className={`rounded-3xl p-6 sm:p-8 border shadow-lg space-y-6 transition-all scroll-mt-20 card-3d-interactive preserve-3d ${
+        isDark
+          ? 'bg-gradient-to-br from-slate-900 via-[#0F172A] to-blue-950/40 border-slate-800 text-white'
+          : 'bg-gradient-to-br from-blue-50/80 via-white to-indigo-50/60 border-blue-100 text-slate-900'
+      }`}>
+        {/* Section Header */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-5">
+          <div>
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-black bg-blue-600/10 text-blue-600 dark:text-blue-400 border border-blue-600/20 mb-2 shadow-sm">
+              <Sparkles className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+              <span>{t('how_it_works_badge')}</span>
+            </div>
+            <h3 className="text-2xl sm:text-3xl font-black tracking-tight">
+              {t('how_it_works_title')}
+            </h3>
+            <p className={`text-xs sm:text-sm mt-1 max-w-2xl leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+              {t('how_it_works_sub')}
+            </p>
+          </div>
+
+          <div className="flex items-center space-x-2 shrink-0">
+            <span className="text-xs font-bold px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center space-x-1.5 shadow-sm">
+              <ShieldCheck className="w-4 h-4" />
+              <span>Kerala Police PCC Checked</span>
+            </span>
+          </div>
+        </div>
+
+        {/* 4 Step Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 relative">
+          
+          {/* Step 1 */}
+          <div className={`rounded-2xl p-5 border flex flex-col justify-between space-y-4 card-3d-interactive preserve-3d transition-all duration-300 hover:scale-[1.02] ${
+            isDark ? 'bg-slate-950/80 border-slate-800 hover:border-blue-500/60 shadow-md' : 'bg-white border-blue-100 hover:border-blue-300 shadow-sm'
+          }`}>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-black text-xl shadow-lg">
+                  📍
+                </div>
+                <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-blue-600/10 text-blue-600 dark:text-blue-400 border border-blue-600/20">
+                  Step 01
+                </span>
+              </div>
+
+              <div>
+                <h4 className="font-black text-base">
+                  {language === 'ml' ? 'സർവീസും സ്ഥലവും തിരഞ്ഞെടുക്കുക' : 'Choose Service & Pin Location'}
+                </h4>
+                <p className={`text-xs mt-1.5 leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                  {language === 'ml'
+                    ? '20+ പ്രധാന സേവനങ്ങളിൽ നിന്ന് നിങ്ങൾക്ക് ആവശ്യമുള്ളത് തിരഞ്ഞെടുക്കൂ. കേരളത്തിലെ എല്ലാ ഗ്രാമങ്ങളിലും ഹൈറേഞ്ചിലും ലൈവ് GPS സപ്പോർട്ട്.'
+                    : 'Pick from 20+ doorstep categories (Mechanic, Driver, AC, Electrician, Plumber) or auto-detect your live Kerala GPS location.'}
+                </p>
+              </div>
+            </div>
+
+            <div className={`p-2.5 rounded-xl text-[11px] font-semibold border ${
+              isDark ? 'bg-slate-900/80 border-slate-800 text-blue-300' : 'bg-blue-50/60 border-blue-100 text-blue-800'
+            }`}>
+              ✓ Live GPS Pinning &amp; Custom Slots
+            </div>
+          </div>
+
+          {/* Step 2 */}
+          <div className={`rounded-2xl p-5 border flex flex-col justify-between space-y-4 card-3d-interactive preserve-3d transition-all duration-300 hover:scale-[1.02] ${
+            isDark ? 'bg-slate-950/80 border-slate-800 hover:border-amber-500/60 shadow-md' : 'bg-white border-amber-100 hover:border-amber-300 shadow-sm'
+          }`}>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-600 text-white flex items-center justify-center font-black text-xl shadow-lg">
+                  ⚡
+                </div>
+                <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                  Step 02
+                </span>
+              </div>
+
+              <div>
+                <h4 className="font-black text-base">
+                  {language === 'ml' ? 'ഉടനടി അല്ലെങ്കിൽ പ്രൊഫഷണലിനെ തിരഞ്ഞെടുക്കാം' : 'Instant Dispatch or Pick Pro'}
+                </h4>
+                <p className={`text-xs mt-1.5 leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                  {language === 'ml'
+                    ? 'റോഡ്‌സൈഡ് എമർജൻസിക്ക് 15-20 മിനിറ്റിനുള്ളിൽ സഹായം, അല്ലെങ്കിൽ PCC വെരിഫിക്കേഷൻ പൂർത്തിയാക്കിയ വിദഗ്ദ്ധ തൊഴിലാളികളെ തിരഞ്ഞെടുക്കാം.'
+                    : 'Get 15-20 min emergency breakdown rescue, or pick verified freelancers with Kerala Police Thuna PCC checks & upfront prices.'}
+                </p>
+              </div>
+            </div>
+
+            <div className={`p-2.5 rounded-xl text-[11px] font-semibold border ${
+              isDark ? 'bg-slate-900/80 border-slate-800 text-amber-300' : 'bg-amber-50/60 border-amber-100 text-amber-800'
+            }`}>
+              ✓ 15-20m Fast Response &amp; ₹0 Advance
+            </div>
+          </div>
+
+          {/* Step 3 */}
+          <div className={`rounded-2xl p-5 border flex flex-col justify-between space-y-4 card-3d-interactive preserve-3d transition-all duration-300 hover:scale-[1.02] ${
+            isDark ? 'bg-slate-950/80 border-slate-800 hover:border-emerald-500/60 shadow-md' : 'bg-white border-emerald-100 hover:border-emerald-300 shadow-sm'
+          }`}>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-600 text-white flex items-center justify-center font-black text-xl shadow-lg">
+                  📸
+                </div>
+                <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                  Step 03
+                </span>
+              </div>
+
+              <div>
+                <h4 className="font-black text-base">
+                  {language === 'ml' ? 'ലൈവ് റൂട്ട് മാപ്പും പരിശോധനയും' : 'Live Route Map & Pre-Check'}
+                </h4>
+                <p className={`text-xs mt-1.5 leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                  {language === 'ml'
+                    ? 'തൊഴിലാളി നിങ്ങളുടെ അടുത്തെത്തുന്നത് മാപ്പിൽ തത്സമയം കാണാം. ജോലി തുടങ്ങുന്നതിന് മുൻപ് 4-ആംഗിൾ ഫോട്ടോ എടുത്ത് സുരക്ഷിതത്വം ഉറപ്പാക്കുന്നു.'
+                    : 'Track your technician in real-time. Before starting, they capture 4-angle photos of your vehicle or appliance to guarantee zero dispute.'}
+                </p>
+              </div>
+            </div>
+
+            <div className={`p-2.5 rounded-xl text-[11px] font-semibold border ${
+              isDark ? 'bg-slate-900/80 border-slate-800 text-emerald-300' : 'bg-emerald-50/60 border-emerald-100 text-emerald-800'
+            }`}>
+              ✓ Live GPS Tracking &amp; Pre-Work Photos
+            </div>
+          </div>
+
+          {/* Step 4 */}
+          <div className={`rounded-2xl p-5 border flex flex-col justify-between space-y-4 card-3d-interactive preserve-3d transition-all duration-300 hover:scale-[1.02] ${
+            isDark ? 'bg-slate-950/80 border-slate-800 hover:border-cyan-500/60 shadow-md' : 'bg-white border-cyan-100 hover:border-cyan-300 shadow-sm'
+          }`}>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 text-white flex items-center justify-center font-black text-xl shadow-lg">
+                  💵
+                </div>
+                <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20">
+                  Step 04
+                </span>
+              </div>
+
+              <div>
+                <h4 className="font-black text-base">
+                  {language === 'ml' ? 'ജോലി കണ്ട് തൃപ്തിയായ ശേഷം പണം നൽകാം' : 'Inspect & Pay After Service'}
+                </h4>
+                <p className={`text-xs mt-1.5 leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                  {language === 'ml'
+                    ? 'ജോലി പൂർണ്ണമായി പരിശോധിച്ചു തൃപ്തിയായ ശേഷം മാത്രം ഒ.ടി.പി നൽകി UPI അല്ലെങ്കിൽ Cash വഴി പണം നൽകാം. 100% നഷ്ടപരിഹാര ഉറപ്പ്.'
+                    : 'Inspect the completed work first. Release your secret 4-digit OTP and pay via UPI or Cash with 100% Damage Liability coverage.'}
+                </p>
+              </div>
+            </div>
+
+            <div className={`p-2.5 rounded-xl text-[11px] font-semibold border ${
+              isDark ? 'bg-slate-900/80 border-slate-800 text-cyan-300' : 'bg-cyan-50/60 border-cyan-100 text-cyan-800'
+            }`}>
+              ✓ 4-Digit OTP Protection &amp; 100% Warranty
+            </div>
+          </div>
+
+        </div>
+
+        {/* Feature Highlights Banner */}
+        <div className={`p-4 sm:p-5 rounded-2xl border flex flex-col sm:flex-row items-center justify-between gap-4 ${
+          isDark ? 'bg-slate-950/60 border-slate-800' : 'bg-white/80 border-blue-100 shadow-sm'
+        }`}>
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-xl bg-blue-600/10 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+              <CheckCircle2 className="w-5 h-5" />
+            </div>
+            <div>
+              <h5 className="font-black text-xs sm:text-sm">
+                {language === 'ml' ? '100% വിശ്വസനീയം • മറഞ്ഞിരിക്കുന്ന ചാർജ്ജുകളില്ല' : '₹0 Advance Required • 100% Transparent Estimates'}
+              </h5>
+              <p className={`text-[11px] ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                {language === 'ml'
+                  ? 'അടിയന്തര ആവശ്യങ്ങൾക്കും വീട്ടുജോലികൾക്കും വിശ്വസ്തരായ തൊഴിലാളികൾ ഇനി നിങ്ങളുടെ വിരൽത്തുമ്പിൽ.'
+                  : 'All pros carry digital ID, background documents verified by Fykzi, and standardized rate cards.'}
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              const searchInput = document.getElementById('service-search-input');
+              if (searchInput) {
+                searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                searchInput.focus();
+              }
+            }}
+            className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-black bg-blue-600 hover:bg-blue-700 text-white shadow transition-all duration-200 flex items-center justify-center space-x-1.5 shrink-0 hover:scale-105 cursor-pointer"
+          >
+            <span>{language === 'ml' ? 'ഇപ്പോൾ തന്നെ ബുക്ക് ചെയ്യുക' : 'Start Booking Now'}</span>
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
       {/* 6. Why Kochi Trusts Fykzi (Trust & Assurance Section) */}
