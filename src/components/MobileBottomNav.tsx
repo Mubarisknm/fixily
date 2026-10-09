@@ -20,7 +20,9 @@ import {
   Crosshair,
   Grid,
   Zap,
-  Package
+  Package,
+  Bell,
+  Settings
 } from 'lucide-react';
 import { ThemeMode, AppLanguage, UserSession, UserRole, KochiLocation } from '../types';
 import { useTranslation } from '../utils/translations';
@@ -41,6 +43,8 @@ interface MobileBottomNavProps {
   onOpenCancellationPolicy?: () => void;
   onOpenLocationModal?: () => void;
   onDetectLiveGps?: () => void;
+  onOpenManageAddress?: () => void;
+  onOpenNotificationSettings?: () => void;
 }
 
 export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
@@ -58,7 +62,9 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   selectedLocation,
   onOpenCancellationPolicy,
   onOpenLocationModal,
-  onDetectLiveGps
+  onDetectLiveGps,
+  onOpenManageAddress,
+  onOpenNotificationSettings
 }) => {
   const { t } = useTranslation(language);
   const isDark = theme === 'dark';
@@ -279,35 +285,105 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                 </span>
               </div>
 
-              {/* Action Buttons: Change on Map or Switch to Live GPS */}
+              {/* Action Buttons: Manage Address, Change on Map or Switch to Live GPS */}
               <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-200/50 dark:border-slate-800/80">
                 <button
                   onClick={() => {
                     setShowAccountDrawer(false);
-                    onOpenLocationModal?.();
+                    if (onOpenManageAddress) {
+                      onOpenManageAddress();
+                    } else if (onOpenLocationModal) {
+                      onOpenLocationModal();
+                    }
                   }}
                   className="py-1.5 px-2 rounded-xl bg-blue-600 text-white text-[11px] font-black flex items-center justify-center space-x-1 hover:bg-blue-700 active:scale-95 transition-all cursor-pointer shadow-sm"
                 >
-                  <MapPin className="w-3 h-3" />
-                  <span>Change on Map</span>
+                  <Home className="w-3.5 h-3.5" />
+                  <span>{language === 'ml' ? 'വിലാസങ്ങൾ മാറ്റുക' : 'Manage Address'}</span>
                 </button>
 
                 <button
                   onClick={() => {
                     setShowAccountDrawer(false);
-                    onDetectLiveGps?.();
+                    onOpenLocationModal?.();
                   }}
-                  className={`py-1.5 px-2 rounded-xl text-[11px] font-black flex items-center justify-center space-x-1 active:scale-95 transition-all cursor-pointer shadow-sm ${
-                    selectedLocation.isLiveGps
-                      ? 'bg-emerald-600 text-white'
-                      : 'border border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 hover:bg-emerald-500/20'
+                  className={`py-1.5 px-2 rounded-xl text-[11px] font-black flex items-center justify-center space-x-1 active:scale-95 transition-all cursor-pointer shadow-sm border ${
+                    isDark
+                      ? 'bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700'
+                      : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
                   }`}
                 >
-                  <Crosshair className="w-3 h-3" />
-                  <span>{selectedLocation.isLiveGps ? 'Refresh GPS' : 'Use Live GPS'}</span>
+                  <MapPin className="w-3 h-3 text-blue-500" />
+                  <span>{language === 'ml' ? 'മാപ്പിൽ മാറ്റുക' : 'Kerala Map'}</span>
                 </button>
               </div>
             </div>
+
+            {/* Dedicated Manage Address Action Tile */}
+            <button
+              onClick={() => {
+                setShowAccountDrawer(false);
+                if (onOpenManageAddress) {
+                  onOpenManageAddress();
+                } else if (onOpenLocationModal) {
+                  onOpenLocationModal();
+                }
+              }}
+              className={`w-full my-2.5 p-3.5 rounded-2xl border text-left flex items-center justify-between transition-all group active:scale-[0.99] cursor-pointer shadow-xs ${
+                isDark
+                  ? 'bg-slate-800/80 hover:bg-slate-800 border-slate-700/80 text-white'
+                  : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-900 shadow-sm'
+              }`}
+            >
+              <div className="flex items-center space-x-3">
+                <div className="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-500 flex items-center justify-center shrink-0">
+                  <MapPin className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="text-xs font-black flex items-center space-x-1.5">
+                    <span>{language === 'ml' ? 'വിലാസങ്ങൾ മാറ്റുക (Manage Address)' : 'Manage Addresses & Location'}</span>
+                    <span className="text-[9px] bg-blue-500/15 text-blue-600 dark:text-blue-400 px-1.5 py-0.5 rounded-full font-bold">
+                      Saved
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-slate-400 mt-0.5">
+                    {selectedLocation.name.split('(')[0].trim()} • {language === 'ml' ? 'ലൊക്കേഷൻ മാറ്റാൻ ടാപ്പ് ചെയ്യുക' : 'Tap to change delivery location'}
+                  </div>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-blue-500 transition-colors" />
+            </button>
+
+            {/* Dedicated Settings & Notifications Action Tile */}
+            <button
+              onClick={() => {
+                setShowAccountDrawer(false);
+                onOpenNotificationSettings?.();
+              }}
+              className={`w-full my-1.5 p-3.5 rounded-2xl border text-left flex items-center justify-between transition-all group active:scale-[0.99] cursor-pointer shadow-xs ${
+                isDark
+                  ? 'bg-slate-800/80 hover:bg-slate-800 border-slate-700/80 text-white'
+                  : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-900 shadow-sm'
+              }`}
+            >
+              <div className="flex items-center space-x-3">
+                <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-500 flex items-center justify-center shrink-0">
+                  <Bell className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="text-xs font-black flex items-center space-x-1.5">
+                    <span>{language === 'ml' ? 'അറിയിപ്പുകൾ & ഓർമ്മപ്പെടുത്തലുകൾ' : 'Notifications & reminders'}</span>
+                    <span className="text-[9px] bg-amber-500/15 text-amber-600 dark:text-amber-400 px-1.5 py-0.5 rounded-full font-bold">
+                      Settings
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-slate-400 mt-0.5">
+                    {language === 'ml' ? 'പുഷ്, വാട്ട്സ്ആപ്പ്, എസ്എംഎസ് & പ്രൈവസി ഡാറ്റ' : 'Push alerts, WhatsApp, SMS & privacy data'}
+                  </div>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-amber-500 transition-colors" />
+            </button>
 
             {/* Portal Switcher Buttons */}
             <div className="space-y-2 py-2">

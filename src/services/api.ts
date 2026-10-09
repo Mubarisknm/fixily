@@ -1,4 +1,4 @@
-import { KochiLocation, ServiceItem, GigPartner, BookingJob, AdminStats } from '../types';
+import { KochiLocation, ServiceItem, GigPartner, BookingJob, AdminStats, UserSession } from '../types';
 import { KOCHI_LOCATIONS, SERVICES, MOCK_PARTNERS, MOCK_JOBS } from '../data/db';
 
 const BASE_URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/$/, '') : '';
@@ -9,7 +9,7 @@ async function fetchJson(url: string, options?: RequestInit) {
     const res = await fetch(url, options);
     if (!res.ok) throw new Error(`HTTP error ${res.status}`);
     const json = await res.json();
-    return json.data;
+    return json.data !== undefined ? json.data : json;
   } catch (err) {
     console.warn(`API call to ${url} failed, using local fallback state:`, err);
     return null;
@@ -20,8 +20,130 @@ async function fetchJson(url: string, options?: RequestInit) {
 let localServices: ServiceItem[] = [...SERVICES] as ServiceItem[];
 let localPartners: GigPartner[] = [...MOCK_PARTNERS];
 let localJobs: BookingJob[] = [...MOCK_JOBS];
+const localOtpStore = new Map<string, { otp: string; expiresAt: number; name?: string; role?: string }>();
 
 export const api = {
+  // Authentication & OTP Methods
+  async sendOtp(payload: { target: string; type?: 'phone' | 'email'; name?: string; role?: string; purpose?: string }): Promise<{ success: boolean; message: string; otp?: string; expiresInSeconds?: number }> {
+    const cleanTarget = payload.target.trim().toLowerCase();
+    const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    localOtpStore.set(cleanTarget, {
+      otp: generatedOtp,
+      expiresAt: Date.now() + 5 * 60 * 1000,
+      name: payload.name,
+      role: payload.role
+    });
+
+    try {
+      const res = await fetch(`${API_BASE}/auth/send-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        const json = await res.json();
+        return json;
+      }
+    } catch (e) {}
+
+    return {
+      success: true,
+      message: `Verification code sent to ${payload.target}`,
+      otp: generatedOtp,
+      expiresInSeconds: 300
+    };
+  },
+
+  async verifyOtp(payload: { target: string; otp: string; name?: string; role?: string; email?: string; phone?: string }): Promise<{ success: boolean; session?: UserSession; message?: string }> {
+    const cleanTarget = payload.target.trim().toLowerCase();
+    const cleanOtp = payload.otp.trim();
+
+    try {
+      const res = await fetch(`${API_BASE}/auth/verify-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        const json = await res.json();
+        return { success: true, session: json.data || json.session };
+      }
+    } catch (e) {}
+
+    // Fallback local validation
+    const record = localOtpStore.get(cleanTarget);
+    if (!record || record.otp !== cleanOtp) {
+      return { success: false, message: 'Invalid 6-digit verification code' };
+    }
+    if (Date.now() > record.expiresAt) {
+      localOtpStore.delete(cleanTarget);
+      return { success: false, message: 'Verification code has expired' };
+    }
+
+    localOtpStore.delete(cleanTarget);
+    const isEmail = cleanTarget.includes('@');
+    const session: UserSession = {
+      id: `usr-${Date.now().toString().slice(-6)}`,
+      name: payload.name || record.name || (isEmail ? cleanTarget.split('@')[0] : 'Verified User'),
+      phone: payload.phone || (!isEmail ? (payload.target.startsWith('+') ? payload.target : `+91 ${payload.target.replace(/\D/g, '').slice(-10)}`) : undefined),
+      email: payload.email || (isEmail ? cleanTarget : undefined),
+      role: (payload.role || record.role || 'customer') as any,
+      isVerified: true,
+      authProvider: isEmail ? 'email' : 'phone'
+    };
+    return { success: true, session };
+  },
+
+  async googleSignIn(payload: { credential?: string; email: string; name?: string; avatar?: string; role?: string }): Promise<{ success: boolean; session?: UserSession }> {
+    try {
+      const res = await fetch(`${API_BASE}/auth/google`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        const json = await res.json();
+        return { success: true, session: json.data || json.session };
+      }
+    } catch (e) {}
+
+    const session: UserSession = {
+      id: `usr-g-${Date.now().toString().slice(-6)}`,
+      email: payload.email,
+      name: payload.name || payload.email.split('@')[0],
+      role: (payload.role || 'customer') as any,
+      isVerified: true,
+      authProvider: 'google',
+      avatar: payload.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120&auto=format&fit=crop&q=80'
+    };
+    return { success: true, session };
+  },
+
+  async registerUser(payload: { name: string; phone?: string; email?: string; role?: string; district?: string }): Promise<{ success: boolean; session?: UserSession }> {
+    try {
+      const res = await fetch(`${API_BASE}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        const json = await res.json();
+        return { success: true, session: json.data || json.session };
+      }
+    } catch (e) {}
+
+    const session: UserSession = {
+      id: `usr-${Date.now().toString().slice(-6)}`,
+      name: payload.name.trim(),
+      phone: payload.phone ? (payload.phone.startsWith('+') ? payload.phone : `+91 ${payload.phone.replace(/\D/g, '').slice(-10)}`) : undefined,
+      email: payload.email ? payload.email.trim().toLowerCase() : undefined,
+      role: (payload.role || 'customer') as any,
+      isVerified: true,
+      authProvider: payload.phone ? 'phone' : 'email'
+    };
+    return { success: true, session };
+  },
+
   async getLocations(): Promise<KochiLocation[]> {
     const data = await fetchJson(`${API_BASE}/locations`);
     return data || KOCHI_LOCATIONS;

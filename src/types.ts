@@ -46,6 +46,19 @@ export interface KochiLocation {
 
 export type ServiceLocation = KochiLocation;
 
+export interface CustomerSavedAddress {
+  id: string;
+  label: 'Home' | 'Work' | 'Other';
+  customTitle?: string;
+  houseOrBuilding: string;
+  streetOrArea: string;
+  landmark?: string;
+  location: KochiLocation;
+  contactName?: string;
+  contactPhone?: string;
+  isDefault?: boolean;
+}
+
 export interface ServiceTier {
   name: string;
   price: number;
@@ -265,4 +278,12 @@ export interface AdminStats {
   activePartnersCount: number;
   verifiedPccCount: number;
   averageTakeRate: string;
+}
+
+export interface NotificationPreferences {
+  whatsapp: boolean;
+  push: boolean;
+  email: boolean;
+  sms: boolean;
+  voice: boolean;
 }

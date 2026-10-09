@@ -78,12 +78,12 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   // Step 1: Personal & Trade
-  const [name, setName] = useState<string>('Rahul Ramesh');
-  const [phone, setPhone] = useState<string>('+91 98472 88990');
+  const [name, setName] = useState<string>('');
+  const [phone, setPhone] = useState<string>('');
   const [selectedRole, setSelectedRole] = useState<string>('Freelance Acting Driver ("Drive My Car")');
   const [customRole, setCustomRole] = useState<string>('');
   const [city, setCity] = useState<string>('Kakkanad (InfoPark & Seaport), Kochi');
-  const [vehicle, setVehicle] = useState<string>('LMV Commercial Driver (Manual & Auto)');
+  const [vehicle, setVehicle] = useState<string>('');
 
   // Own Photo Upload State
   const [photoUrl, setPhotoUrl] = useState<string>(
@@ -95,18 +95,18 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
 
   // Step 2: KYC & Government Verification
   const [govtIdType, setGovtIdType] = useState<'AADHAAR' | 'PAN' | 'VOTER_ID' | 'DRIVING_LICENSE' | 'PASSPORT'>('AADHAAR');
-  const [govtIdNumber, setGovtIdNumber] = useState<string>('5489 2210 9043');
-  const [aadhaarNumber, setAadhaarNumber] = useState<string>('5489 2210 9043');
-  const [govtIdVerified, setGovtIdVerified] = useState<boolean>(true);
+  const [govtIdNumber, setGovtIdNumber] = useState<string>('');
+  const [aadhaarNumber, setAadhaarNumber] = useState<string>('');
+  const [govtIdVerified, setGovtIdVerified] = useState<boolean>(false);
   const [isVerifyingGovtId, setIsVerifyingGovtId] = useState<boolean>(false);
-  const [govtIdFileAttached, setGovtIdFileAttached] = useState<boolean>(true);
-  const [pccRefNo, setPccRefNo] = useState<string>('THUNA-PCC-2024-91204');
-  const [pccExpiry, setPccExpiry] = useState<string>('2027-10-15');
-  const [pccFileAttached, setPccFileAttached] = useState<boolean>(true);
-  const [dlNumber, setDlNumber] = useState<string>('KL-07-2016-0038491');
+  const [govtIdFileAttached, setGovtIdFileAttached] = useState<boolean>(false);
+  const [pccRefNo, setPccRefNo] = useState<string>('');
+  const [pccExpiry, setPccExpiry] = useState<string>('');
+  const [pccFileAttached, setPccFileAttached] = useState<boolean>(false);
+  const [dlNumber, setDlNumber] = useState<string>('');
 
   // Step 3: Payout Banking & Activation
-  const [upiId, setUpiId] = useState<string>('rahul.fykzi@okicici');
+  const [upiId, setUpiId] = useState<string>('');
   const [agreeAllowancePolicy, setAgreeAllowancePolicy] = useState<boolean>(true);
   const [agreeDamageLiability, setAgreeDamageLiability] = useState<boolean>(true);
 

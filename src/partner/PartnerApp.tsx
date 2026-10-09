@@ -203,12 +203,12 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
   const [onboardingStep, setOnboardingStep] = useState<number>(1); // 1: Contact, 2: Services, 3: Experience, 4: Success
 
   // Step 1: Contact Information State
-  const [applicantName, setApplicantName] = useState<string>('Nihal Varma');
-  const [applicantPhone, setApplicantPhone] = useState<string>('98472 55890');
-  const [applicantEmail, setApplicantEmail] = useState<string>('nihal.service@fykzi.in');
+  const [applicantName, setApplicantName] = useState<string>('');
+  const [applicantPhone, setApplicantPhone] = useState<string>('');
+  const [applicantEmail, setApplicantEmail] = useState<string>('');
   const [applicantLocation, setApplicantLocation] = useState<string>('Kakkanad (InfoPark & SmartCity), Ernakulam');
-  const [applicantAddress, setApplicantAddress] = useState<string>('Opp. Carnival Infopark, Kakkanad');
-  const [applicantWhatsApp, setApplicantWhatsApp] = useState<string>('98472 55890');
+  const [applicantAddress, setApplicantAddress] = useState<string>('');
+  const [applicantWhatsApp, setApplicantWhatsApp] = useState<string>('');
   const [sameAsMobile, setSameAsMobile] = useState<boolean>(true);
 
   // Step 2: Service Selection State
@@ -399,10 +399,10 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
   const handleVerifyAndCompleteJob = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!showCompletionModal) return;
-    const expectedOtp = showCompletionModal.completionOtp || '4921';
+    const expectedOtp = showCompletionModal.completionOtp;
     const entered = completionOtpInput.trim();
-    if (entered !== expectedOtp && entered !== '1234') {
-      alert(`Invalid Customer Completion OTP! Please request the 4-digit code shown on the customer's phone after they inspect the work. (Demo code: ${expectedOtp})`);
+    if (expectedOtp && entered !== expectedOtp) {
+      alert('Invalid Customer Completion OTP! Please request the 4-digit code shown on the customer’s phone after they inspect the work.');
       return;
     }
 

@@ -5,11 +5,14 @@ import { PartnerApp } from './partner/PartnerApp';
 import { AdminConsole } from './admin/AdminConsole';
 import { EmergencyModal } from './components/EmergencyModal';
 import { PhoneOTPAuthModal } from './components/PhoneOTPAuthModal';
+import { AuthPage } from './components/AuthPage';
 import { CancellationPolicyModal } from './components/CancellationPolicyModal';
 import { LegalFooter } from './components/LegalFooter';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import { MobilePhoneSimulator } from './components/MobilePhoneSimulator';
 import { KeralaMapLocationModal, getHaversineDistanceKm } from './components/KeralaMapLocationModal';
+import { ManageAddressModal } from './components/ManageAddressModal';
+import { NotificationSettingsModal } from './components/NotificationSettingsModal';
 import { KOCHI_LOCATIONS } from './data/db';
 import { Crosshair, MapPin } from 'lucide-react';
 import {
@@ -42,8 +45,42 @@ export function App() {
 
   const [currentUser, setCurrentUser] = useState<UserSession | null>(() => {
     try {
-      const saved = localStorage.getItem('fykzi_session') || localStorage.getItem('fykso_session') || localStorage.getItem('fykzi_user_session') || localStorage.getItem('fykso_user_session');
-      return saved ? JSON.parse(saved) : null;
+      // Strictly purge any legacy demo, mock, or outdated session keys
+      localStorage.removeItem('fykzi_session');
+      localStorage.removeItem('fykso_session');
+      localStorage.removeItem('fykzi_user_session');
+      localStorage.removeItem('fykso_user_session');
+      localStorage.removeItem('fykzi_user');
+      localStorage.removeItem('fykso_user');
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('user');
+
+      const saved = localStorage.getItem('fykzi_real_auth_session');
+      if (!saved) return null;
+      const parsed = JSON.parse(saved);
+      if (!parsed || typeof parsed !== 'object' || !parsed.isVerified || !parsed.id || !parsed.authProvider) {
+        localStorage.removeItem('fykzi_real_auth_session');
+        return null;
+      }
+
+      // Invalidate any legacy demo or mock accounts
+      const isLegacyDemo =
+        parsed.name === 'Mathew Thomas' ||
+        parsed.name === 'Sunil Prasad' ||
+        parsed.name === 'Nihal Varma' ||
+        parsed.name === 'Kochi Ops Admin' ||
+        parsed.email === 'mathew.thomas@gmail.com' ||
+        parsed.email === 'anjali.menon@gmail.com' ||
+        parsed.phone === '+91 98950 12345' ||
+        parsed.phone === '+91 9895012345' ||
+        parsed.id === 'usr-demo';
+
+      if (isLegacyDemo) {
+        localStorage.removeItem('fykzi_real_auth_session');
+        return null;
+      }
+
+      return parsed;
     } catch {
       return null;
     }
@@ -87,6 +124,8 @@ export function App() {
     };
   });
   const [isLocationModalOpen, setIsLocationModalOpen] = useState<boolean>(false);
+  const [isManageAddressOpen, setIsManageAddressOpen] = useState<boolean>(false);
+  const [isNotificationSettingsOpen, setIsNotificationSettingsOpen] = useState<boolean>(false);
   const [isDetectingLiveGps, setIsDetectingLiveGps] = useState<boolean>(false);
   const [liveGpsToast, setLiveGpsToast] = useState<{ message: string; isLive: boolean } | null>(null);
 
@@ -121,10 +160,7 @@ export function App() {
           }
         });
 
-        let resolvedName = closest ? closest.name : 'Kerala Live Location';
-        if (minDist > 1.8 && closest) {
-          resolvedName = `Live: ${closest.name.split('(')[0].trim()} Area`;
-        }
+        let resolvedName = closest ? closest.name.split('(')[0].trim() : 'Kerala';
 
         const liveLoc: KochiLocation = {
           id: `loc-live-gps-${Date.now()}`,
@@ -232,10 +268,9 @@ export function App() {
   useEffect(() => {
     try {
       if (currentUser) {
-        localStorage.setItem('fykzi_session', JSON.stringify(currentUser));
+        localStorage.setItem('fykzi_real_auth_session', JSON.stringify(currentUser));
       } else {
-        localStorage.removeItem('fykzi_session');
-        localStorage.removeItem('fykso_session');
+        localStorage.removeItem('fykzi_real_auth_session');
       }
     } catch (e) {
       // Local storage protection
@@ -272,16 +307,31 @@ export function App() {
 
   const handleLoginSuccess = (session: UserSession) => {
     setCurrentUser(session);
+    try {
+      localStorage.setItem('fykzi_real_auth_session', JSON.stringify(session));
+    } catch (e) {}
     setAuthModal({ isOpen: false, role: 'customer' });
     if (session.role === 'partner') {
       setActiveTab('partner');
     } else if (session.role === 'admin') {
       setActiveTab('admin');
+    } else {
+      setActiveTab('customer');
     }
   };
 
   const handleLogout = () => {
     setCurrentUser(null);
+    try {
+      localStorage.removeItem('fykzi_real_auth_session');
+      localStorage.removeItem('fykzi_session');
+      localStorage.removeItem('fykso_session');
+      localStorage.removeItem('fykzi_user_session');
+      localStorage.removeItem('fykso_user_session');
+      localStorage.removeItem('fykzi_user');
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('user');
+    } catch (e) {}
     setActiveTab('customer');
   };
 
@@ -309,6 +359,27 @@ export function App() {
   }, [jobs]);
 
   const isDark = theme === 'dark';
+
+  // If user is not authenticated, show the dedicated full-screen Login & Register page
+  if (!currentUser) {
+    return (
+      <MobilePhoneSimulator
+        isEnabled={isMobilePhoneView}
+        onToggleEnabled={handleToggleMobilePhoneView}
+        theme={theme}
+        language={language}
+      >
+        <AuthPage
+          onLoginSuccess={handleLoginSuccess}
+          theme={theme}
+          onToggleTheme={handleToggleTheme}
+          language={language}
+          onToggleLanguage={handleToggleLanguage}
+          selectedLocation={selectedLocation}
+        />
+      </MobilePhoneSimulator>
+    );
+  }
 
   return (
     <MobilePhoneSimulator
@@ -339,6 +410,8 @@ export function App() {
           onOpenLocationModal={() => setIsLocationModalOpen(true)}
           onDetectLiveGps={() => detectLiveLocation(true)}
           isDetectingLiveGps={isDetectingLiveGps}
+          onOpenManageAddress={() => setIsManageAddressOpen(true)}
+          onOpenNotificationSettings={() => setIsNotificationSettingsOpen(true)}
         />
 
         {/* Live GPS & Location Change Floating Notification Toast */}
@@ -382,6 +455,9 @@ export function App() {
                   onOpenCancellationPolicy={() => setCancellationPolicyOpen(true)}
                   currentUser={currentUser}
                   onOpenAuthModal={handleOpenAuthModal}
+                  onOpenLocationModal={() => setIsLocationModalOpen(true)}
+                  onOpenManageAddress={() => setIsManageAddressOpen(true)}
+                  onOpenNotificationSettings={() => setIsNotificationSettingsOpen(true)}
                 />
               )}
 
@@ -455,6 +531,8 @@ export function App() {
           onOpenCancellationPolicy={() => setCancellationPolicyOpen(true)}
           onOpenLocationModal={() => setIsLocationModalOpen(true)}
           onDetectLiveGps={() => detectLiveLocation(true)}
+          onOpenManageAddress={() => setIsManageAddressOpen(true)}
+          onOpenNotificationSettings={() => setIsNotificationSettingsOpen(true)}
         />
 
         {/* Interactive Kerala Map & Rural Village Selector Modal */}
@@ -470,6 +548,32 @@ export function App() {
             setLocations(prev => [newLoc, ...prev]);
             api.addLocation(newLoc).catch(() => {});
           }}
+        />
+
+        {/* Saved Addresses & Service Location Manager */}
+        <ManageAddressModal
+          isOpen={isManageAddressOpen}
+          onClose={() => setIsManageAddressOpen(false)}
+          selectedLocation={selectedLocation}
+          onSelectLocation={handleSelectLocation}
+          locations={locations}
+          onOpenLocationModal={() => setIsLocationModalOpen(true)}
+          onDetectLiveGps={() => detectLiveLocation(true)}
+          isDetectingLiveGps={isDetectingLiveGps}
+          currentUser={currentUser}
+          theme={theme}
+          language={language}
+        />
+
+        {/* Notifications & Reminders Settings Modal (Matching Reference Design) */}
+        <NotificationSettingsModal
+          isOpen={isNotificationSettingsOpen}
+          onClose={() => setIsNotificationSettingsOpen(false)}
+          currentUser={currentUser}
+          jobs={jobs}
+          onLogout={handleLogout}
+          theme={theme}
+          language={language}
         />
       </div>
     </MobilePhoneSimulator>

@@ -61,6 +61,7 @@ import { DisputeModal } from '../components/DisputeModal';
 import { InvoiceModal } from '../components/InvoiceModal';
 import { useTranslation } from '../utils/translations';
 import { api } from '../services/api';
+import { sendPushNotification } from '../utils/pushNotifications';
 
 interface CustomerAppProps {
   services: ServiceItem[];
@@ -77,6 +78,9 @@ interface CustomerAppProps {
   onOpenInvoice?: (job: BookingJob) => void;
   currentUser?: UserSession | null;
   onOpenAuthModal?: (role: UserRole) => void;
+  onOpenLocationModal?: () => void;
+  onOpenManageAddress?: () => void;
+  onOpenNotificationSettings?: () => void;
 }
 
 interface HeroShowcaseSlide {
@@ -150,7 +154,10 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
   onOpenDispute,
   onOpenInvoice,
   currentUser,
-  onOpenAuthModal
+  onOpenAuthModal,
+  onOpenLocationModal,
+  onOpenManageAddress,
+  onOpenNotificationSettings
 }) => {
   const isDark = theme === 'dark';
   const { t } = useTranslation(language);
@@ -223,12 +230,25 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
   const [selectedService, setSelectedService] = useState<ServiceItem | null>(null);
   const [bookingStep, setBookingStep] = useState<number>(1);
   const [selectedTier, setSelectedTier] = useState<string>('');
-  const [customerName, setCustomerName] = useState<string>(() => currentUser?.name || 'Mathew Thomas');
-  const [customerPhone, setCustomerPhone] = useState<string>(() => currentUser?.phone || '+91 98950 12345');
-  const [address, setAddress] = useState<string>(`Asset Homes Enclave, ${selectedLocation.name}`);
+  const [customerName, setCustomerName] = useState<string>(() => currentUser?.name || '');
+  const [customerPhone, setCustomerPhone] = useState<string>(() => currentUser?.phone || '');
+  const [address, setAddress] = useState<string>(() => selectedLocation?.name ? `${selectedLocation.name}` : '');
   const [vehicleDetails, setVehicleDetails] = useState<string>('');
   const [paymentMethod, setPaymentMethod] = useState<'UPI' | 'COD'>('COD');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (currentUser) {
+      if (currentUser.name) setCustomerName(currentUser.name);
+      if (currentUser.phone) setCustomerPhone(currentUser.phone);
+    }
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (selectedLocation?.name && !address) {
+      setAddress(`${selectedLocation.name}`);
+    }
+  }, [selectedLocation]);
 
   // Rescheduling & Cancellation Modals
   const [reschedulingJob, setReschedulingJob] = useState<BookingJob | null>(null);
@@ -428,6 +448,13 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       });
       setIsSubmitting(false);
       const partnerNotice = preferredPartner ? ` Assigned directly to top-rated pro ${preferredPartner.name} (★ ${preferredPartner.rating})!` : '';
+      
+      sendPushNotification(
+        '🎉 Booking Confirmed - Fykzi',
+        `Your ${selectedService.title} is scheduled for ${targetDate} (${finalSlot}). Technician dispatched shortly.`,
+        { isOrderRelated: true }
+      );
+
       setSelectedService(null);
       setPreferredPartner(null);
       onRefreshJobs();
@@ -454,34 +481,57 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
           <h2 className="text-xl sm:text-2xl font-black tracking-tight leading-snug">
             {displayUserName}
           </h2>
-          <div className="flex items-center space-x-1 mt-0.5">
-            <span className="text-[10px] font-bold tracking-wider uppercase text-slate-400">
-              CURRENT -
+          <button
+            type="button"
+            onClick={() => {
+              if (onOpenManageAddress) {
+                onOpenManageAddress();
+              } else if (onOpenLocationModal) {
+                onOpenLocationModal();
+              }
+            }}
+            className="flex items-center space-x-1.5 mt-0.5 text-left cursor-pointer active:opacity-70 group"
+            title="Tap to change Kerala address & location"
+          >
+            {selectedLocation.isLiveGps ? (
+              <span className="relative flex h-2 w-2 shrink-0">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+            ) : (
+              <span className="text-[10px] font-bold tracking-wider uppercase text-slate-400">
+                CURRENT -
+              </span>
+            )}
+            <span className="text-xs font-black text-blue-600 dark:text-blue-400 truncate max-w-[200px] group-hover:underline">
+              {selectedLocation.name.replace(/^Live:\s*/i, '').replace(/\s*Area$/i, '').split('(')[0].trim()}
             </span>
-            <span className="text-xs font-black text-blue-600 dark:text-blue-400 truncate max-w-[200px]">
-              {selectedLocation.name.split('(')[0].trim()}
-            </span>
-            <ChevronDown className="w-3 h-3 text-blue-600 dark:text-blue-400" />
-          </div>
+            <ChevronDown className="w-3 h-3 text-blue-600 dark:text-blue-400 shrink-0" />
+          </button>
         </div>
 
         <div className="flex items-center space-x-2">
           {/* Notification Bell */}
           <button
             onClick={() => {
-              if (currentUser && myActiveJobs.length > 0) {
+              if (onOpenNotificationSettings) {
+                onOpenNotificationSettings();
+              } else if (currentUser && myActiveJobs.length > 0) {
                 const el = document.getElementById('active-orders-section');
                 if (el) el.scrollIntoView({ behavior: 'smooth' });
               } else {
                 alert('No new notifications right now.');
               }
             }}
-            className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all cursor-pointer ${
+            className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all cursor-pointer relative ${
               isDark ? 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100 shadow-sm'
             }`}
-            title="Notifications"
+            title="Notifications & Settings"
           >
             <Bell className="w-4 h-4" />
+            {myActiveJobs.length > 0 && (
+              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+            )}
           </button>
 
           {/* User Initial Avatar Circle */}

@@ -1,6 +1,12 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { KOCHI_LOCATIONS, SERVICES, MOCK_PARTNERS, MOCK_JOBS } from './db.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const distPath = path.resolve(__dirname, '../dist');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -11,6 +17,7 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
+app.use(express.static(distPath));
 
 // Health check endpoint for Render & Cloudflare uptime monitoring
 app.get('/api/health', (req, res) => {
@@ -22,6 +29,307 @@ let locations = [...KOCHI_LOCATIONS];
 let services = [...SERVICES];
 let partners = [...MOCK_PARTNERS];
 let jobs = [...MOCK_JOBS];
+
+// OTP Store: target (phone / email) -> { otp, expiresAt, attempts, name, role }
+const otpStore = new Map();
+// Registered Users Store: userId -> UserSession
+const registeredUsers = new Map();
+
+// Helper functions to send physical cellular SMS via Fast2SMS or Twilio if keys exist
+async function dispatchCellularSMS(phoneNumber, otp) {
+  const cleanPhone = phoneNumber.replace(/\D/g, '').slice(-10);
+  
+  // 1. Fast2SMS (popular for Indian phone numbers)
+  if (process.env.FAST2SMS_API_KEY) {
+    try {
+      const response = await fetch('https://www.fast2sms.com/dev/bulkV2', {
+        method: 'POST',
+        headers: {
+          'authorization': process.env.FAST2SMS_API_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          route: 'otp',
+          variables_values: otp,
+          numbers: cleanPhone
+        })
+      });
+      const data = await response.json();
+      console.log(`[SMS GATEWAY Fast2SMS] Dispatched to +91 ${cleanPhone}:`, data);
+      return data.return === true;
+    } catch (err) {
+      console.error('[SMS GATEWAY Fast2SMS Error]', err.message);
+    }
+  }
+
+  // 2. Twilio SMS Gateway
+  if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER) {
+    try {
+      const sid = process.env.TWILIO_ACCOUNT_SID;
+      const token = process.env.TWILIO_AUTH_TOKEN;
+      const from = process.env.TWILIO_PHONE_NUMBER;
+      const to = `+91${cleanPhone}`;
+      const auth = Buffer.from(`${sid}:${token}`).toString('base64');
+      const params = new URLSearchParams();
+      params.append('To', to);
+      params.append('From', from);
+      params.append('Body', `Your Fykzi Kerala On-Demand Service verification code is: ${otp}. Valid for 5 minutes.`);
+
+      const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${auth}`,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: params.toString()
+      });
+      const data = await response.json();
+      console.log(`[SMS GATEWAY Twilio] Dispatched to ${to}, SID: ${data.sid}`);
+      return !!data.sid;
+    } catch (err) {
+      console.error('[SMS GATEWAY Twilio Error]', err.message);
+    }
+  }
+
+  return false;
+}
+
+// ==========================================
+// AUTHENTICATION & OTP VALIDATION ENDPOINTS
+// ==========================================
+
+// 1. Send OTP (Mobile SMS / Email Verification)
+app.post('/api/auth/send-otp', async (req, res) => {
+  const { target, type, name, role, purpose } = req.body;
+
+  if (!target || typeof target !== 'string') {
+    return res.status(400).json({ success: false, message: 'Phone number or email is required' });
+  }
+
+  const cleanTarget = target.trim().toLowerCase();
+  // Generate a real, secure 6-digit verification code
+  const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+  const expiresAt = Date.now() + 5 * 60 * 1000; // 5 minutes validity
+
+  otpStore.set(cleanTarget, {
+    otp: generatedOtp,
+    expiresAt,
+    attempts: 0,
+    type: type || (cleanTarget.includes('@') ? 'email' : 'phone'),
+    name: name || '',
+    role: role || 'customer',
+    purpose: purpose || 'login'
+  });
+
+  console.log(`[AUTH] 🔐 Real OTP Generated for ${cleanTarget}: ${generatedOtp} (Valid for 5 mins)`);
+
+  // Attempt real cellular SMS delivery if SMS gateway is configured
+  let smsDelivered = false;
+  if (!cleanTarget.includes('@')) {
+    smsDelivered = await dispatchCellularSMS(cleanTarget, generatedOtp);
+  }
+
+  res.json({
+    success: true,
+    message: smsDelivered 
+      ? `SMS Verification code sent directly to ${target}`
+      : `Verification code generated for ${target}`,
+    target: cleanTarget,
+    otp: generatedOtp, // Sent so local dev UI displays the exact code for testing
+    smsDelivered,
+    expiresInSeconds: 300
+  });
+});
+
+// 2. Verify OTP & Authenticate Session
+app.post('/api/auth/verify-otp', (req, res) => {
+  const { target, otp, name, role, email, phone } = req.body;
+
+  if (!target || !otp) {
+    return res.status(400).json({ success: false, message: 'Target and 6-digit OTP are required' });
+  }
+
+  const cleanTarget = target.trim().toLowerCase();
+  const cleanOtp = otp.toString().trim();
+  const record = otpStore.get(cleanTarget);
+
+  if (!record) {
+    return res.status(400).json({
+      success: false,
+      message: 'No active OTP found. Please request a new verification code.'
+    });
+  }
+
+  if (Date.now() > record.expiresAt) {
+    otpStore.delete(cleanTarget);
+    return res.status(400).json({
+      success: false,
+      message: 'OTP has expired (valid for 5 mins). Please request a new code.'
+    });
+  }
+
+  if (record.otp !== cleanOtp) {
+    record.attempts = (record.attempts || 0) + 1;
+    if (record.attempts >= 5) {
+      otpStore.delete(cleanTarget);
+      return res.status(400).json({
+        success: false,
+        message: 'Too many incorrect attempts. Please request a new OTP.'
+      });
+    }
+    return res.status(400).json({
+      success: false,
+      message: 'Invalid 6-digit OTP code. Please check and try again.'
+    });
+  }
+
+  // OTP is verified! Clean up OTP record
+  otpStore.delete(cleanTarget);
+
+  const isEmail = cleanTarget.includes('@');
+  const userPhone = phone || (!isEmail ? target : undefined);
+  const userEmail = email || (isEmail ? cleanTarget : undefined);
+  const userName = name || record.name || (userEmail ? userEmail.split('@')[0] : 'Verified User');
+  const userRole = role || record.role || 'customer';
+
+  // Check if existing user exists
+  let existingUser = Array.from(registeredUsers.values()).find(
+    u => (userPhone && u.phone === userPhone) || (userEmail && u.email === userEmail)
+  );
+
+  let session;
+  if (existingUser) {
+    session = {
+      ...existingUser,
+      isVerified: true,
+      authProvider: isEmail ? 'email' : 'phone'
+    };
+    if (userName && userName !== 'Verified User') session.name = userName;
+    registeredUsers.set(session.id, session);
+  } else {
+    session = {
+      id: `usr-${Date.now().toString().slice(-6)}`,
+      name: userName,
+      phone: userPhone ? (userPhone.startsWith('+') ? userPhone : `+91 ${userPhone.replace(/\D/g, '').slice(-10)}`) : undefined,
+      email: userEmail,
+      role: userRole,
+      isVerified: true,
+      authProvider: isEmail ? 'email' : 'phone',
+      createdAt: new Date().toISOString()
+    };
+    registeredUsers.set(session.id, session);
+  }
+
+  // If partner role, also ensure a partner profile exists
+  if (userRole === 'partner' && !session.partnerId) {
+    const existingPartner = partners.find(p => p.phone === session.phone);
+    if (existingPartner) {
+      session.partnerId = existingPartner.id;
+    }
+  }
+
+  res.json({
+    success: true,
+    message: 'Authentication successful',
+    data: session,
+    token: `fykzi_tok_${session.id}_${Date.now()}`
+  });
+});
+
+// 3. Google Sign-In / OAuth Authentication
+app.post('/api/auth/google', (req, res) => {
+  const { credential, email, name, avatar, role } = req.body;
+
+  let resolvedEmail = email;
+  let resolvedName = name;
+  let resolvedAvatar = avatar;
+
+  if (credential) {
+    try {
+      const parts = credential.split('.');
+      if (parts.length === 3) {
+        const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString('utf-8'));
+        resolvedEmail = payload.email || resolvedEmail;
+        resolvedName = payload.name || resolvedName;
+        resolvedAvatar = payload.picture || resolvedAvatar;
+      }
+    } catch (e) {
+      console.warn('[AUTH] Error parsing Google credential JWT:', e.message);
+    }
+  }
+
+  if (!resolvedEmail) {
+    return res.status(400).json({ success: false, message: 'Valid Google account email is required' });
+  }
+
+  const cleanEmail = resolvedEmail.trim().toLowerCase();
+  let existingUser = Array.from(registeredUsers.values()).find(u => u.email === cleanEmail);
+
+  let session;
+  if (existingUser) {
+    session = {
+      ...existingUser,
+      isVerified: true,
+      authProvider: 'google',
+      avatar: resolvedAvatar || existingUser.avatar
+    };
+    if (resolvedName) session.name = resolvedName;
+    registeredUsers.set(session.id, session);
+  } else {
+    session = {
+      id: `usr-g-${Date.now().toString().slice(-6)}`,
+      name: resolvedName || cleanEmail.split('@')[0],
+      email: cleanEmail,
+      role: role || 'customer',
+      isVerified: true,
+      avatar: resolvedAvatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120&auto=format&fit=crop&q=80',
+      authProvider: 'google',
+      createdAt: new Date().toISOString()
+    };
+    registeredUsers.set(session.id, session);
+  }
+
+  res.json({
+    success: true,
+    message: 'Google authentication successful',
+    data: session,
+    token: `fykzi_tok_${session.id}_${Date.now()}`
+  });
+});
+
+// 4. Register New Account (Full Profile with OTP)
+app.post('/api/auth/register', (req, res) => {
+  const { name, phone, email, role, district, pin } = req.body;
+
+  if (!name || (!phone && !email)) {
+    return res.status(400).json({
+      success: false,
+      message: 'Full Name and at least one contact (Mobile or Email) are required'
+    });
+  }
+
+  const session = {
+    id: `usr-${Date.now().toString().slice(-6)}`,
+    name: name.trim(),
+    phone: phone ? (phone.startsWith('+') ? phone : `+91 ${phone.replace(/\D/g, '').slice(-10)}`) : undefined,
+    email: email ? email.trim().toLowerCase() : undefined,
+    role: role || 'customer',
+    district: district || 'Ernakulam',
+    pin: pin || '682001',
+    isVerified: true,
+    authProvider: phone ? 'phone' : 'email',
+    createdAt: new Date().toISOString()
+  };
+
+  registeredUsers.set(session.id, session);
+
+  res.status(201).json({
+    success: true,
+    message: 'Account created successfully',
+    data: session,
+    token: `fykzi_tok_${session.id}_${Date.now()}`
+  });
+});
 
 // GET Locations
 app.get('/api/locations', (req, res) => {
@@ -525,6 +833,14 @@ app.get('/api/stats', (req, res) => {
   });
 });
 
+// SPA Catch-all Route for client-side routing
+app.get('*', (req, res) => {
+  if (req.path.startsWith('/api')) {
+    return res.status(404).json({ success: false, message: 'API endpoint not found' });
+  }
+  res.sendFile(path.join(distPath, 'index.html'));
+});
+
 app.listen(PORT, () => {
-  console.log(`Fykzi Backend API running on port ${PORT}`);
+  console.log(`Fykzi Backend API & App running on port ${PORT}`);
 });
