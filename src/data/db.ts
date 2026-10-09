@@ -1106,7 +1106,10 @@ export const MOCK_JOBS: BookingJob[] = [
     preServiceChecklist: {
       completedAt: '2026-10-05T10:15:00Z',
       photos: [
-        { angle: 'Front Engine Bay', url: 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?w=400', notes: 'Alternator cables intact. Battery voltage low.' }
+        { angle: 'Front Engine Bay', url: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=600&q=80', notes: 'Alternator cables intact. Battery voltage low.' },
+        { angle: 'Rear & Tailgate', url: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=600&q=80', notes: 'Clean condition, no scratches.' },
+        { angle: 'Left Body Panels', url: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=600&q=80', notes: 'No dents recorded.' },
+        { angle: 'Interior Dashboard', url: 'https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=600&q=80', notes: 'Pre-check odometer noted.' }
       ]
     },
     invoiceId: 'INV-KL-2026-8849',

@@ -238,6 +238,9 @@ export const Header: React.FC<HeaderProps> = ({
                       <img
                         src={currentUser.avatar}
                         alt={currentUser.name}
+                        onError={(e) => {
+                          e.currentTarget.src = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80';
+                        }}
                         className="w-5 h-5 rounded-full object-cover ring-1 ring-blue-500"
                       />
                     ) : (

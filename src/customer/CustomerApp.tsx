@@ -55,7 +55,8 @@ import {
   Package,
   CheckCircle,
   Layers,
-  Inbox
+  Inbox,
+  ZoomIn
 } from 'lucide-react';
 import {
   ServiceItem,
@@ -268,6 +269,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
   // Invoice & Dispute Modals
   const [activeInvoiceJob, setActiveInvoiceJob] = useState<BookingJob | null>(null);
   const [activeDisputeJob, setActiveDisputeJob] = useState<BookingJob | null>(null);
+  const [enlargedPhoto, setEnlargedPhoto] = useState<{ url: string; angle: string; notes?: string } | null>(null);
 
   useEffect(() => {
     if (currentUser) {
@@ -868,6 +870,9 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                     <img
                       src={slide.imageUrl}
                       alt={slide.title}
+                      onError={(e) => {
+                        e.currentTarget.src = 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=1200&auto=format&fit=crop&q=80';
+                      }}
                       className="w-full h-full object-cover transform hover:scale-105 transition-all duration-700"
                     />
 
@@ -1470,6 +1475,53 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                         </div>
                       )}
 
+                      {/* Pre-Service 4-Angle Inspection Photos (Dispute Protection) */}
+                      {job.preServiceChecklist && job.preServiceChecklist.photos && job.preServiceChecklist.photos.length > 0 && (
+                        <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-teal-500/30 dark:border-teal-800/40 space-y-2.5">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[11px] font-black uppercase tracking-wider text-teal-700 dark:text-teal-400 flex items-center space-x-1.5">
+                              <ShieldCheck className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                              <span>Pre-Service 4-Angle Photos (Dispute Protection)</span>
+                            </span>
+                            <span className="text-[10px] font-bold text-slate-400">
+                              {job.preServiceChecklist.photos.length} Verified
+                            </span>
+                          </div>
+
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                            {job.preServiceChecklist.photos.map((ph, pIdx) => (
+                              <div
+                                key={pIdx}
+                                onClick={() => setEnlargedPhoto(ph)}
+                                className="group relative rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-900 cursor-pointer aspect-[4/3] shadow-sm hover:border-teal-500 transition-all"
+                              >
+                                <img
+                                  src={ph.url}
+                                  alt={ph.angle}
+                                  onError={(e) => {
+                                    e.currentTarget.src = 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=600&q=80';
+                                  }}
+                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent flex flex-col justify-end p-2">
+                                  <span className="text-[10px] font-black text-white leading-tight drop-shadow truncate">
+                                    {ph.angle}
+                                  </span>
+                                  {ph.notes && (
+                                    <span className="text-[9px] text-teal-300 font-medium truncate mt-0.5">
+                                      {ph.notes}
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-black/60 backdrop-blur text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <ZoomIn className="w-3 h-3" />
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
                       {/* Action Buttons (Reschedule / Cancel / Emergency) */}
                       <div className="flex items-center space-x-2 pt-2 border-t border-slate-100 dark:border-slate-800">
                         <button
@@ -1554,6 +1606,37 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                         100% Verified Work
                       </span>
                     </div>
+
+                    {/* Pre-Service 4-Angle Inspection Photos (If recorded) */}
+                    {job.preServiceChecklist && job.preServiceChecklist.photos && job.preServiceChecklist.photos.length > 0 && (
+                      <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center space-x-1">
+                            <ShieldCheck className="w-3 h-3 text-teal-500" />
+                            <span>Pre-Service Photos</span>
+                          </span>
+                          <span className="text-[10px] text-teal-600 dark:text-teal-400 font-bold">4 Verified Angles</span>
+                        </div>
+                        <div className="grid grid-cols-4 gap-1.5">
+                          {job.preServiceChecklist.photos.map((ph, pIdx) => (
+                            <div
+                              key={pIdx}
+                              onClick={() => setEnlargedPhoto(ph)}
+                              className="group relative rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-900 cursor-pointer aspect-square"
+                            >
+                              <img
+                                src={ph.url}
+                                alt={ph.angle}
+                                onError={(e) => {
+                                  e.currentTarget.src = 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=600&q=80';
+                                }}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
                     {/* Completed Order Action Buttons */}
                     <div className="flex items-center space-x-2 pt-2 border-t border-slate-100 dark:border-slate-800">
@@ -1853,6 +1936,52 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
           job={activeInvoiceJob}
           theme={theme}
         />
+      )}
+
+      {/* Enlarged Photo Modal */}
+      {enlargedPhoto && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
+          onClick={() => setEnlargedPhoto(null)}
+        >
+          <div
+            className="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl space-y-3"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-4 flex items-center justify-between border-b border-slate-800 bg-slate-950">
+              <div>
+                <span className="text-[10px] font-black uppercase tracking-wider text-teal-400">
+                  Pre-Service Inspection Record
+                </span>
+                <h4 className="text-sm font-black text-white">{enlargedPhoto.angle}</h4>
+              </div>
+              <button
+                onClick={() => setEnlargedPhoto(null)}
+                className="p-1.5 rounded-full text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="p-4 space-y-3">
+              <div className="rounded-2xl overflow-hidden border border-slate-800 bg-black">
+                <img
+                  src={enlargedPhoto.url}
+                  alt={enlargedPhoto.angle}
+                  onError={(e) => {
+                    e.currentTarget.src = 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=600&q=80';
+                  }}
+                  className="w-full max-h-[60vh] object-contain mx-auto"
+                />
+              </div>
+              {enlargedPhoto.notes && (
+                <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300">
+                  <span className="font-bold text-teal-400">Technician Note: </span>
+                  {enlargedPhoto.notes}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       )}
 
     </div>

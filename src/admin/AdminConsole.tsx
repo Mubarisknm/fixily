@@ -248,7 +248,14 @@ export const AdminConsole: React.FC<AdminConsoleProps> = ({
                 {filteredPartners.map(p => (
                   <tr key={p.id} className="hover:bg-slate-800/40 transition-colors">
                     <td className="p-3 font-bold text-white flex items-center space-x-2">
-                      <img src={p.photoUrl} alt="" className="w-8 h-8 rounded-full object-cover border border-slate-700" />
+                      <img
+                        src={p.photoUrl}
+                        alt=""
+                        onError={(e) => {
+                          e.currentTarget.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80';
+                        }}
+                        className="w-8 h-8 rounded-full object-cover border border-slate-700"
+                      />
                       <span>{p.name}</span>
                     </td>
                     <td className="p-3 font-medium text-slate-300">{p.role}</td>
@@ -340,7 +347,14 @@ export const AdminConsole: React.FC<AdminConsoleProps> = ({
                     <div className="grid grid-cols-2 gap-4">
                       {selectedDisputeJob.preServiceChecklist.photos.map((ph, idx) => (
                         <div key={idx} className="bg-slate-950 text-white rounded-2xl p-3 space-y-2 border border-slate-800">
-                          <img src={ph.url} alt={ph.angle} className="w-full h-36 object-cover rounded-xl" />
+                          <img
+                            src={ph.url}
+                            alt={ph.angle}
+                            onError={(e) => {
+                              e.currentTarget.src = 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=600&q=80';
+                            }}
+                            className="w-full h-36 object-cover rounded-xl"
+                          />
                           <div className="font-bold text-xs text-amber-400">{ph.angle}</div>
                           <div className="text-[11px] text-slate-300 italic">{ph.notes}</div>
                         </div>

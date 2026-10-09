@@ -383,10 +383,10 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
     if (!showPrecheckModal) return;
     try {
       await api.uploadPreCheck(showPrecheckModal.id, [
-        { angle: 'Front Bumper / Angle', url: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=400&auto=format&fit=crop&q=80', notes: 'Inspected - No pre-existing damage' },
-        { angle: 'Rear Bumper / Angle', url: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400&auto=format&fit=crop&q=80', notes: 'Verified clean' },
-        { angle: 'Left Side Doors', url: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=400&auto=format&fit=crop&q=80', notes: 'Recorded' },
-        { angle: 'Right Side Doors', url: 'https://images.unsplash.com/photo-1563720223185-11003d516935?w=400&auto=format&fit=crop&q=80', notes: 'Recorded' }
+        { angle: 'Front Engine Bay / Angle', url: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=600&q=80', notes: 'Inspected - No pre-existing damage' },
+        { angle: 'Rear Bumper & Tailgate', url: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=600&q=80', notes: 'Verified clean condition' },
+        { angle: 'Left Side Panels', url: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=600&q=80', notes: 'Recorded pre-service state' },
+        { angle: 'Interior Dashboard', url: 'https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=600&q=80', notes: 'Recorded odometer and dash' }
       ]);
       setShowPrecheckModal(null);
       onRefreshData();
@@ -1525,6 +1525,9 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
                 <img
                   src={currentPartner.photoUrl}
                   alt={currentPartner.name}
+                  onError={(e) => {
+                    e.currentTarget.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80';
+                  }}
                   className="w-16 h-16 rounded-2xl object-cover border-2 border-amber-400/80 shadow-lg shadow-amber-500/10"
                 />
                 <div>

@@ -212,6 +212,9 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                   <img
                     src={currentUser.avatar}
                     alt={currentUser.name}
+                    onError={(e) => {
+                      e.currentTarget.src = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80';
+                    }}
                     className="w-11 h-11 rounded-2xl object-cover ring-2 ring-blue-500 shadow-md"
                   />
                 ) : (

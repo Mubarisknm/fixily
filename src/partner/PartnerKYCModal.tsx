@@ -276,6 +276,9 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
                   <img
                     src={photoUrl}
                     alt="Partner Avatar Preview"
+                    onError={(e) => {
+                      e.currentTarget.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80';
+                    }}
                     className="w-20 h-20 rounded-2xl object-cover border-2 border-amber-400 shadow-lg shadow-amber-500/20"
                   />
                   {isCustomPhoto && (
