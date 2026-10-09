@@ -30,6 +30,8 @@ import { useTranslation } from '../utils/translations';
 interface MobileBottomNavProps {
   activeTab: 'customer' | 'partner' | 'admin';
   setActiveTab: (tab: 'customer' | 'partner' | 'admin') => void;
+  customerNavTab?: 'home' | 'services' | 'orders';
+  setCustomerNavTab?: (tab: 'home' | 'services' | 'orders') => void;
   activeJobsCount: number;
   onOpenEmergency: () => void;
   theme: ThemeMode;
@@ -50,6 +52,8 @@ interface MobileBottomNavProps {
 export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   activeTab,
   setActiveTab,
+  customerNavTab = 'home',
+  setCustomerNavTab,
   activeJobsCount,
   onOpenEmergency,
   theme,
@@ -72,43 +76,32 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
 
   const handleNavHome = () => {
     setActiveTab('customer');
+    if (setCustomerNavTab) {
+      setCustomerNavTab('home');
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleNavServices = () => {
     setActiveTab('customer');
-    const expertiseEl = document.getElementById('our-expertise-section') || document.getElementById('service-search-input');
-    if (expertiseEl) {
-      expertiseEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-      window.scrollTo({ top: 400, behavior: 'smooth' });
+    if (setCustomerNavTab) {
+      setCustomerNavTab('services');
     }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleNavBookings = () => {
     setActiveTab('customer');
-    if (!currentUser) {
-      onOpenAuthModal('customer');
-      return;
+    if (setCustomerNavTab) {
+      setCustomerNavTab('orders');
     }
-    const ordersEl = document.getElementById('active-orders-section');
-    if (ordersEl) {
-      ordersEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-      window.scrollTo({ top: 350, behavior: 'smooth' });
-    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleFixNowClick = () => {
-    setActiveTab('customer');
-    const searchInput = document.getElementById('service-search-input');
-    if (searchInput) {
-      searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      searchInput.focus();
-    } else {
-      onOpenEmergency();
-    }
-  };
+  const isHomeActive = activeTab === 'customer' && customerNavTab === 'home' && !showAccountDrawer;
+  const isServicesActive = activeTab === 'customer' && customerNavTab === 'services' && !showAccountDrawer;
+  const isOrdersActive = activeTab === 'customer' && customerNavTab === 'orders' && !showAccountDrawer;
+  const isProfileActive = showAccountDrawer || activeTab !== 'customer';
 
   return (
     <>
@@ -128,12 +121,12 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           <button
             onClick={handleNavHome}
             className={`flex flex-col items-center justify-center px-3 py-1 rounded-full transition-all active:scale-95 cursor-pointer ${
-              activeTab === 'customer'
-                ? 'text-blue-600 dark:text-blue-400 font-extrabold'
+              isHomeActive
+                ? 'text-blue-600 dark:text-blue-400 font-extrabold scale-105'
                 : 'hover:text-blue-500 font-medium'
             }`}
           >
-            <Home className="w-5 h-5 mb-0.5 stroke-[2.2]" />
+            <Home className={`w-5 h-5 mb-0.5 ${isHomeActive ? 'stroke-[2.5]' : 'stroke-[2]'}`} />
             <span className="text-[10px] leading-tight font-bold">
               {language === 'ml' ? 'ഹോം' : 'Home'}
             </span>
@@ -142,9 +135,13 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           {/* Tab 2: Services / Expertise */}
           <button
             onClick={handleNavServices}
-            className="flex flex-col items-center justify-center px-3 py-1 rounded-full transition-all active:scale-95 hover:text-blue-500 font-medium cursor-pointer"
+            className={`flex flex-col items-center justify-center px-3 py-1 rounded-full transition-all active:scale-95 cursor-pointer ${
+              isServicesActive
+                ? 'text-blue-600 dark:text-blue-400 font-extrabold scale-105'
+                : 'hover:text-blue-500 font-medium'
+            }`}
           >
-            <Grid className="w-5 h-5 mb-0.5 stroke-[2.2]" />
+            <Grid className={`w-5 h-5 mb-0.5 ${isServicesActive ? 'stroke-[2.5]' : 'stroke-[2]'}`} />
             <span className="text-[10px] leading-tight font-bold">
               {language === 'ml' ? 'സർവീസുകൾ' : 'Services'}
             </span>
@@ -153,9 +150,13 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           {/* Tab 3: Orders (With Active Badge) */}
           <button
             onClick={handleNavBookings}
-            className="relative flex flex-col items-center justify-center px-3 py-1 rounded-full transition-all active:scale-95 hover:text-blue-500 font-medium cursor-pointer"
+            className={`relative flex flex-col items-center justify-center px-3 py-1 rounded-full transition-all active:scale-95 cursor-pointer ${
+              isOrdersActive
+                ? 'text-blue-600 dark:text-blue-400 font-extrabold scale-105'
+                : 'hover:text-blue-500 font-medium'
+            }`}
           >
-            <Package className="w-5 h-5 mb-0.5 stroke-[2.2]" />
+            <Package className={`w-5 h-5 mb-0.5 ${isOrdersActive ? 'stroke-[2.5]' : 'stroke-[2]'}`} />
             {activeJobsCount > 0 && (
               <span className="absolute -top-1 right-2 w-4 h-4 bg-blue-600 text-white text-[9px] font-black rounded-full flex items-center justify-center shadow-sm animate-bounce">
                 {activeJobsCount}
@@ -170,13 +171,13 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           <button
             onClick={() => setShowAccountDrawer(true)}
             className={`flex flex-col items-center justify-center px-3 py-1 rounded-full transition-all active:scale-95 cursor-pointer ${
-              showAccountDrawer || activeTab !== 'customer'
-                ? 'text-blue-600 dark:text-blue-400 font-extrabold'
+              isProfileActive
+                ? 'text-blue-600 dark:text-blue-400 font-extrabold scale-105'
                 : 'hover:text-blue-500 font-medium'
             }`}
           >
             <div className="relative">
-              <User className="w-5 h-5 mb-0.5 stroke-[2.2]" />
+              <User className={`w-5 h-5 mb-0.5 ${isProfileActive ? 'stroke-[2.5]' : 'stroke-[2]'}`} />
               {currentUser && (
                 <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900" />
               )}

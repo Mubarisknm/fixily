@@ -1,6 +1,7 @@
 export type ThemeMode = 'light' | 'dark';
 export type AppLanguage = 'en' | 'ml';
 export type UserRole = 'customer' | 'partner' | 'admin';
+export type CustomerNavTab = 'home' | 'services' | 'orders';
 
 export interface UserSession {
   id: string;

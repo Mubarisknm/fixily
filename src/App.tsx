@@ -23,12 +23,14 @@ import {
   ThemeMode,
   AppLanguage,
   UserRole,
-  UserSession
+  UserSession,
+  CustomerNavTab
 } from './types';
 import { api } from './services/api';
 
 export function App() {
   const [activeTab, setActiveTab] = useState<'customer' | 'partner' | 'admin'>('customer');
+  const [customerNavTab, setCustomerNavTab] = useState<CustomerNavTab>('home');
   const [theme, setTheme] = useState<ThemeMode>(() => {
     const saved = localStorage.getItem('fykzi_theme') || localStorage.getItem('fykso_theme');
     return (saved === 'light' || saved === 'dark') ? (saved as ThemeMode) : 'dark';
@@ -449,6 +451,8 @@ export function App() {
                   partners={partners}
                   onRefreshJobs={loadAllData}
                   theme={theme}
+                  customerNavTab={customerNavTab}
+                  setCustomerNavTab={setCustomerNavTab}
                   isEmergencyModalOpen={isEmergencyModalOpen}
                   setIsEmergencyModalOpen={setIsEmergencyModalOpen}
                   language={language}
@@ -518,6 +522,8 @@ export function App() {
         <MobileBottomNav
           activeTab={activeTab}
           setActiveTab={handleTabChange}
+          customerNavTab={customerNavTab}
+          setCustomerNavTab={setCustomerNavTab}
           activeJobsCount={activeJobsCount}
           onOpenEmergency={() => setIsEmergencyModalOpen(true)}
           theme={theme}
