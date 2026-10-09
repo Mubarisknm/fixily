@@ -85,11 +85,6 @@ export const FykziLogo: React.FC<FykziLogoProps> = ({
             >
               Fykzi
             </span>
-            {showBadge && (
-              <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider bg-blue-500/10 text-blue-600 dark:text-blue-400 px-1.5 py-0.5 rounded-full border border-blue-500/20">
-                Kerala
-              </span>
-            )}
           </div>
           <span className="text-[9px] text-slate-400 font-bold hidden sm:inline-block">
             ഫിക്സി • Doorstep Services
