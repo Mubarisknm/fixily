@@ -144,16 +144,18 @@ const HERO_SHOWCASE_SLIDES: HeroShowcaseSlide[] = [
 ];
 
 const EXPERTISE_CATEGORIES = [
-  { id: 'all', label: 'All Services', icon: '🌟', actionClass: 'action-icon-star', color: 'bg-blue-500/10 text-blue-500 border-blue-500/20' },
-  { id: 'Driver', label: 'Acting Driver', icon: '👨‍✈️', actionClass: 'action-icon-driver', color: 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20', badgeTitle: 'TOP RATED DRIVERS & CHAUFFEURS' },
-  { id: 'Electrical Services', label: 'Electrician', icon: '⚡', actionClass: 'action-icon-electrician', color: 'bg-amber-500/10 text-amber-500 border-amber-500/20', badgeTitle: 'TOP RATED ELECTRICIANS & WIRING PROS' },
-  { id: 'Mechanic & Roadside Assistance', label: 'Mechanic', icon: '🔧', actionClass: 'action-icon-mechanic', color: 'bg-orange-500/10 text-orange-500 border-orange-500/20', badgeTitle: 'TOP RATED MECHANICS & RESCUE PROS' },
-  { id: 'Appliance Care & Servicing', label: 'AC Repair', icon: '❄️', actionClass: 'action-icon-ac', color: 'bg-cyan-500/10 text-cyan-500 border-cyan-500/20', badgeTitle: 'TOP RATED AC & APPLIANCE TECHNICIANS' },
-  { id: 'Plumbing & Water Management', label: 'Plumber', icon: '🚰', actionClass: 'action-icon-plumber', color: 'bg-sky-500/10 text-sky-500 border-sky-500/20', badgeTitle: 'TOP RATED PLUMBERS & PIPELINE EXPERTS' },
-  { id: 'Vehicle Care', label: 'Car Spa', icon: '🚗', actionClass: 'action-icon-carspa', color: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20', badgeTitle: 'TOP RATED CAR SPA & DETAILING SPECIALISTS' },
-  { id: 'Deep Cleaning & Housekeeping', label: 'Deep Clean', icon: '🧹', actionClass: 'action-icon-clean', color: 'bg-teal-500/10 text-teal-500 border-teal-500/20', badgeTitle: 'TOP RATED HOUSEKEEPING & DEEP CLEANERS' },
-  { id: 'Carpenter & Locksmith', label: 'Carpenter', icon: '🔨', actionClass: 'action-icon-carpenter', color: 'bg-amber-600/10 text-amber-600 border-amber-600/20', badgeTitle: 'TOP RATED CARPENTERS & LOCKSMITHS' },
-  { id: 'Other Services', label: 'Other Works', icon: '🛠️', actionClass: 'action-icon-tools', color: 'bg-purple-500/10 text-purple-500 border-purple-500/20', badgeTitle: 'TOP RATED CUSTOM TRADE FREELANCERS' }
+  { id: 'all', label: 'All Services', icon: '🌟', actionClass: 'action-icon-star', color: 'bg-purple-100 dark:bg-purple-950/50 text-purple-600', badgeTitle: 'ALL DOORSTEP SERVICES' },
+  { id: 'Electrical Services', label: 'Electrician', icon: '⚡', actionClass: 'action-icon-electrician', color: 'bg-purple-100 dark:bg-purple-950/50 text-purple-600', badgeTitle: 'TOP RATED ELECTRICIANS & WIRING PROS' },
+  { id: 'Plumbing & Water Management', label: 'Plumber', icon: '🚰', actionClass: 'action-icon-plumber', color: 'bg-sky-100 dark:bg-sky-950/50 text-sky-600', badgeTitle: 'TOP RATED PLUMBERS & PIPELINE EXPERTS' },
+  { id: 'Mechanic & Roadside Assistance', label: 'Bike Repair', icon: '🏍️', actionClass: 'action-icon-mechanic', color: 'bg-teal-100 dark:bg-teal-950/50 text-teal-600', badgeTitle: 'TOP RATED MECHANICS & BIKE RESCUE' },
+  { id: 'Appliance Care & Servicing', label: 'AC Repair', icon: '❄️', actionClass: 'action-icon-ac', color: 'bg-amber-100 dark:bg-amber-950/50 text-amber-600', badgeTitle: 'TOP RATED AC & APPLIANCE TECHNICIANS' },
+  { id: 'Water Tank Cleaning', label: 'Water Purifier', icon: '💧', actionClass: 'action-icon-plumber', color: 'bg-cyan-100 dark:bg-cyan-950/50 text-cyan-600', badgeTitle: 'WATER PURIFIER & TANK CLEANERS' },
+  { id: 'Appliance Repair', label: 'Washing Machine', icon: '🧺', actionClass: 'action-icon-tools', color: 'bg-pink-100 dark:bg-pink-950/50 text-pink-600', badgeTitle: 'WASHING MACHINE & APPLIANCE REPAIR' },
+  { id: 'Driver', label: 'Acting Driver', icon: '👨‍✈️', actionClass: 'action-icon-driver', color: 'bg-indigo-100 dark:bg-indigo-950/50 text-indigo-600', badgeTitle: 'TOP RATED DRIVERS & CHAUFFEURS' },
+  { id: 'Vehicle Care', label: 'Car Spa', icon: '🚗', actionClass: 'action-icon-carspa', color: 'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-600', badgeTitle: 'TOP RATED CAR SPA & DETAILING' },
+  { id: 'Deep Cleaning & Housekeeping', label: 'Deep Clean', icon: '🧹', actionClass: 'action-icon-clean', color: 'bg-teal-100 dark:bg-teal-950/50 text-teal-600', badgeTitle: 'TOP RATED HOUSEKEEPING & DEEP CLEANERS' },
+  { id: 'Carpenter & Locksmith', label: 'Carpenter', icon: '🔨', actionClass: 'action-icon-carpenter', color: 'bg-orange-100 dark:bg-orange-950/50 text-orange-600', badgeTitle: 'TOP RATED CARPENTERS & LOCKSMITHS' },
+  { id: 'Other Services', label: 'Other Works', icon: '🛠️', actionClass: 'action-icon-tools', color: 'bg-violet-100 dark:bg-violet-950/50 text-violet-600', badgeTitle: 'TOP RATED CUSTOM TRADE FREELANCERS' }
 ];
 
 export const CustomerApp: React.FC<CustomerAppProps> = ({
@@ -187,7 +189,6 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategoryTab, setSelectedCategoryTab] = useState<string>('all');
   const [showScheduleDrawer, setShowScheduleDrawer] = useState<boolean>(false);
-  const [ordersSubTab, setOrdersSubTab] = useState<'active' | 'completed'>('active');
 
   // 3D Shuffling Hero Showcase State
   const [activeHeroSlide, setActiveHeroSlide] = useState<number>(0);
@@ -215,10 +216,8 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       const touchEndX = e.changedTouches[0].clientX;
       const diff = touchStartX - touchEndX;
       if (diff > 40) {
-        // Swipe Left -> Next
         setActiveHeroSlide((prev) => (prev + 1) % HERO_SHOWCASE_SLIDES.length);
       } else if (diff < -40) {
-        // Swipe Right -> Prev
         setActiveHeroSlide((prev) => (prev === 0 ? HERO_SHOWCASE_SLIDES.length - 1 : prev - 1));
       }
     }
@@ -333,7 +332,6 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       const role = (p.role || '').toLowerCase();
       const name = (p.name || '').toLowerCase();
 
-      // If user typed a search query
       if (q) {
         if (name.includes(q) || role.includes(q)) return true;
         if (q.includes('driver') && (role.includes('driver') || role.includes('chauffeur'))) return true;
@@ -344,13 +342,12 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
         if (q.includes('clean') && (role.includes('clean') || role.includes('housekeep'))) return true;
       }
 
-      // If category tab is selected
       if (cat === 'all') return true;
       if (cat === 'driver' || cat.includes('driver')) {
         return role.includes('driver') || role.includes('chauffeur');
       }
-      if (cat.includes('mechanic') || cat.includes('roadside')) {
-        return role.includes('mechanic') || role.includes('breakdown') || role.includes('auto');
+      if (cat.includes('mechanic') || cat.includes('roadside') || cat.includes('bike')) {
+        return role.includes('mechanic') || role.includes('breakdown') || role.includes('auto') || role.includes('bike');
       }
       if (cat.includes('electric')) {
         return role.includes('electrician') || role.includes('wiring') || role.includes('electrical');
@@ -358,8 +355,11 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       if (cat.includes('plumb')) {
         return role.includes('plumber') || role.includes('pipeline') || role.includes('plumbing');
       }
-      if (cat.includes('appliance') || cat.includes('ac')) {
-        return role.includes('ac') || role.includes('appliance') || role.includes('technician');
+      if (cat.includes('appliance') || cat.includes('ac') || cat.includes('washing')) {
+        return role.includes('ac') || role.includes('appliance') || role.includes('technician') || role.includes('washing');
+      }
+      if (cat.includes('water') || cat.includes('purifier')) {
+        return role.includes('tank') || role.includes('water') || role.includes('plumber');
       }
       if (cat.includes('vehicle') || cat.includes('car')) {
         return role.includes('car') || role.includes('detailing') || role.includes('wash') || role.includes('mechanic');
@@ -376,19 +376,16 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
 
       return false;
     }).sort((a, b) => {
-      // Online first, then Top Rated Pro, then rating descending
       if (a.isOnline !== b.isOnline) return a.isOnline ? -1 : 1;
       if (a.isTopRated !== b.isTopRated) return a.isTopRated ? -1 : 1;
       return (b.rating || 4.5) - (a.rating || 4.5);
     });
   };
 
-  // Trade-specific Top Rated Technicians when on Services page or filtering
   const activeTradeTechnicians = useMemo(() => {
     return getMatchedTechniciansForCategory(selectedCategoryTab, searchQuery);
   }, [partners, selectedCategoryTab, searchQuery]);
 
-  // Active Category Banner Title
   const activeCategoryBadgeTitle = useMemo(() => {
     const matched = EXPERTISE_CATEGORIES.find(c => c.id === selectedCategoryTab);
     if (matched && matched.badgeTitle) return matched.badgeTitle;
@@ -398,47 +395,178 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
     return 'TOP RATED VERIFIED SPECIALISTS IN KERALA';
   }, [selectedCategoryTab, searchQuery]);
 
-  // Filter Services by Category and Search Query
-  const filteredServices = useMemo(() => {
+  // Clean Service List matching the reference image layout
+  const serviceListCatalog = useMemo(() => {
+    const list = [
+      {
+        id: 'electrician',
+        title: 'Electrician',
+        subtitle: 'Wiring, fan installation & board repair',
+        category: 'Electrical Services',
+        icon: '💡',
+        squircleColor: 'bg-purple-100 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800/40 text-purple-600 dark:text-purple-400',
+        diagnosticRate: 149,
+        eta: '25 mins'
+      },
+      {
+        id: 'plumber',
+        title: 'Plumber',
+        subtitle: 'Pipe leaks, drain cleaning & fixture installation',
+        category: 'Plumbing & Water Management',
+        icon: '🚰',
+        squircleColor: 'bg-sky-100 dark:bg-sky-950/60 border border-sky-200 dark:border-sky-800/40 text-sky-600 dark:text-sky-400',
+        diagnosticRate: 149,
+        eta: '30 mins'
+      },
+      {
+        id: 'bike-repair',
+        title: 'Bike Repair',
+        subtitle: 'Repair, servicing & pickup support',
+        category: 'Mechanic & Roadside Assistance',
+        icon: '🏍️',
+        squircleColor: 'bg-teal-100 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800/40 text-teal-600 dark:text-teal-400',
+        diagnosticRate: 199,
+        eta: '20 mins'
+      },
+      {
+        id: 'ac-repair',
+        title: 'AC Repair',
+        subtitle: 'Service, gas refill & component replacement',
+        category: 'Appliance Care & Servicing',
+        icon: '❄️',
+        squircleColor: 'bg-amber-100 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800/40 text-amber-600 dark:text-amber-400',
+        diagnosticRate: 299,
+        eta: '40 mins'
+      },
+      {
+        id: 'water-purifier',
+        title: 'Water Purifier',
+        subtitle: 'Water purifier installation, filter change & service',
+        category: 'Water Tank Cleaning',
+        icon: '💧',
+        squircleColor: 'bg-cyan-100 dark:bg-cyan-950/60 border border-cyan-200 dark:border-cyan-800/40 text-cyan-600 dark:text-cyan-400',
+        diagnosticRate: 249,
+        eta: '35 mins'
+      },
+      {
+        id: 'washing-machine',
+        title: 'Washing Machine Repair',
+        subtitle: 'Washing machine repair, service & installation',
+        category: 'Appliance Care & Servicing',
+        icon: '🧺',
+        squircleColor: 'bg-pink-100 dark:bg-pink-950/60 border border-pink-200 dark:border-pink-800/40 text-pink-600 dark:text-pink-400',
+        diagnosticRate: 299,
+        eta: '35 mins'
+      },
+      {
+        id: 'acting-driver',
+        title: 'Acting Driver',
+        subtitle: 'Hourly & daily private chauffeurs for manual & auto cars',
+        category: 'Driver',
+        icon: '👨‍✈️',
+        squircleColor: 'bg-indigo-100 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800/40 text-indigo-600 dark:text-indigo-400',
+        diagnosticRate: 250,
+        eta: '20 mins'
+      },
+      {
+        id: 'car-spa',
+        title: 'Car Spa & Foam Wash',
+        subtitle: 'High pressure foam wash, interior dry clean & wax',
+        category: 'Vehicle Care',
+        icon: '🚗',
+        squircleColor: 'bg-emerald-100 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/40 text-emerald-600 dark:text-emerald-400',
+        diagnosticRate: 499,
+        eta: '30 mins'
+      },
+      {
+        id: 'deep-cleaning',
+        title: 'Deep Cleaning',
+        subtitle: 'Bathroom scrubbing, kitchen degreasing & full home sanitization',
+        category: 'Deep Cleaning & Housekeeping',
+        icon: '🧹',
+        squircleColor: 'bg-teal-100 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800/40 text-teal-600 dark:text-teal-400',
+        diagnosticRate: 499,
+        eta: '45 mins'
+      },
+      {
+        id: 'carpenter',
+        title: 'Carpenter & Locksmith',
+        subtitle: 'Door locks, custom furniture fix & woodwork',
+        category: 'Carpenter & Locksmith',
+        icon: '🔨',
+        squircleColor: 'bg-orange-100 dark:bg-orange-950/60 border border-orange-200 dark:border-orange-800/40 text-orange-600 dark:text-orange-400',
+        diagnosticRate: 199,
+        eta: '30 mins'
+      },
+      {
+        id: 'other-services',
+        title: 'Other Works & Custom Trades',
+        subtitle: 'Solar technician, gardener, mason & freelance trades',
+        category: 'Other Services',
+        icon: '🛠️',
+        squircleColor: 'bg-violet-100 dark:bg-violet-950/60 border border-violet-200 dark:border-violet-800/40 text-violet-600 dark:text-violet-400',
+        diagnosticRate: 299,
+        eta: '30 mins'
+      }
+    ];
+
     const q = searchQuery.toLowerCase().trim();
-
     if (q) {
-      return services.filter(service => {
-        return (
-          service.title.toLowerCase().includes(q) ||
-          service.category.toLowerCase().includes(q) ||
-          (service.tagline && service.tagline.toLowerCase().includes(q)) ||
-          (service.features && service.features.some(f => f.toLowerCase().includes(q))) ||
-          (service.createdByPartnerName && service.createdByPartnerName.toLowerCase().includes(q))
-        );
-      });
-    }
-
-    if (selectedCategoryTab === 'all') {
-      return services;
-    }
-
-    if (selectedCategoryTab === 'Other Services') {
-      return services.filter(
-        s => s.category === 'Other Works' || s.category === 'Other Services' || Boolean(s.createdByPartnerId)
+      return list.filter(item =>
+        item.title.toLowerCase().includes(q) ||
+        item.subtitle.toLowerCase().includes(q) ||
+        item.category.toLowerCase().includes(q)
       );
     }
 
-    return services.filter(s => s.category === selectedCategoryTab);
-  }, [services, selectedCategoryTab, searchQuery]);
+    if (selectedCategoryTab === 'all') {
+      return list;
+    }
 
-  // Matching technicians for the currently selected service (used inside Booking Modal)
-  const serviceMatchingTechnicians = useMemo(() => {
-    if (!selectedService) return [];
-    return getMatchedTechniciansForCategory(selectedService.category, selectedService.title);
-  }, [selectedService, partners]);
+    return list.filter(item => {
+      const cat = selectedCategoryTab.toLowerCase();
+      return (
+        item.category.toLowerCase().includes(cat) ||
+        item.title.toLowerCase().includes(cat) ||
+        (cat.includes('driver') && item.title.includes('Driver')) ||
+        (cat.includes('electric') && item.title.includes('Electrician')) ||
+        (cat.includes('plumb') && item.title.includes('Plumber')) ||
+        (cat.includes('mechanic') && item.title.includes('Bike')) ||
+        (cat.includes('ac') && item.title.includes('AC')) ||
+        (cat.includes('water') && item.title.includes('Water')) ||
+        (cat.includes('clean') && item.title.includes('Cleaning')) ||
+        (cat.includes('carpenter') && item.title.includes('Carpenter'))
+      );
+    });
+  }, [searchQuery, selectedCategoryTab]);
 
-  const handleStartBooking = (service: ServiceItem) => {
-    setSelectedService(service);
-    setSelectedTier(service.tiers ? service.tiers[0].name : service.title);
+  const handleStartBookingByCatalog = (item: any) => {
+    const matchedService = services.find(
+      s => s.title.toLowerCase().includes(item.title.toLowerCase().split(' ')[0]) ||
+           s.category.toLowerCase().includes(item.category.toLowerCase().split(' ')[0])
+    ) || {
+      id: item.id,
+      title: item.title,
+      category: item.category,
+      tagline: item.subtitle,
+      priceType: 'flat_diagnostic',
+      diagnosticFee: item.diagnosticRate,
+      basePrice: item.diagnosticRate,
+      eta: item.eta,
+      features: ['Doorstep arrival with tools', 'Upfront pricing and clear diagnosis', '100% damage responsibility guaranteed'],
+      rating: 4.9,
+      reviewsCount: 35,
+      icon: 'Wrench',
+      imageUrl: '',
+      phase: 1,
+      isInstant: true
+    } as ServiceItem;
+
+    setSelectedService(matchedService);
+    setSelectedTier(matchedService.tiers ? matchedService.tiers[0].name : matchedService.title);
     setBookingStep(1);
-    // Auto-select the top-rated specialist if direct booking or default to nearest
-    const matching = getMatchedTechniciansForCategory(service.category, service.title);
+
+    const matching = getMatchedTechniciansForCategory(matchedService.category, matchedService.title);
     if (matching.length > 0 && matching[0].isOnline) {
       setPreferredPartner(matching[0]);
     } else {
@@ -561,106 +689,102 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
   }, [jobs]);
 
   return (
-    <div className="space-y-6 pb-24 w-full max-w-full overflow-x-hidden">
+    <div className="space-y-6 pb-28 w-full max-w-full overflow-x-hidden">
       
-      {/* ========================================================================= */}
-      {/* COMMON TOP GREETING & LOCATION HEADER (Present across all views)           */}
-      {/* ========================================================================= */}
-      <div className="flex items-center justify-between pt-1">
-        <div>
-          <span className={`text-xs font-semibold block ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-            {greetingText}
-          </span>
-          <h2 className="text-xl sm:text-2xl font-black tracking-tight leading-snug">
-            {displayUserName}
-          </h2>
-          <button
-            type="button"
-            onClick={() => {
-              if (onOpenManageAddress) {
-                onOpenManageAddress();
-              } else if (onOpenLocationModal) {
-                onOpenLocationModal();
-              }
-            }}
-            className="flex items-center space-x-1.5 mt-0.5 text-left cursor-pointer active:opacity-70 group"
-            title="Tap to change address & location"
-          >
-            {selectedLocation.isLiveGps ? (
-              <span className="relative flex h-2 w-2 shrink-0">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-              </span>
-            ) : (
-              <span className="text-[10px] font-bold tracking-wider uppercase text-slate-400">
-                CURRENT -
-              </span>
-            )}
-            <span className="text-xs font-black text-blue-600 dark:text-blue-400 truncate max-w-[200px] group-hover:underline">
-              {selectedLocation.name.replace(/^Live:\s*/i, '').replace(/\s*Area$/i, '').split('(')[0].trim()}
-            </span>
-            <ChevronDown className="w-3 h-3 text-blue-600 dark:text-blue-400 shrink-0" />
-          </button>
-        </div>
-
-        <div className="flex items-center space-x-2">
-          {/* Notification Bell */}
-          <button
-            onClick={() => {
-              if (onOpenNotificationSettings) {
-                onOpenNotificationSettings();
-              } else if (currentUser && myActiveJobs.length > 0) {
-                navigateToOrders();
-              } else {
-                alert('No new notifications right now.');
-              }
-            }}
-            className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all cursor-pointer relative ${
-              isDark ? 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100 shadow-sm'
-            }`}
-            title="Notifications & Reminders"
-          >
-            <Bell className="w-4 h-4" />
-            {myActiveJobs.length > 0 && (
-              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-            )}
-          </button>
-
-          {/* User Initial Avatar Circle */}
-          <div
-            onClick={() => {
-              if (!currentUser && onOpenAuthModal) {
-                onOpenAuthModal('customer');
-              }
-            }}
-            className="w-10 h-10 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm flex items-center justify-center shadow-md cursor-pointer transition-transform hover:scale-105"
-            title={currentUser ? currentUser.name : 'Click to Login'}
-          >
-            {userAvatarInitial}
-          </div>
-        </div>
-      </div>
-
       {/* ========================================================================= */}
       {/* VIEW 1: HOME PAGE (Minimal, 3D Deck, 10-Trade Hub, How it works, Safety)   */}
       {/* ========================================================================= */}
       {customerNavTab === 'home' && (
         <div className="space-y-6 animate-in fade-in duration-300">
           
+          {/* Top Greeting & Location Header */}
+          <div className="flex items-center justify-between pt-1">
+            <div>
+              <span className={`text-xs font-semibold block ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                {greetingText}
+              </span>
+              <h2 className="text-xl sm:text-2xl font-black tracking-tight leading-snug">
+                {displayUserName}
+              </h2>
+              <button
+                type="button"
+                onClick={() => {
+                  if (onOpenManageAddress) {
+                    onOpenManageAddress();
+                  } else if (onOpenLocationModal) {
+                    onOpenLocationModal();
+                  }
+                }}
+                className="flex items-center space-x-1.5 mt-0.5 text-left cursor-pointer active:opacity-70 group"
+                title="Tap to change address & location"
+              >
+                {selectedLocation.isLiveGps ? (
+                  <span className="relative flex h-2 w-2 shrink-0">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                  </span>
+                ) : (
+                  <span className="text-[10px] font-bold tracking-wider uppercase text-slate-400">
+                    CURRENT -
+                  </span>
+                )}
+                <span className="text-xs font-black text-teal-600 dark:text-teal-400 truncate max-w-[200px] group-hover:underline">
+                  {selectedLocation.name.replace(/^Live:\s*/i, '').replace(/\s*Area$/i, '').split('(')[0].trim()}
+                </span>
+                <ChevronDown className="w-3 h-3 text-teal-600 dark:text-teal-400 shrink-0" />
+              </button>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => {
+                  if (onOpenNotificationSettings) {
+                    onOpenNotificationSettings();
+                  } else if (currentUser && myActiveJobs.length > 0) {
+                    navigateToOrders();
+                  } else {
+                    alert('No new notifications right now.');
+                  }
+                }}
+                className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all cursor-pointer relative ${
+                  isDark ? 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100 shadow-sm'
+                }`}
+                title="Notifications & Reminders"
+              >
+                <Bell className="w-4 h-4" />
+                {myActiveJobs.length > 0 && (
+                  <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                )}
+              </button>
+
+              <div
+                onClick={() => {
+                  if (!currentUser && onOpenAuthModal) {
+                    onOpenAuthModal('customer');
+                  }
+                }}
+                className="w-10 h-10 rounded-full bg-[#004D40] hover:bg-teal-700 text-white font-black text-sm flex items-center justify-center shadow-md cursor-pointer transition-transform hover:scale-105"
+                title={currentUser ? currentUser.name : 'Click to Login'}
+              >
+                {userAvatarInitial}
+              </div>
+            </div>
+          </div>
+
           {/* Search Bar - Quick jump to Services */}
           <div
             onClick={() => navigateToServices()}
             className={`relative flex items-center rounded-full border px-4 py-3 shadow-sm transition-all cursor-pointer group ${
               isDark
-                ? 'bg-slate-900/90 border-slate-800 text-white hover:border-blue-500/70 ring-1 ring-slate-800'
-                : 'bg-white border-slate-200 text-slate-900 hover:border-blue-400 shadow-[0_2px_10px_rgba(0,0,0,0.04)]'
+                ? 'bg-slate-900/90 border-slate-800 text-white hover:border-teal-500/70 ring-1 ring-slate-800'
+                : 'bg-white border-slate-200 text-slate-900 hover:border-teal-400 shadow-[0_2px_10px_rgba(0,0,0,0.04)]'
             }`}
           >
-            <Search className="w-4 h-4 text-blue-500 mr-2.5 shrink-0 group-hover:scale-110 transition-transform" />
+            <Search className="w-4 h-4 text-teal-600 mr-2.5 shrink-0 group-hover:scale-110 transition-transform" />
             <span className="text-xs sm:text-sm font-semibold text-slate-400 truncate flex-1">
               Search "Driver", "Electrician", "Mechanic", "AC Repair"...
             </span>
-            <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-blue-600/10 text-blue-500 border border-blue-500/20">
+            <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-full bg-[#004D40]/10 text-[#004D40] dark:text-teal-400 border border-teal-500/20">
               Browse
             </span>
           </div>
@@ -697,7 +821,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                   opacity = 1;
                   pointerEvents = 'auto';
                   filter = 'brightness(1)';
-                  boxShadow = '0 24px 45px -10px rgba(0,0,0,0.7), 0 0 25px rgba(37, 99, 235, 0.25)';
+                  boxShadow = '0 24px 45px -10px rgba(0,0,0,0.7), 0 0 25px rgba(13, 148, 136, 0.25)';
                 } else if (isRight) {
                   transformStyle = 'translateX(40%) scale(0.86) translateZ(-40px) rotateY(-20deg)';
                   zIndex = 20;
@@ -747,24 +871,21 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                       className="w-full h-full object-cover transform hover:scale-105 transition-all duration-700"
                     />
 
-                    {/* Smooth Gradient Overlays */}
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
                     <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-slate-950/30 to-transparent" />
 
-                    {/* Top Badge */}
                     <div className="absolute top-3 left-3.5">
-                      <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-blue-600 text-white shadow-md">
+                      <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-[#004D40] text-white shadow-md">
                         {slide.badge}
                       </span>
                     </div>
 
-                    {/* Banner Content */}
                     <div className="absolute bottom-3.5 left-4 right-4 text-white">
                       <div className="flex items-baseline space-x-2">
                         <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-white drop-shadow-md">
                           {slide.title}
                         </h1>
-                        <span className="text-xs sm:text-sm font-black text-blue-400 tracking-wider drop-shadow">
+                        <span className="text-xs sm:text-sm font-black text-teal-400 tracking-wider drop-shadow">
                           {slide.subtitle}
                         </span>
                       </div>
@@ -776,13 +897,12 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                 );
               })}
 
-              {/* 3D Arrow Navigation Controls */}
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   setActiveHeroSlide((prev) => (prev === 0 ? HERO_SHOWCASE_SLIDES.length - 1 : prev - 1));
                 }}
-                className="absolute left-1 sm:left-3 z-40 w-8 h-8 rounded-full bg-slate-950/80 hover:bg-blue-600 text-white flex items-center justify-center backdrop-blur shadow-lg border border-slate-800 transition-all cursor-pointer hover:scale-110 active:scale-95"
+                className="absolute left-1 sm:left-3 z-40 w-8 h-8 rounded-full bg-slate-950/80 hover:bg-[#004D40] text-white flex items-center justify-center backdrop-blur shadow-lg border border-slate-800 transition-all cursor-pointer hover:scale-110 active:scale-95"
                 title="Previous Card"
               >
                 <ChevronLeft className="w-4 h-4" />
@@ -792,21 +912,20 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                   e.stopPropagation();
                   setActiveHeroSlide((prev) => (prev + 1) % HERO_SHOWCASE_SLIDES.length);
                 }}
-                className="absolute right-1 sm:right-3 z-40 w-8 h-8 rounded-full bg-slate-950/80 hover:bg-blue-600 text-white flex items-center justify-center backdrop-blur shadow-lg border border-slate-800 transition-all cursor-pointer hover:scale-110 active:scale-95"
+                className="absolute right-1 sm:right-3 z-40 w-8 h-8 rounded-full bg-slate-950/80 hover:bg-[#004D40] text-white flex items-center justify-center backdrop-blur shadow-lg border border-slate-800 transition-all cursor-pointer hover:scale-110 active:scale-95"
                 title="Next Card"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
 
-            {/* 3D Carousel Deck Dots Indicator */}
             <div className="pt-2.5 flex items-center justify-center space-x-2">
               {HERO_SHOWCASE_SLIDES.map((slide, idx) => (
                 <button
                   key={slide.id}
                   onClick={() => setActiveHeroSlide(idx)}
                   className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                    idx === activeHeroSlide ? 'w-6 bg-blue-500 shadow-sm shadow-blue-500' : 'w-2 bg-slate-700 hover:bg-slate-500'
+                    idx === activeHeroSlide ? 'w-6 bg-teal-500 shadow-sm shadow-teal-500' : 'w-2 bg-slate-700 hover:bg-slate-500'
                   }`}
                 />
               ))}
@@ -817,7 +936,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
           <div id="our-expertise-section" className="space-y-3 pt-2 expertise-3d-perspective-container">
             <div className="flex items-center justify-between px-1">
               <div className="flex items-center space-x-2">
-                <span className="w-2 h-2 rounded-full bg-blue-500 animate-ping" />
+                <span className="w-2 h-2 rounded-full bg-teal-500 animate-ping" />
                 <h3 className="text-xs sm:text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white flex items-center gap-1.5">
                   <span>OUR EXPERTISE</span>
                   <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
@@ -825,9 +944,9 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
               </div>
               <button
                 onClick={() => navigateToServices('all')}
-                className="text-[11px] font-bold text-blue-500 hover:underline flex items-center space-x-1 cursor-pointer"
+                className="text-[11px] font-bold text-teal-600 dark:text-teal-400 hover:underline flex items-center space-x-1 cursor-pointer"
               >
-                <span>View All Services</span>
+                <span>View All</span>
                 <ChevronRight className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -843,11 +962,10 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                     onClick={() => navigateToServices(cat.id)}
                     className={`p-2.5 sm:p-3 rounded-2xl border text-center transition-all flex flex-col items-center justify-center space-y-1.5 cursor-pointer expertise-3d-card ${floatClass} ${
                       isDark
-                        ? 'bg-[#0F172A]/90 border-slate-800 text-slate-200 hover:border-blue-500/50 hover:bg-slate-850 shadow-md shadow-slate-950/50'
-                        : 'bg-white border-slate-200/90 text-slate-700 hover:border-blue-300 hover:bg-blue-50/60 shadow-md shadow-slate-200/60'
+                        ? 'bg-[#0F172A]/90 border-slate-800 text-slate-200 hover:border-teal-500/50 hover:bg-slate-850 shadow-md shadow-slate-950/50'
+                        : 'bg-white border-slate-200/90 text-slate-700 hover:border-teal-300 hover:bg-teal-50/60 shadow-md shadow-slate-200/60'
                     }`}
                   >
-                    {/* 3D Elevated Emoji Icon Container */}
                     <div
                       className={`w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center text-xl sm:text-2xl expertise-3d-icon transition-transform ${
                         isDark ? 'bg-slate-800/80 shadow-inner' : 'bg-slate-100 shadow-sm'
@@ -856,7 +974,6 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                       <span className={cat.actionClass}>{cat.icon}</span>
                     </div>
 
-                    {/* 3D Elevated Label */}
                     <span className="text-[10px] sm:text-[11px] font-black truncate w-full expertise-3d-label">
                       {cat.label}
                     </span>
@@ -866,27 +983,27 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             </div>
           </div>
 
-          {/* Quick Active Bookings Banner (If user has ongoing jobs) */}
+          {/* Quick Active Bookings Banner */}
           {myActiveJobs.length > 0 && (
             <div
               onClick={navigateToOrders}
-              className="p-4 rounded-3xl bg-gradient-to-r from-blue-900/80 to-indigo-950/90 border border-blue-600/40 text-white shadow-lg cursor-pointer flex items-center justify-between group hover:scale-[1.01] transition-transform"
+              className="p-4 rounded-3xl bg-gradient-to-r from-teal-950 via-[#004D40] to-slate-950 border border-teal-500/40 text-white shadow-lg cursor-pointer flex items-center justify-between group hover:scale-[1.01] transition-transform"
             >
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-2xl bg-blue-600/40 border border-blue-400 flex items-center justify-center">
-                  <Clock className="w-5 h-5 text-blue-300 animate-spin" />
+                <div className="w-10 h-10 rounded-2xl bg-teal-500/30 border border-teal-400 flex items-center justify-center">
+                  <Clock className="w-5 h-5 text-teal-300 animate-spin" />
                 </div>
                 <div>
                   <div className="flex items-center space-x-2">
-                    <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-500 text-slate-950">
+                    <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-400 text-slate-950">
                       Active Order Live
                     </span>
-                    <span className="text-xs font-bold text-slate-300">#{myActiveJobs[0].id}</span>
+                    <span className="text-xs font-bold text-teal-200">#{myActiveJobs[0].id}</span>
                   </div>
                   <h4 className="font-black text-sm mt-0.5">{myActiveJobs[0].serviceTitle}</h4>
                 </div>
               </div>
-              <div className="flex items-center space-x-1.5 text-xs font-bold text-blue-300 group-hover:text-white">
+              <div className="flex items-center space-x-1.5 text-xs font-bold text-teal-200 group-hover:text-white">
                 <span>Track Order</span>
                 <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </div>
@@ -913,7 +1030,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                 { step: '4', title: '4-Digit OTP', desc: 'Pay and confirm completion only when fully satisfied.' }
               ].map((s) => (
                 <div key={s.step} className="p-3.5 rounded-2xl bg-slate-950/40 border border-slate-800/80 space-y-1.5">
-                  <span className="text-[10px] font-black w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center">
+                  <span className="text-[10px] font-black w-6 h-6 rounded-full bg-[#004D40] text-white flex items-center justify-center">
                     {s.step}
                   </span>
                   <h5 className="font-bold text-xs">{s.title}</h5>
@@ -944,11 +1061,11 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             ))}
           </div>
 
-          {/* Big CTA Banner to Explore All Services */}
+          {/* Big CTA Banner */}
           <div className={`p-6 rounded-3xl border text-center space-y-3 relative overflow-hidden ${
             isDark
-              ? 'bg-gradient-to-b from-blue-950/40 via-slate-900 to-slate-950 border-slate-800 text-white'
-              : 'bg-gradient-to-b from-blue-50 via-white to-blue-50/50 border-blue-200 text-slate-900'
+              ? 'bg-gradient-to-b from-teal-950/40 via-slate-900 to-slate-950 border-slate-800 text-white'
+              : 'bg-gradient-to-b from-teal-50 via-white to-teal-50/50 border-teal-200 text-slate-900'
           }`}>
             <div className="relative z-10 space-y-2">
               <h3 className="text-base sm:text-lg font-black">Ready to Book a Doorstep Specialist?</h3>
@@ -957,7 +1074,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
               </p>
               <button
                 onClick={() => navigateToServices('all')}
-                className="mt-2 px-6 py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs shadow-lg inline-flex items-center space-x-2 transition-transform hover:scale-105 cursor-pointer"
+                className="mt-2 px-6 py-3 rounded-2xl bg-[#004D40] hover:bg-teal-700 text-white font-black text-xs shadow-lg inline-flex items-center space-x-2 transition-transform hover:scale-105 cursor-pointer"
               >
                 <span>Explore All Services</span>
                 <ArrowRight className="w-4 h-4" />
@@ -968,32 +1085,51 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       )}
 
       {/* ========================================================================= */}
-      {/* VIEW 2: SERVICES PAGE (Full Catalog, Top Specialists, Category Filter)    */}
+      {/* VIEW 2: SERVICES PAGE ("Explore Services" - Matching Reference Screen 1)   */}
       {/* ========================================================================= */}
       {customerNavTab === 'services' && (
-        <div className="space-y-5 animate-in fade-in duration-300">
+        <div className="space-y-4 animate-in fade-in duration-300">
           
-          {/* Header Title */}
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg sm:text-xl font-black tracking-tight text-slate-900 dark:text-white flex items-center space-x-2">
-                <Layers className="w-5 h-5 text-blue-500" />
-                <span>Doorstep Services & Specialists</span>
-              </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Select category or book verified specialists directly
-              </p>
+          {/* Top Curved Green Banner Header (Matching Reference Screen 1) */}
+          <div className="relative rounded-3xl p-6 bg-gradient-to-b from-[#00382E] via-[#004D40] to-[#0A5C4F] text-white shadow-lg overflow-hidden">
+            {/* Background ambient glow */}
+            <div className="absolute -right-8 -top-8 w-40 h-40 bg-teal-400/20 rounded-full blur-2xl pointer-events-none" />
+
+            <div className="flex items-start justify-between relative z-10">
+              <div className="space-y-1">
+                <span className="text-[10px] font-black uppercase tracking-widest text-teal-300/80 block">
+                  FYKZI
+                </span>
+                <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white leading-tight">
+                  Explore Services
+                </h1>
+                <p className="text-xs text-teal-100/90 font-medium">
+                  Professional help for everyday needs
+                </p>
+              </div>
+
+              {/* Notification Bell in Header */}
+              <button
+                onClick={() => {
+                  if (onOpenNotificationSettings) {
+                    onOpenNotificationSettings();
+                  } else {
+                    alert('No new notifications right now.');
+                  }
+                }}
+                className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center text-white backdrop-blur transition-all cursor-pointer"
+                title="Notifications"
+              >
+                <Bell className="w-4 h-4" />
+              </button>
             </div>
-            <span className="text-xs font-black px-2.5 py-1 rounded-full bg-blue-600/10 text-blue-500 border border-blue-500/20">
-              {filteredServices.length} Services
-            </span>
           </div>
 
-          {/* Search Bar & Custom Scheduling Toggle */}
+          {/* Search Bar & Schedule Filter */}
           <div className={`relative flex items-center rounded-full border px-4 py-2.5 shadow-sm transition-all ${
             isDark
-              ? 'bg-slate-900/90 border-slate-800 text-white focus-within:border-blue-500 ring-1 ring-slate-800'
-              : 'bg-white border-slate-200 text-slate-900 focus-within:border-blue-500 shadow-[0_2px_10px_rgba(0,0,0,0.04)]'
+              ? 'bg-slate-900/90 border-slate-800 text-white focus-within:border-teal-500 ring-1 ring-slate-800'
+              : 'bg-white border-slate-200 text-slate-900 focus-within:border-teal-500 shadow-[0_2px_10px_rgba(0,0,0,0.04)]'
           }`}>
             <Search className="w-4 h-4 text-slate-400 mr-2.5 shrink-0" />
             <input
@@ -1001,7 +1137,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder='Search "Driver", "Electrician", "Mechanic", "AC Repair"...'
+              placeholder='Search "Electrician", "Plumber", "Bike Repair", "AC"...'
               className="w-full bg-transparent text-xs sm:text-sm font-semibold focus:outline-none placeholder:text-slate-400"
             />
             {searchQuery && (
@@ -1016,7 +1152,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
               onClick={() => setShowScheduleDrawer(!showScheduleDrawer)}
               className={`p-1.5 rounded-full border transition-all cursor-pointer ${
                 showScheduleDrawer
-                  ? 'bg-blue-600 text-white border-blue-600'
+                  ? 'bg-[#004D40] text-white border-[#004D40]'
                   : isDark ? 'border-slate-800 text-slate-400 hover:text-white' : 'border-slate-200 text-slate-500 hover:text-slate-900'
               }`}
               title="Schedule Time Slot"
@@ -1028,10 +1164,10 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
           {/* Schedule Custom Drawer */}
           {showScheduleDrawer && (
             <div className={`p-3.5 rounded-3xl border text-xs space-y-2.5 animate-in slide-in-from-top-2 duration-200 ${
-              isDark ? 'bg-slate-900 border-slate-800' : 'bg-blue-50/70 border-blue-200'
+              isDark ? 'bg-slate-900 border-slate-800' : 'bg-teal-50/70 border-teal-200'
             }`}>
               <div className="flex items-center justify-between font-bold">
-                <span className="flex items-center space-x-1.5 text-blue-500">
+                <span className="flex items-center space-x-1.5 text-[#004D40] dark:text-teal-400">
                   <Calendar className="w-3.5 h-3.5" />
                   <span>Custom Service Scheduling</span>
                 </span>
@@ -1071,8 +1207,8 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             </div>
           )}
 
-          {/* 10-Trade Horizontal Category Filter Pills */}
-          <div className="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none">
+          {/* Category Filter Pills */}
+          <div className="flex items-center space-x-2 overflow-x-auto pb-1.5 scrollbar-none">
             {EXPERTISE_CATEGORIES.map((cat) => {
               const isSelected = selectedCategoryTab === cat.id;
               return (
@@ -1082,9 +1218,9 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                     setSelectedCategoryTab(cat.id);
                     setSearchQuery('');
                   }}
-                  className={`px-3.5 py-2 rounded-2xl border text-xs font-black shrink-0 transition-all flex items-center space-x-1.5 cursor-pointer ${
+                  className={`px-3.5 py-1.5 rounded-2xl border text-xs font-bold shrink-0 transition-all flex items-center space-x-1.5 cursor-pointer ${
                     isSelected
-                      ? 'bg-blue-600 text-white border-blue-500 shadow-md shadow-blue-500/20'
+                      ? 'bg-[#004D40] text-white border-[#004D40] shadow-sm'
                       : isDark
                       ? 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800'
                       : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100 shadow-sm'
@@ -1097,70 +1233,45 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             })}
           </div>
 
-          {/* TOP RATED TECHNICIANS ROW FOR SELECTED CATEGORY (e.g. Drivers first) */}
-          {activeTradeTechnicians.length > 0 && (
-            <div className="space-y-3 pt-1">
+          {/* Top Rated Specialists Row (When filtered or available) */}
+          {activeTradeTechnicians.length > 0 && selectedCategoryTab !== 'all' && (
+            <div className="space-y-2.5 pt-1">
               <div className="flex items-center justify-between">
-                <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full text-xs font-black tracking-wider uppercase bg-amber-500/15 text-amber-500 dark:text-amber-400 border border-amber-500/30 shadow-sm">
-                  <span>• {activeCategoryBadgeTitle} •</span>
-                </div>
+                <span className="text-xs font-black uppercase tracking-wider text-amber-500">
+                  • {activeCategoryBadgeTitle} •
+                </span>
                 <span className="text-[11px] font-bold text-slate-400">
-                  {activeTradeTechnicians.length} Top Rated Available
+                  {activeTradeTechnicians.length} Available
                 </span>
               </div>
 
-              {/* Horizontal Slider of Specialists */}
               <div className="flex items-center space-x-3 overflow-x-auto pb-2 scrollbar-none">
                 {activeTradeTechnicians.map((pro, index) => {
                   const initial = pro.name.charAt(0).toUpperCase();
-                  const colors = [
-                    'bg-blue-600 text-white',
-                    'bg-indigo-600 text-white',
-                    'bg-emerald-600 text-white',
-                    'bg-teal-600 text-white',
-                    'bg-cyan-600 text-white'
-                  ];
-                  const avatarColor = colors[index % colors.length];
-
                   return (
                     <div
                       key={pro.id}
-                      className={`w-44 sm:w-48 shrink-0 rounded-3xl p-4 border shadow-md flex flex-col justify-between transition-all card-3d-interactive ${
-                        isDark
-                          ? 'bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 border-slate-800'
-                          : 'bg-gradient-to-b from-slate-50 via-white to-slate-50 border-slate-200'
+                      className={`w-44 shrink-0 rounded-3xl p-3.5 border shadow-sm flex flex-col justify-between transition-all ${
+                        isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
                       }`}
                     >
-                      <div className="space-y-2">
+                      <div className="space-y-1.5">
                         <div className="flex items-center justify-between">
-                          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-base shadow-md ${avatarColor}`}>
+                          <div className="w-9 h-9 rounded-2xl bg-[#004D40] text-white font-black text-sm flex items-center justify-center shadow">
                             {initial}
                           </div>
-
-                          <span className="bg-amber-400/20 text-amber-500 border border-amber-400/30 text-[10px] font-black px-2 py-0.5 rounded-full flex items-center space-x-1">
+                          <span className="bg-amber-400/20 text-amber-500 text-[10px] font-black px-2 py-0.5 rounded-full flex items-center space-x-1">
                             <Star className="w-3 h-3 fill-amber-400" />
                             <span>{pro.rating}</span>
                           </span>
                         </div>
-
-                        <div>
-                          <h4 className="font-black text-xs sm:text-sm text-slate-900 dark:text-white truncate">
-                            {pro.name}
-                          </h4>
-                          <span className="text-[11px] font-bold text-blue-500 dark:text-blue-400 block truncate lowercase">
-                            {pro.role}
-                          </span>
-                        </div>
-
-                        <div className="flex items-center space-x-1.5 text-[10px] text-slate-400 pt-1 border-t border-slate-200 dark:border-slate-800">
-                          <span className={`w-1.5 h-1.5 rounded-full ${pro.isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-slate-500'}`} />
-                          <span>{pro.isOnline ? 'Available Now' : 'Offline'}</span>
-                        </div>
+                        <h4 className="font-black text-xs truncate">{pro.name}</h4>
+                        <p className="text-[10px] text-slate-400 truncate">{pro.role}</p>
                       </div>
 
                       <button
                         onClick={() => handleStartDirectBooking(pro)}
-                        className="mt-3 w-full py-2 rounded-xl text-[11px] font-black bg-blue-600 hover:bg-blue-500 text-white shadow-md transition-all cursor-pointer flex items-center justify-center space-x-1"
+                        className="mt-2.5 w-full py-1.5 rounded-xl text-[11px] font-bold bg-[#004D40] hover:bg-teal-700 text-white shadow transition-all cursor-pointer flex items-center justify-center space-x-1"
                       >
                         <span>⚡ Book {pro.name.split(' ')[0]}</span>
                       </button>
@@ -1171,188 +1282,101 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             </div>
           )}
 
-          {/* Full Grid of Service Cards */}
-          <div className="space-y-3 pt-2">
-            <div className="flex items-center justify-between">
-              <h3 className="text-xs sm:text-sm font-black uppercase tracking-wider text-slate-900 dark:text-white">
-                Available Doorstep Services
-              </h3>
-              <span className="text-xs font-bold text-slate-400">{filteredServices.length} Options</span>
-            </div>
+          {/* "All Services" List Section (Matching Reference Screen 1) */}
+          <div className="space-y-3 pt-1">
+            <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white px-1">
+              All Services
+            </h3>
 
-            {filteredServices.length === 0 ? (
+            {serviceListCatalog.length === 0 ? (
               <div className={`p-8 rounded-3xl border text-center space-y-3 ${
                 isDark ? 'bg-slate-900/40 border-slate-800 text-white' : 'bg-slate-50 border-slate-200 text-slate-900'
               }`}>
                 <Inbox className="w-10 h-10 text-slate-400 mx-auto" />
-                <h4 className="font-black text-sm">No exact services found</h4>
-                <p className="text-xs text-slate-400">Try searching for different keywords or view all services.</p>
-                <button
-                  onClick={() => {
-                    setSelectedCategoryTab('all');
-                    setSearchQuery('');
-                  }}
-                  className="px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-bold"
-                >
-                  Clear Filters
-                </button>
+                <h4 className="font-black text-sm">No services found</h4>
+                <p className="text-xs text-slate-400">Try searching with a different term.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
-                {filteredServices.map((service) => (
+              <div className="space-y-3">
+                {serviceListCatalog.map((item) => (
                   <div
-                    key={service.id}
-                    className={`rounded-3xl border p-4 sm:p-5 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between card-3d-interactive ${
-                      isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+                    key={item.id}
+                    onClick={() => handleStartBookingByCatalog(item)}
+                    className={`rounded-3xl border p-4 sm:p-5 flex items-center justify-between gap-3.5 shadow-sm hover:shadow-md transition-all cursor-pointer group ${
+                      isDark
+                        ? 'bg-slate-900/90 border-slate-800/90 text-white hover:border-teal-500/50'
+                        : 'bg-white border-slate-100 text-slate-900 hover:border-teal-300'
                     }`}
                   >
-                    <div className="space-y-2">
-                      <div className="flex items-start justify-between gap-2">
-                        <div>
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-blue-500 block">
-                            {service.category}
-                          </span>
-                          <h4 className="font-black text-sm sm:text-base leading-snug mt-0.5">{service.title}</h4>
-                          {service.malayalamTitle && (
-                            <p className="text-[11px] text-teal-500 font-bold">{service.malayalamTitle}</p>
-                          )}
-                        </div>
-                        <span className="text-xl p-2 bg-slate-800/10 rounded-2xl shrink-0">
-                          {service.icon === 'Wrench' ? '🔧' : service.icon === 'Droplet' ? '💧' : service.icon === 'ShieldCheck' ? '🛡️' : service.icon === 'Navigation' ? '👨‍✈️' : '⚡'}
-                        </span>
-                      </div>
-
-                      <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-600'} line-clamp-2`}>
-                        {service.tagline}
-                      </p>
-
-                      <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
-                        <div>
-                          <span className="text-[10px] text-slate-400 block font-bold">Standard Rate</span>
-                          <span className="font-black text-sm text-blue-600 dark:text-blue-400">
-                            ₹{service.diagnosticFee || service.estPrice || (service.tiers ? service.tiers[0].price : 299)}
-                          </span>
-                        </div>
-                        <div className="text-right">
-                          <span className="text-[10px] text-slate-400 block font-bold">ETA</span>
-                          <span className="font-black text-slate-700 dark:text-slate-300">{service.eta || '20 mins'}</span>
-                        </div>
-                      </div>
+                    {/* Left Pastel Squircle Icon */}
+                    <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center shrink-0 text-2xl shadow-inner ${item.squircleColor}`}>
+                      <span>{item.icon}</span>
                     </div>
 
-                    <button
-                      onClick={() => handleStartBooking(service)}
-                      className="mt-3 w-full py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs transition-all shadow-md flex items-center justify-center space-x-1.5 cursor-pointer"
-                    >
-                      <span>Book Service</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
+                    {/* Middle Content */}
+                    <div className="flex-1 min-w-0 pr-1">
+                      <h4 className="font-black text-sm sm:text-base tracking-tight leading-snug truncate">
+                        {item.title}
+                      </h4>
+                      <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'} line-clamp-2 mt-0.5 leading-relaxed`}>
+                        {item.subtitle}
+                      </p>
+                    </div>
+
+                    {/* Right Circle Action Button (Matching Reference Screen 1) */}
+                    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-[#004D40] dark:bg-teal-600 text-white flex items-center justify-center shrink-0 shadow-md group-hover:scale-110 transition-transform cursor-pointer">
+                      <ChevronRight className="w-5 h-5" />
+                    </div>
                   </div>
                 ))}
               </div>
             )}
           </div>
-
-          {/* Custom Trade Quote Request */}
-          <div className={`p-4 rounded-3xl border flex items-center justify-between ${
-            isDark ? 'bg-slate-900/50 border-slate-800 text-white' : 'bg-slate-50 border-slate-200 text-slate-900'
-          }`}>
-            <div className="space-y-0.5">
-              <h4 className="font-black text-xs sm:text-sm">Need a Custom Work or Trade?</h4>
-              <p className="text-[11px] text-slate-400">Request specialized freelance pros for solar, gardening, carpentry or custom repair.</p>
-            </div>
-            <button
-              onClick={() => {
-                const otherService = services.find(s => s.category === 'Other Works' || s.category === 'Other Services') || services[0];
-                handleStartBooking(otherService);
-              }}
-              className="px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-bold shrink-0 cursor-pointer hover:bg-blue-500"
-            >
-              Get Custom Quote
-            </button>
-          </div>
         </div>
       )}
 
       {/* ========================================================================= */}
-      {/* VIEW 3: ORDERS PAGE (Live Radar, 4-Digit OTP, Pre-Photos, Invoices)       */}
+      {/* VIEW 3: ORDERS PAGE ("My Orders" - Matching Reference Screen 2)           */}
       {/* ========================================================================= */}
       {customerNavTab === 'orders' && (
-        <div className="space-y-5 animate-in fade-in duration-300">
+        <div className="space-y-6 animate-in fade-in duration-300">
           
-          {/* Header */}
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg sm:text-xl font-black tracking-tight text-slate-900 dark:text-white flex items-center space-x-2">
-                <Clock className="w-5 h-5 text-blue-500" />
-                <span>My Orders & Live Tracking</span>
-              </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Real-time dispatch, 4-digit security OTP & tax invoices
+          {/* Top Header (Matching Reference Screen 2) */}
+          <div className="flex items-start justify-between pt-1 px-1">
+            <div className="space-y-0.5">
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
+                My Orders
+              </h1>
+              <p className="text-xs text-slate-400 font-medium">
+                Track and manage your bookings
               </p>
+            </div>
+
+            {/* Total Count Pill Badge (Matching Reference Screen 2) */}
+            <div className="px-3.5 py-1.5 rounded-full bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800 text-teal-800 dark:text-teal-300 font-bold text-xs shadow-sm">
+              {myActiveJobs.length + myCompletedJobs.length} total
             </div>
           </div>
 
-          {/* Subtabs Switcher */}
-          <div className="flex items-center p-1 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-            <button
-              onClick={() => setOrdersSubTab('active')}
-              className={`flex-1 py-2 rounded-xl text-xs font-black transition-all flex items-center justify-center space-x-1.5 cursor-pointer ${
-                ordersSubTab === 'active'
-                  ? 'bg-blue-600 text-white shadow'
-                  : 'text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              <span>Active Bookings</span>
-              <span className={`px-1.5 py-0.2 rounded-full text-[10px] ${
-                ordersSubTab === 'active' ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'
-              }`}>
-                {myActiveJobs.length}
-              </span>
-            </button>
-            <button
-              onClick={() => setOrdersSubTab('completed')}
-              className={`flex-1 py-2 rounded-xl text-xs font-black transition-all flex items-center justify-center space-x-1.5 cursor-pointer ${
-                ordersSubTab === 'completed'
-                  ? 'bg-blue-600 text-white shadow'
-                  : 'text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              <span>Completed & Invoices</span>
-              <span className={`px-1.5 py-0.2 rounded-full text-[10px] ${
-                ordersSubTab === 'completed' ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'
-              }`}>
-                {myCompletedJobs.length}
-              </span>
-            </button>
-          </div>
+          {/* ACTIVE ORDERS SECTION (If user has ongoing jobs) */}
+          {myActiveJobs.length > 0 && (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between px-1">
+                <span className="text-xs font-black uppercase tracking-wider text-teal-600 dark:text-teal-400 flex items-center space-x-1.5">
+                  <span className="w-2 h-2 rounded-full bg-teal-500 animate-ping" />
+                  <span>• Active Bookings</span>
+                </span>
+                <span className="text-xs font-bold text-slate-400">{myActiveJobs.length} Ongoing</span>
+              </div>
 
-          {/* SUBTAB 1: ACTIVE BOOKINGS */}
-          {ordersSubTab === 'active' && (
-            <div className="space-y-4">
-              {myActiveJobs.length === 0 ? (
-                <div className={`p-10 rounded-3xl border text-center space-y-3 ${
-                  isDark ? 'bg-slate-900/40 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
-                }`}>
-                  <Package className="w-12 h-12 text-slate-500 mx-auto" />
-                  <h4 className="font-black text-base">No Active Bookings</h4>
-                  <p className="text-xs text-slate-400 max-w-sm mx-auto">
-                    You don't have any ongoing doorstep service requests right now. Book an expert in 15-20 minutes.
-                  </p>
-                  <button
-                    onClick={() => navigateToServices('all')}
-                    className="mt-2 px-6 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs shadow-md inline-flex items-center space-x-1.5 cursor-pointer"
-                  >
-                    <span>Browse & Book Services</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                </div>
-              ) : (
-                myActiveJobs.map((job) => {
+              <div className="space-y-3">
+                {myActiveJobs.map((job) => {
                   const statusColors: Record<string, string> = {
                     PENDING: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
                     ASSIGNED: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-                    REACHED: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
+                    PROVIDER_ASSIGNED: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+                    ON_THE_WAY: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
+                    PRE_INSPECTION_DONE: 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30',
                     IN_PROGRESS: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
                     COMPLETED: 'bg-emerald-500 text-slate-950'
                   };
@@ -1360,7 +1384,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                   return (
                     <div
                       key={job.id}
-                      className={`rounded-3xl p-5 border shadow-lg space-y-4 transition-all ${
+                      className={`rounded-3xl p-5 border shadow-sm space-y-4 transition-all ${
                         isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
                       }`}
                     >
@@ -1368,14 +1392,14 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                       <div className="flex items-start justify-between">
                         <div>
                           <div className="flex items-center space-x-2">
-                            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-600/20 text-blue-400 border border-blue-600/30">
+                            <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20">
                               Order #{job.id}
                             </span>
                             <span className="text-xs text-slate-400">{job.scheduledTime}</span>
                           </div>
-                          <h3 className="text-base font-black mt-1">{job.serviceTitle}</h3>
+                          <h3 className="text-base font-black mt-1.5">{job.serviceTitle}</h3>
                           <p className="text-xs text-slate-400 flex items-center space-x-1 mt-0.5">
-                            <MapPin className="w-3 h-3 text-red-500" />
+                            <MapPin className="w-3 h-3 text-teal-600 shrink-0" />
                             <span className="truncate">{job.location.address}</span>
                           </p>
                         </div>
@@ -1385,10 +1409,10 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                       </div>
 
                       {/* 5-Stage Visual Progress Radar */}
-                      <div className="p-3.5 rounded-2xl bg-slate-950/40 border border-slate-800/80 space-y-2">
+                      <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800 space-y-2">
                         <div className="flex items-center justify-between text-[10px] font-bold text-slate-400">
                           <span>Live Progress Radar</span>
-                          <span className="text-blue-400">
+                          <span className="text-teal-600 dark:text-teal-400">
                             Step {job.status === 'PENDING' ? '1/4' : (job.status === 'ASSIGNED' || job.status === 'PROVIDER_ASSIGNED') ? '2/4' : (job.status === 'ON_THE_WAY' || job.status === 'PRE_INSPECTION_DONE') ? '3/4' : '4/4'}
                           </span>
                         </div>
@@ -1400,44 +1424,44 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                             { label: 'In Progress', active: job.status === 'IN_PROGRESS' || job.status === 'COMPLETED' }
                           ].map((st, sIdx) => (
                             <div key={sIdx} className="space-y-1">
-                              <div className={`h-1.5 rounded-full ${st.active ? 'bg-emerald-500 shadow-sm shadow-emerald-500' : 'bg-slate-800'}`} />
-                              <span className={st.active ? 'text-white' : 'text-slate-500'}>{st.label}</span>
+                              <div className={`h-1.5 rounded-full ${st.active ? 'bg-[#004D40] dark:bg-teal-500 shadow-sm' : 'bg-slate-200 dark:bg-slate-800'}`} />
+                              <span className={st.active ? 'text-slate-900 dark:text-white' : 'text-slate-400'}>{st.label}</span>
                             </div>
                           ))}
                         </div>
                       </div>
 
                       {/* 4-Digit Security OTP Banner */}
-                      <div className="p-3.5 rounded-2xl bg-gradient-to-r from-emerald-950/60 to-slate-900 border border-emerald-500/40 flex items-center justify-between text-xs">
+                      <div className="p-3.5 rounded-2xl bg-gradient-to-r from-emerald-950/80 via-[#004D40] to-slate-950 border border-teal-500/40 text-white flex items-center justify-between text-xs">
                         <div>
-                          <span className="text-[10px] text-emerald-400 font-black uppercase tracking-wider block">
+                          <span className="text-[10px] text-teal-300 font-black uppercase tracking-wider block">
                             🔐 4-Digit Completion Security OTP
                           </span>
-                          <p className="text-[11px] text-slate-300 mt-0.5">
+                          <p className="text-[11px] text-slate-200 mt-0.5">
                             Share with pro only when work is 100% completed
                           </p>
                         </div>
-                        <div className="px-3.5 py-1.5 rounded-xl bg-emerald-500 text-slate-950 font-mono font-black text-lg tracking-widest shadow">
+                        <div className="px-3.5 py-1.5 rounded-xl bg-emerald-400 text-slate-950 font-mono font-black text-lg tracking-widest shadow">
                           {job.completionOtp || '4921'}
                         </div>
                       </div>
 
                       {/* Assigned Specialist Card */}
                       {job.assignedPartnerName && (
-                        <div className="p-3 rounded-2xl bg-slate-950/50 border border-slate-800 flex items-center justify-between">
+                        <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
                           <div className="flex items-center space-x-2.5">
-                            <div className="w-10 h-10 rounded-2xl bg-blue-600 text-white font-black text-sm flex items-center justify-center shadow">
+                            <div className="w-10 h-10 rounded-2xl bg-[#004D40] text-white font-black text-sm flex items-center justify-center shadow">
                               {job.assignedPartnerName.charAt(0)}
                             </div>
                             <div>
                               <h4 className="font-bold text-xs">{job.assignedPartnerName}</h4>
-                              <span className="text-[10px] text-emerald-400 font-bold block">★ Verified Fykzi Specialist</span>
+                              <span className="text-[10px] text-teal-600 dark:text-teal-400 font-bold block">★ Verified Fykzi Specialist</span>
                             </div>
                           </div>
                           {job.assignedPartnerPhone && (
                             <a
                               href={`tel:${job.assignedPartnerPhone}`}
-                              className="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold flex items-center space-x-1 shadow"
+                              className="px-3 py-1.5 rounded-xl bg-[#004D40] hover:bg-teal-700 text-white text-xs font-bold flex items-center space-x-1 shadow"
                             >
                               <Phone className="w-3 h-3" />
                               <span>Call Pro</span>
@@ -1446,36 +1470,19 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                         </div>
                       )}
 
-                      {/* 4-Angle Pre-Service Photos (If available) */}
-                      {job.preServiceChecklist && job.preServiceChecklist.photos && job.preServiceChecklist.photos.length > 0 && (
-                        <div className="space-y-2 pt-1 border-t border-slate-800">
-                          <span className="text-[10px] font-black uppercase text-slate-400 flex items-center space-x-1">
-                            <Camera className="w-3.5 h-3.5 text-blue-400" />
-                            <span>Pre-Service 4-Angle Inspection Photos (Dispute Protection)</span>
-                          </span>
-                          <div className="grid grid-cols-4 gap-2">
-                            {job.preServiceChecklist.photos.map((p, pIdx) => (
-                              <div key={pIdx} className="rounded-xl overflow-hidden border border-slate-800 aspect-square bg-slate-950">
-                                <img src={p.url} alt={`Pre-check ${p.angle}`} className="w-full h-full object-cover" />
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
                       {/* Action Buttons (Reschedule / Cancel / Emergency) */}
-                      <div className="flex items-center space-x-2 pt-2 border-t border-slate-800">
+                      <div className="flex items-center space-x-2 pt-2 border-t border-slate-100 dark:border-slate-800">
                         <button
                           type="button"
                           onClick={() => setReschedulingJob(job)}
-                          className="flex-1 py-2 rounded-xl border border-slate-700 text-slate-300 hover:text-white text-xs font-bold cursor-pointer"
+                          className="flex-1 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-white text-xs font-bold cursor-pointer"
                         >
                           Reschedule
                         </button>
                         <button
                           type="button"
                           onClick={() => setCancellingJob(job)}
-                          className="flex-1 py-2 rounded-xl border border-red-900/60 bg-red-950/20 text-red-400 hover:bg-red-900/30 text-xs font-bold cursor-pointer"
+                          className="flex-1 py-2 rounded-xl border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 hover:bg-red-100 text-xs font-bold cursor-pointer"
                         >
                           Cancel Order
                         </button>
@@ -1491,57 +1498,65 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                       </div>
                     </div>
                   );
-                })
-              )}
+                })}
+              </div>
             </div>
           )}
 
-          {/* SUBTAB 2: COMPLETED ORDERS & INVOICES */}
-          {ordersSubTab === 'completed' && (
-            <div className="space-y-4">
-              {myCompletedJobs.length === 0 ? (
-                <div className={`p-10 rounded-3xl border text-center space-y-3 ${
-                  isDark ? 'bg-slate-900/40 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
-                }`}>
-                  <FileText className="w-12 h-12 text-slate-500 mx-auto" />
-                  <h4 className="font-black text-base">No Completed Orders Yet</h4>
-                  <p className="text-xs text-slate-400 max-w-sm mx-auto">
-                    Your past completed bookings, digital tax invoices, and service receipts will appear here.
-                  </p>
-                </div>
-              ) : (
-                myCompletedJobs.map((job) => (
+          {/* PAST ORDERS SECTION (Matching Reference Screen 2) */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between px-1">
+              <span className="text-xs font-black tracking-wide text-slate-700 dark:text-slate-300 flex items-center space-x-1.5">
+                <span className="w-2 h-2 rounded-full bg-slate-400" />
+                <span>Past Orders</span>
+              </span>
+              <span className="text-xs font-bold text-slate-400">{myCompletedJobs.length}</span>
+            </div>
+
+            {myCompletedJobs.length === 0 ? (
+              /* Clean Minimal Empty State Card (Exact Match to Reference Screen 2) */
+              <div className={`rounded-3xl border p-10 text-center flex flex-col items-center justify-center space-y-2.5 shadow-sm ${
+                isDark ? 'bg-slate-900/60 border-slate-800' : 'bg-white border-slate-200/80'
+              }`}>
+                <Package className="w-10 h-10 text-slate-400/80 dark:text-slate-500" />
+                <p className="text-xs sm:text-sm font-semibold text-slate-400 dark:text-slate-500">
+                  No past orders yet
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {myCompletedJobs.map((job) => (
                   <div
                     key={job.id}
-                    className={`rounded-3xl p-5 border shadow-md space-y-3 ${
+                    className={`rounded-3xl p-5 border shadow-sm space-y-3 ${
                       isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
                     }`}
                   >
                     <div className="flex items-start justify-between">
                       <div>
-                        <span className="text-[10px] font-black uppercase tracking-wider text-emerald-400 block">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-teal-600 dark:text-teal-400 block">
                           COMPLETED • #{job.id}
                         </span>
                         <h3 className="text-base font-black mt-0.5">{job.serviceTitle}</h3>
                         <p className="text-xs text-slate-400 mt-0.5">Completed on {job.scheduledTime}</p>
                       </div>
-                      <span className="text-sm font-black text-emerald-400">
+                      <span className="text-sm font-black text-teal-600 dark:text-teal-400">
                         ₹{job.pricing?.totalPaid || 499}
                       </span>
                     </div>
 
-                    <div className="p-3 rounded-2xl bg-slate-950/50 border border-slate-800 flex items-center justify-between text-xs">
+                    <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
                       <div>
                         <span className="text-[10px] text-slate-400 block font-bold">Serviced By</span>
                         <span className="font-bold">{job.assignedPartnerName || 'Verified Specialist'}</span>
                       </div>
-                      <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-[10px]">
+                      <span className="px-2 py-0.5 rounded-full bg-teal-500/10 text-teal-600 dark:text-teal-400 font-bold text-[10px]">
                         100% Verified Work
                       </span>
                     </div>
 
                     {/* Completed Order Action Buttons */}
-                    <div className="flex items-center space-x-2 pt-2 border-t border-slate-800">
+                    <div className="flex items-center space-x-2 pt-2 border-t border-slate-100 dark:border-slate-800">
                       <button
                         onClick={() => {
                           if (onOpenInvoice) {
@@ -1550,7 +1565,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                             setActiveInvoiceJob(job);
                           }
                         }}
-                        className="flex-1 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-black shadow flex items-center justify-center space-x-1 cursor-pointer"
+                        className="flex-1 py-2 rounded-xl bg-[#004D40] hover:bg-teal-700 text-white text-xs font-black shadow flex items-center justify-center space-x-1 cursor-pointer"
                       >
                         <FileText className="w-3.5 h-3.5" />
                         <span>Download Invoice</span>
@@ -1558,17 +1573,17 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
 
                       <button
                         onClick={() => setFeedbackJob(job)}
-                        className="flex-1 py-2 rounded-xl border border-slate-700 hover:border-amber-400 text-amber-400 text-xs font-bold flex items-center justify-center space-x-1 cursor-pointer"
+                        className="flex-1 py-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-amber-400 text-amber-500 text-xs font-bold flex items-center justify-center space-x-1 cursor-pointer"
                       >
                         <Star className="w-3.5 h-3.5 fill-amber-400" />
                         <span>Rate Service</span>
                       </button>
                     </div>
                   </div>
-                ))
-              )}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       )}
 
@@ -1584,7 +1599,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
               isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
             }`}>
               <div>
-                <span className="text-[10px] font-bold text-blue-500 uppercase tracking-wider">Booking Service</span>
+                <span className="text-[10px] font-bold text-teal-600 dark:text-teal-400 uppercase tracking-wider">Booking Doorstep Service</span>
                 <h3 className="text-base font-black">{selectedService.title}</h3>
               </div>
               <button onClick={() => setSelectedService(null)} className="text-slate-400 hover:text-white p-1 cursor-pointer">
@@ -1593,54 +1608,13 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             </div>
 
             <div className="p-5 space-y-4 max-h-[75vh] overflow-y-auto text-xs">
-              
-              {/* Top Rated Specialist Picker in Checkout */}
-              {serviceMatchingTechnicians.length > 0 && (
-                <div className="space-y-2">
-                  <label className="block text-[10px] font-black uppercase text-slate-300">
-                    Top Rated Specialists in your Area (Select Preferred Pro)
-                  </label>
-                  <div className="flex items-center space-x-2 overflow-x-auto pb-1.5 scrollbar-none">
-                    <button
-                      type="button"
-                      onClick={() => setPreferredPartner(null)}
-                      className={`p-2.5 rounded-2xl border text-xs font-bold shrink-0 transition-all cursor-pointer ${
-                        preferredPartner === null
-                          ? 'bg-blue-600 text-white border-blue-600 shadow'
-                          : isDark ? 'bg-slate-950 border-slate-800 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'
-                      }`}
-                    >
-                      ⚡ Auto-Assign Nearest Pro
-                    </button>
-                    {serviceMatchingTechnicians.map(p => (
-                      <button
-                        key={p.id}
-                        type="button"
-                        onClick={() => setPreferredPartner(p)}
-                        className={`p-2.5 rounded-2xl border text-xs font-bold shrink-0 flex items-center space-x-2 transition-all cursor-pointer ${
-                          preferredPartner?.id === p.id
-                            ? 'bg-blue-600 text-white border-blue-600 shadow'
-                            : isDark ? 'bg-slate-950 border-slate-800 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'
-                        }`}
-                      >
-                        <div className="w-5 h-5 rounded-full bg-emerald-500 text-slate-950 font-black text-[10px] flex items-center justify-center">
-                          {p.name.charAt(0)}
-                        </div>
-                        <span>{p.name.split(' ')[0]}</span>
-                        <span className="text-amber-400">★ {p.rating}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
               <div>
                 <label className="block text-[10px] font-bold uppercase text-slate-400 mb-1">Your Full Name *</label>
                 <input
                   type="text"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  className={`w-full p-2.5 rounded-xl border font-bold focus:outline-none focus:border-blue-500 ${
+                  className={`w-full p-2.5 rounded-xl border font-bold focus:outline-none focus:border-teal-500 ${
                     isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
                   }`}
                 />
@@ -1652,7 +1626,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                   type="tel"
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value)}
-                  className={`w-full p-2.5 rounded-xl border font-bold focus:outline-none focus:border-blue-500 ${
+                  className={`w-full p-2.5 rounded-xl border font-bold focus:outline-none focus:border-teal-500 ${
                     isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
                   }`}
                 />
@@ -1664,20 +1638,20 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                   type="text"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  className={`w-full p-2.5 rounded-xl border focus:outline-none focus:border-blue-500 ${
+                  className={`w-full p-2.5 rounded-xl border focus:outline-none focus:border-teal-500 ${
                     isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
                   }`}
                 />
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-blue-950/20 border border-blue-800/30 flex items-center justify-between">
+              <div className="p-3.5 rounded-2xl bg-teal-50 dark:bg-teal-950/20 border border-teal-200 dark:border-teal-800/30 flex items-center justify-between">
                 <div>
-                  <span className="text-[10px] text-slate-400 block font-bold">Pay After Service (Cash / UPI)</span>
-                  <span className="font-black text-sm text-emerald-400">
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 block font-bold">Pay After Service (Cash / UPI)</span>
+                  <span className="font-black text-sm text-teal-700 dark:text-teal-400">
                     ₹{selectedService.diagnosticFee || selectedService.estPrice || 299} (Flat Diagnostic)
                   </span>
                 </div>
-                <span className="text-[10px] bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded-full">
+                <span className="text-[10px] bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold px-2 py-0.5 rounded-full">
                   Zero Upfront Charge
                 </span>
               </div>
@@ -1686,7 +1660,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                 <button
                   type="button"
                   onClick={() => setSelectedService(null)}
-                  className="flex-1 py-3 rounded-xl border border-slate-700 text-slate-300 font-bold cursor-pointer"
+                  className="flex-1 py-3 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -1694,7 +1668,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                   type="button"
                   onClick={handleConfirmBooking}
                   disabled={isSubmitting}
-                  className="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black shadow-lg cursor-pointer"
+                  className="flex-1 py-3 rounded-xl bg-[#004D40] hover:bg-teal-700 text-white font-black shadow-lg cursor-pointer"
                 >
                   {isSubmitting ? 'Confirming...' : 'Confirm Doorstep Booking'}
                 </button>
@@ -1751,7 +1725,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
               <button
                 onClick={handleRescheduleBooking}
                 disabled={isRescheduling}
-                className="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black"
+                className="flex-1 py-2.5 rounded-xl bg-[#004D40] hover:bg-teal-700 text-white font-black"
               >
                 {isRescheduling ? 'Rescheduling...' : 'Confirm Reschedule'}
               </button>
