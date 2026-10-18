@@ -25,6 +25,7 @@ import {
   deleteUserAccountData,
   NotificationPermissionState
 } from '../utils/pushNotifications';
+import { sound } from '../utils/soundEffects';
 
 interface NotificationSettingsModalProps {
   isOpen: boolean;
@@ -222,120 +223,145 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
               {/* 1. WhatsApp */}
               <div className="flex items-center justify-between py-3.5">
                 <div className="flex items-center space-x-3.5">
-                  <WhatsAppIcon className="w-5 h-5 text-[#25D366] shrink-0" />
-                  <span className="text-sm font-semibold text-slate-900 dark:text-white">
-                    WhatsApp
-                  </span>
+                  <div className="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0">
+                    <WhatsAppIcon className="w-5 h-5 text-[#25D366]" />
+                  </div>
+                  <div>
+                    <span className="text-sm font-bold text-slate-900 dark:text-white block">
+                      WhatsApp
+                    </span>
+                    <span className="text-[11px] text-slate-400">
+                      Booking updates &amp; technician tracking link
+                    </span>
+                  </div>
                 </div>
                 <button
                   type="button"
-                  onClick={() => handleTogglePreference('whatsapp')}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer focus:outline-none ${
-                    preferences.whatsapp ? 'bg-[#107C41]' : 'bg-slate-300 dark:bg-slate-700'
-                  }`}
+                  onClick={() => {
+                    sound.playClick();
+                    handleTogglePreference('whatsapp');
+                  }}
+                  className={`switch-track ${preferences.whatsapp ? 'switch-track-on' : 'switch-track-off'}`}
                   aria-pressed={preferences.whatsapp}
+                  title={preferences.whatsapp ? 'Turn off WhatsApp notifications' : 'Turn on WhatsApp notifications'}
                 >
-                  <span
-                    className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-md transition-transform duration-200 ease-in-out ${
-                      preferences.whatsapp ? 'translate-x-5.5' : 'translate-x-0.5'
-                    }`}
-                  />
+                  <span className="switch-thumb" />
                 </button>
               </div>
 
               {/* 2. Push Notifications */}
               <div className="flex items-center justify-between py-3.5">
                 <div className="flex items-center space-x-3.5">
-                  <Bell className="w-5 h-5 text-slate-700 dark:text-slate-300 shrink-0" />
-                  <span className="text-sm font-semibold text-slate-900 dark:text-white">
-                    Push Notifications
-                  </span>
+                  <div className="w-8 h-8 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
+                    <Bell className="w-4 h-4 text-blue-500" />
+                  </div>
+                  <div>
+                    <span className="text-sm font-bold text-slate-900 dark:text-white block">
+                      Push Notifications
+                    </span>
+                    <span className="text-[11px] text-slate-400">
+                      Real-time arrivals, ETA radars &amp; SOS alerts
+                    </span>
+                  </div>
                 </div>
                 <button
                   type="button"
-                  onClick={() => handleTogglePreference('push')}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer focus:outline-none ${
-                    preferences.push ? 'bg-[#107C41]' : 'bg-slate-300 dark:bg-slate-700'
-                  }`}
+                  onClick={() => {
+                    sound.playClick();
+                    handleTogglePreference('push');
+                  }}
+                  className={`switch-track ${preferences.push ? 'switch-track-on' : 'switch-track-off'}`}
                   aria-pressed={preferences.push}
+                  title={preferences.push ? 'Turn off Push notifications' : 'Turn on Push notifications'}
                 >
-                  <span
-                    className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-md transition-transform duration-200 ease-in-out ${
-                      preferences.push ? 'translate-x-5.5' : 'translate-x-0.5'
-                    }`}
-                  />
+                  <span className="switch-thumb" />
                 </button>
               </div>
 
               {/* 3. Email */}
               <div className="flex items-center justify-between py-3.5">
                 <div className="flex items-center space-x-3.5">
-                  <Mail className="w-5 h-5 text-slate-700 dark:text-slate-300 shrink-0" />
-                  <span className="text-sm font-semibold text-slate-900 dark:text-white">
-                    Email
-                  </span>
+                  <div className="w-8 h-8 rounded-xl bg-purple-500/10 flex items-center justify-center shrink-0">
+                    <Mail className="w-4 h-4 text-purple-500" />
+                  </div>
+                  <div>
+                    <span className="text-sm font-bold text-slate-900 dark:text-white block">
+                      Email
+                    </span>
+                    <span className="text-[11px] text-slate-400">
+                      PDF invoices, service summaries &amp; bills
+                    </span>
+                  </div>
                 </div>
                 <button
                   type="button"
-                  onClick={() => handleTogglePreference('email')}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer focus:outline-none ${
-                    preferences.email ? 'bg-[#107C41]' : 'bg-slate-300 dark:bg-slate-700'
-                  }`}
+                  onClick={() => {
+                    sound.playClick();
+                    handleTogglePreference('email');
+                  }}
+                  className={`switch-track ${preferences.email ? 'switch-track-on' : 'switch-track-off'}`}
                   aria-pressed={preferences.email}
+                  title={preferences.email ? 'Turn off Email notifications' : 'Turn on Email notifications'}
                 >
-                  <span
-                    className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-md transition-transform duration-200 ease-in-out ${
-                      preferences.email ? 'translate-x-5.5' : 'translate-x-0.5'
-                    }`}
-                  />
+                  <span className="switch-thumb" />
                 </button>
               </div>
 
               {/* 4. SMS */}
               <div className="flex items-center justify-between py-3.5">
                 <div className="flex items-center space-x-3.5">
-                  <MessageSquare className="w-5 h-5 text-slate-700 dark:text-slate-300 shrink-0" />
-                  <span className="text-sm font-semibold text-slate-900 dark:text-white">
-                    SMS
-                  </span>
+                  <div className="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0">
+                    <MessageSquare className="w-4 h-4 text-amber-500" />
+                  </div>
+                  <div>
+                    <span className="text-sm font-bold text-slate-900 dark:text-white block">
+                      SMS
+                    </span>
+                    <span className="text-[11px] text-slate-400">
+                      4-digit completion OTP &amp; verification codes
+                    </span>
+                  </div>
                 </div>
                 <button
                   type="button"
-                  onClick={() => handleTogglePreference('sms')}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer focus:outline-none ${
-                    preferences.sms ? 'bg-[#107C41]' : 'bg-slate-300 dark:bg-slate-700'
-                  }`}
+                  onClick={() => {
+                    sound.playClick();
+                    handleTogglePreference('sms');
+                  }}
+                  className={`switch-track ${preferences.sms ? 'switch-track-on' : 'switch-track-off'}`}
                   aria-pressed={preferences.sms}
+                  title={preferences.sms ? 'Turn off SMS notifications' : 'Turn on SMS notifications'}
                 >
-                  <span
-                    className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-md transition-transform duration-200 ease-in-out ${
-                      preferences.sms ? 'translate-x-5.5' : 'translate-x-0.5'
-                    }`}
-                  />
+                  <span className="switch-thumb" />
                 </button>
               </div>
 
               {/* 5. Voice calls */}
               <div className="flex items-center justify-between py-3.5">
                 <div className="flex items-center space-x-3.5">
-                  <PhoneCall className="w-5 h-5 text-slate-700 dark:text-slate-300 shrink-0" />
-                  <span className="text-sm font-semibold text-slate-900 dark:text-white">
-                    Voice calls
-                  </span>
+                  <div className="w-8 h-8 rounded-xl bg-teal-500/10 flex items-center justify-center shrink-0">
+                    <PhoneCall className="w-4 h-4 text-teal-500" />
+                  </div>
+                  <div>
+                    <span className="text-sm font-bold text-slate-900 dark:text-white block">
+                      Voice calls
+                    </span>
+                    <span className="text-[11px] text-slate-400">
+                      Technician doorstep directions &amp; emergency hotline
+                    </span>
+                  </div>
                 </div>
                 <button
                   type="button"
-                  onClick={() => handleTogglePreference('voice')}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer focus:outline-none ${
-                    preferences.voice ? 'bg-[#107C41]' : 'bg-slate-300 dark:bg-slate-700'
-                  }`}
+                  onClick={() => {
+                    sound.playClick();
+                    handleTogglePreference('voice');
+                  }}
+                  className={`switch-track ${preferences.voice ? 'switch-track-on' : 'switch-track-off'}`}
                   aria-pressed={preferences.voice}
+                  title={preferences.voice ? 'Turn off Voice call notifications' : 'Turn on Voice call notifications'}
                 >
-                  <span
-                    className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-md transition-transform duration-200 ease-in-out ${
-                      preferences.voice ? 'translate-x-5.5' : 'translate-x-0.5'
-                    }`}
-                  />
+                  <span className="switch-thumb" />
                 </button>
               </div>
             </div>
