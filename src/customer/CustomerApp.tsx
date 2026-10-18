@@ -74,9 +74,15 @@ import { EmergencyModal } from '../components/EmergencyModal';
 import { CancellationPolicyModal } from '../components/CancellationPolicyModal';
 import { DisputeModal } from '../components/DisputeModal';
 import { InvoiceModal } from '../components/InvoiceModal';
+import { LiveDispatchTicker } from '../components/LiveDispatchTicker';
+import { InteractivePriceCalculator } from '../components/InteractivePriceCalculator';
+import { LiveFleetRadar } from '../components/LiveFleetRadar';
+import { AIDiagnosticAssistant } from '../components/AIDiagnosticAssistant';
+import { InteractiveFykziPerks } from '../components/InteractiveFykziPerks';
 import { useTranslation } from '../utils/translations';
 import { api } from '../services/api';
 import { sendPushNotification } from '../utils/pushNotifications';
+import { sound } from '../utils/soundEffects';
 
 interface CustomerAppProps {
   services: ServiceItem[];
@@ -224,6 +230,21 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
     }
     setTouchStartX(null);
     setTimeout(() => setIsHeroAutoPlay(true), 5000);
+  };
+
+  // 3D Parallax Tilt for Active Hero Card
+  const [heroTilt, setHeroTilt] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+
+  const handleHeroMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2; // -1 to 1
+    const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+    setHeroTilt({ x: Number((x * 12).toFixed(2)), y: Number((-y * 12).toFixed(2)) });
+  };
+
+  const handleHeroMouseLeave = () => {
+    setHeroTilt({ x: 0, y: 0 });
+    setIsHeroAutoPlay(true);
   };
 
   // Scheduling Search State
@@ -588,6 +609,49 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
     setBookingStep(1);
   };
 
+  const handleBookCalculatorIssue = (issue: {
+    id: string;
+    category: string;
+    title: string;
+    shortDesc: string;
+    diagnosticFee: number;
+    estArrivalMins: string;
+    includes: string[];
+    vehicleOrItem: string;
+  }) => {
+    const matchedService = services.find(
+      s => s.category.toLowerCase().includes(issue.category.toLowerCase().split(' ')[0]) ||
+           s.title.toLowerCase().includes(issue.category.toLowerCase().split(' ')[0])
+    ) || {
+      id: issue.id,
+      title: issue.title,
+      category: issue.category,
+      tagline: issue.shortDesc,
+      priceType: 'flat_diagnostic',
+      diagnosticFee: issue.diagnosticFee,
+      basePrice: issue.diagnosticFee,
+      eta: issue.estArrivalMins,
+      features: issue.includes,
+      rating: 4.9,
+      reviewsCount: 42,
+      icon: 'Wrench',
+      imageUrl: '',
+      phase: 1,
+      isInstant: true
+    } as ServiceItem;
+
+    setSelectedService(matchedService);
+    setSelectedTier(issue.title);
+    setBookingStep(1);
+
+    const matching = getMatchedTechniciansForCategory(matchedService.category, matchedService.title);
+    if (matching.length > 0 && matching[0].isOnline) {
+      setPreferredPartner(matching[0]);
+    } else {
+      setPreferredPartner(null);
+    }
+  };
+
   const handleConfirmBooking = async () => {
     if (!selectedService) return;
     setIsSubmitting(true);
@@ -696,6 +760,9 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       {/* ========================================================================= */}
       {/* VIEW 1: HOME PAGE (Minimal, 3D Deck, 10-Trade Hub, How it works, Safety)   */}
       {/* ========================================================================= */}
+      {/* ========================================================================= */}
+      {/* VIEW 1: HOME PAGE (Spatial 3D Command Deck, Live Radar & Instant Estimator) */}
+      {/* ========================================================================= */}
       {customerNavTab === 'home' && (
         <div className="space-y-6 animate-in fade-in duration-300">
           
@@ -773,33 +840,70 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             </div>
           </div>
 
-          {/* Search Bar - Quick jump to Services */}
-          <div
-            onClick={() => navigateToServices()}
-            className={`relative flex items-center rounded-full border px-4 py-3 shadow-sm transition-all cursor-pointer group ${
-              isDark
-                ? 'bg-slate-900/90 border-slate-800 text-white hover:border-teal-500/70 ring-1 ring-slate-800'
-                : 'bg-white border-slate-200 text-slate-900 hover:border-teal-400 shadow-[0_2px_10px_rgba(0,0,0,0.04)]'
-            }`}
-          >
-            <Search className="w-4 h-4 text-teal-600 mr-2.5 shrink-0 group-hover:scale-110 transition-transform" />
-            <span className="text-xs sm:text-sm font-semibold text-slate-400 truncate flex-1">
-              Search "Driver", "Electrician", "Mechanic", "AC Repair"...
-            </span>
-            <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-full bg-[#004D40]/10 text-[#004D40] dark:text-teal-400 border border-teal-500/20">
-              Browse
-            </span>
+          {/* Real-time Kerala Live Activity Marquee Ticker */}
+          <LiveDispatchTicker
+            theme={theme}
+            currentDistrict={selectedLocation.district || 'Ernakulam'}
+            onSelectService={(serviceKeyword) => navigateToServices(serviceKeyword)}
+          />
+
+          {/* Search Bar + Quick Tag Jump Pills */}
+          <div className="space-y-2">
+            <div
+              onClick={() => navigateToServices()}
+              className={`relative flex items-center rounded-full border px-4 py-3 shadow-sm transition-all cursor-pointer group ${
+                isDark
+                  ? 'bg-slate-900/90 border-slate-800 text-white hover:border-teal-500/70 ring-1 ring-slate-800'
+                  : 'bg-white border-slate-200 text-slate-900 hover:border-teal-400 shadow-[0_2px_10px_rgba(0,0,0,0.04)]'
+              }`}
+            >
+              <Search className="w-4 h-4 text-teal-600 mr-2.5 shrink-0 group-hover:scale-110 transition-transform" />
+              <span className="text-xs sm:text-sm font-semibold text-slate-400 truncate flex-1">
+                Search "Driver", "Electrician", "Mechanic", "AC Repair"...
+              </span>
+              <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-full bg-[#004D40]/10 text-[#004D40] dark:text-teal-400 border border-teal-500/20">
+                Browse
+              </span>
+            </div>
+
+            {/* Quick Interactive Problem Tags */}
+            <div className="flex items-center space-x-1.5 overflow-x-auto pb-1 scrollbar-none select-none">
+              {[
+                { label: '⚡ Battery Jumpstart', query: 'Mechanic' },
+                { label: '🛞 Flat Tyre / Towing', query: 'Mechanic' },
+                { label: '👨‍✈️ Acting Driver', query: 'Driver' },
+                { label: '❄️ AC Repair', query: 'AC Repair' },
+                { label: '🚰 Water Leak', query: 'Plumber' },
+                { label: '🔌 Electrician', query: 'Electrician' }
+              ].map((tag, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigateToServices(tag.query);
+                  }}
+                  className={`text-[10px] font-bold px-2.5 py-1 rounded-full border whitespace-nowrap transition-all cursor-pointer ${
+                    isDark
+                      ? 'bg-slate-900/80 border-slate-800 text-slate-300 hover:border-teal-500/60 hover:text-white'
+                      : 'bg-white border-slate-200 text-slate-600 hover:border-teal-400 hover:text-teal-700 shadow-xs'
+                  }`}
+                >
+                  {tag.label}
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* 3D Popping & Shuffling Hero Showcase Deck */}
+          {/* 3D Popping & Shuffling Hero Showcase Deck with Gyro/Cursor Tilt */}
           <div
             className="relative pt-1 pb-2 hero-3d-stage select-none"
             onTouchStart={handleHeroTouchStart}
             onTouchEnd={handleHeroTouchEnd}
             onMouseEnter={() => setIsHeroAutoPlay(false)}
-            onMouseLeave={() => setIsHeroAutoPlay(true)}
+            onMouseLeave={handleHeroMouseLeave}
           >
-            <div className="relative h-44 sm:h-52 md:h-60 overflow-visible flex items-center justify-center">
+            <div className="relative h-48 sm:h-56 md:h-64 overflow-visible flex items-center justify-center">
               {HERO_SHOWCASE_SLIDES.map((slide, idx) => {
                 const total = HERO_SHOWCASE_SLIDES.length;
                 let diff = idx - activeHeroSlide;
@@ -818,12 +922,12 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                 let boxShadow = 'none';
 
                 if (isCenter) {
-                  transformStyle = 'translateX(0%) scale(1) translateZ(35px) rotateY(0deg)';
+                  transformStyle = `translateX(0%) scale(1) translateZ(35px) rotateY(${heroTilt.x}deg) rotateX(${heroTilt.y}deg)`;
                   zIndex = 30;
                   opacity = 1;
                   pointerEvents = 'auto';
                   filter = 'brightness(1)';
-                  boxShadow = '0 24px 45px -10px rgba(0,0,0,0.7), 0 0 25px rgba(13, 148, 136, 0.25)';
+                  boxShadow = '0 28px 50px -12px rgba(0,0,0,0.75), 0 0 30px rgba(13, 148, 136, 0.35)';
                 } else if (isRight) {
                   transformStyle = 'translateX(40%) scale(0.86) translateZ(-40px) rotateY(-20deg)';
                   zIndex = 20;
@@ -857,6 +961,8 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                         navigateToServices();
                       }
                     }}
+                    onMouseMove={isCenter ? handleHeroMouseMove : undefined}
+                    onMouseLeave={isCenter ? handleHeroMouseLeave : undefined}
                     style={{
                       transform: transformStyle,
                       zIndex,
@@ -865,7 +971,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                       boxShadow,
                       pointerEvents: pointerEvents as any
                     }}
-                    className={`absolute w-[88%] sm:w-[82%] md:w-[78%] h-full rounded-3xl overflow-hidden border border-slate-800/80 bg-slate-950 hero-3d-card-item cursor-pointer`}
+                    className={`absolute w-[90%] sm:w-[84%] md:w-[80%] h-full rounded-3xl overflow-hidden border border-slate-800/80 bg-slate-950 hero-3d-card-item cursor-pointer transition-transform duration-200`}
                   >
                     <img
                       src={slide.imageUrl}
@@ -876,12 +982,15 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                       className="w-full h-full object-cover transform hover:scale-105 transition-all duration-700"
                     />
 
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
-                    <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-slate-950/30 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/45 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/35 to-transparent" />
 
-                    <div className="absolute top-3 left-3.5">
-                      <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-[#004D40] text-white shadow-md">
+                    <div className="absolute top-3 left-3.5 flex items-center space-x-2">
+                      <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-[#004D40] text-white shadow-md border border-teal-400/30">
                         {slide.badge}
+                      </span>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-900/80 backdrop-blur text-emerald-300 border border-emerald-500/30 hidden sm:inline-block">
+                        ⚡ 15-Min ETA
                       </span>
                     </div>
 
@@ -897,6 +1006,17 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                       <p className="text-[11px] sm:text-xs text-slate-300 line-clamp-1 mt-0.5 drop-shadow">
                         {slide.tagline}
                       </p>
+                      {isCenter && (
+                        <div className="mt-2.5 flex items-center space-x-2">
+                          <span className="text-[10px] font-black uppercase px-3 py-1.5 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 shadow-md inline-flex items-center space-x-1.5">
+                            <span>Book In 60s</span>
+                            <ArrowRight className="w-3 h-3" />
+                          </span>
+                          <span className="text-[10px] text-teal-300 font-bold hidden sm:inline">
+                            ₹0 Advance • Pay after service
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 );
@@ -937,6 +1057,14 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             </div>
           </div>
 
+          {/* Real-time Kerala Roadside Fleet Radar with Emergency SOS Dispatch */}
+          <LiveFleetRadar
+            theme={theme}
+            selectedLocation={selectedLocation}
+            onOpenEmergency={() => setEmergencyModalOpen(true)}
+            activeSpecialistsCount={18}
+          />
+
           {/* "OUR EXPERTISE" CATEGORY GRID (Interactive 3D Spatial Hub) */}
           <div id="our-expertise-section" className="space-y-3 pt-2 expertise-3d-perspective-container">
             <div className="flex items-center justify-between px-1">
@@ -957,7 +1085,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             </div>
 
             {/* 3D Animated Category Cards Grid */}
-            <div className="grid grid-cols-5 sm:grid-cols-5 md:grid-cols-10 gap-2 sm:gap-2.5">
+            <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-12 gap-2 sm:gap-2.5">
               {EXPERTISE_CATEGORIES.map((cat, idx) => {
                 const floatClass = idx % 3 === 0 ? 'animate-3d-float-1' : idx % 3 === 1 ? 'animate-3d-float-2' : 'animate-3d-float-3';
 
@@ -987,6 +1115,33 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
               })}
             </div>
           </div>
+
+          {/* Interactive Diagnostic Rate & Live ETA Calculator */}
+          <InteractivePriceCalculator
+            theme={theme}
+            onBookIssue={handleBookCalculatorIssue}
+          />
+
+          {/* AI Smart Triage & Instant Diagnostic Assistant */}
+          <AIDiagnosticAssistant
+            theme={theme}
+            onBookService={(category, tierName) => {
+              const matchedService = services.find(
+                s => s.category.toLowerCase().includes(category.toLowerCase().split(' ')[0]) ||
+                     s.title.toLowerCase().includes(category.toLowerCase().split(' ')[0])
+              ) || services[0];
+              setSelectedService(matchedService);
+              setSelectedTier(tierName || (matchedService.tiers ? matchedService.tiers[0].name : matchedService.title));
+              setBookingStep(1);
+            }}
+            onOpenSOS={() => setEmergencyModalOpen(true)}
+          />
+
+          {/* Interactive Trust, Insurance & Police Verification Showcase */}
+          <InteractiveFykziPerks
+            theme={theme}
+            onExploreServices={() => navigateToServices('all')}
+          />
 
           {/* Quick Active Bookings Banner */}
           {myActiveJobs.length > 0 && (
@@ -1306,31 +1461,44 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                 {serviceListCatalog.map((item) => (
                   <div
                     key={item.id}
-                    onClick={() => handleStartBookingByCatalog(item)}
-                    className={`rounded-3xl border p-4 sm:p-5 flex items-center justify-between gap-3.5 shadow-sm hover:shadow-md transition-all cursor-pointer group ${
+                    onClick={() => {
+                      sound.playClick();
+                      handleStartBookingByCatalog(item);
+                    }}
+                    className={`rounded-3xl border p-4 sm:p-5 flex items-center justify-between gap-3.5 shadow-sm hover:shadow-md transition-all cursor-pointer group card-3d-interactive ${
                       isDark
-                        ? 'bg-slate-900/90 border-slate-800/90 text-white hover:border-teal-500/50'
-                        : 'bg-white border-slate-100 text-slate-900 hover:border-teal-300'
+                        ? 'bg-slate-900/90 border-slate-800/90 text-white hover:border-teal-500/50 hover:bg-slate-850'
+                        : 'bg-white border-slate-100 text-slate-900 hover:border-teal-300 hover:bg-teal-50/20'
                     }`}
                   >
                     {/* Left Pastel Squircle Icon */}
-                    <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center shrink-0 text-2xl shadow-inner ${item.squircleColor}`}>
+                    <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center shrink-0 text-2xl shadow-inner transition-transform group-hover:scale-110 ${item.squircleColor}`}>
                       <span>{item.icon}</span>
                     </div>
 
                     {/* Middle Content */}
                     <div className="flex-1 min-w-0 pr-1">
-                      <h4 className="font-black text-sm sm:text-base tracking-tight leading-snug truncate">
-                        {item.title}
-                      </h4>
-                      <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'} line-clamp-2 mt-0.5 leading-relaxed`}>
+                      <div className="flex items-center space-x-2">
+                        <h4 className="font-black text-sm sm:text-base tracking-tight leading-snug truncate">
+                          {item.title}
+                        </h4>
+                        <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20 hidden sm:inline-block">
+                          ₹{item.diagnosticRate}
+                        </span>
+                      </div>
+                      <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'} line-clamp-1 mt-0.5 leading-relaxed`}>
                         {item.subtitle}
                       </p>
+                      <div className="flex items-center space-x-2 mt-1.5 text-[10px] font-bold">
+                        <span className="text-teal-600 dark:text-teal-400">⚡ {item.eta}</span>
+                        <span className="text-slate-400">•</span>
+                        <span className="text-slate-500 dark:text-slate-400">★ 4.9 Verified</span>
+                      </div>
                     </div>
 
                     {/* Right Circle Action Button (Matching Reference Screen 1) */}
-                    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-[#004D40] dark:bg-teal-600 text-white flex items-center justify-center shrink-0 shadow-md group-hover:scale-110 transition-transform cursor-pointer">
-                      <ChevronRight className="w-5 h-5" />
+                    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-[#004D40] dark:bg-teal-600 text-white flex items-center justify-center shrink-0 shadow-md group-hover:scale-110 group-hover:bg-teal-500 transition-all cursor-pointer">
+                      <ChevronRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
                     </div>
                   </div>
                 ))}

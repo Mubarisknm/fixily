@@ -23,12 +23,15 @@ import {
   Monitor,
   Sparkles,
   Mail,
-  Bell
+  Bell,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
 import { KochiLocation, ThemeMode, AppLanguage, UserSession, UserRole } from '../types';
 import { useTranslation } from '../utils/translations';
 import { KeralaMapLocationModal } from './KeralaMapLocationModal';
 import { FykziLogo } from './FykziLogo';
+import { sound } from '../utils/soundEffects';
 
 interface HeaderProps {
   activeTab: 'customer' | 'partner' | 'admin';
@@ -81,8 +84,27 @@ export const Header: React.FC<HeaderProps> = ({
   const [showLocationModal, setShowLocationModal] = useState<boolean>(false);
   const [gpsToast, setGpsToast] = useState<string | null>(null);
   const [showUserDropdown, setShowUserDropdown] = useState<boolean>(false);
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(() => {
+    const saved = typeof window !== 'undefined' ? localStorage.getItem('fykzi_sound_fx') : null;
+    const isEnabled = saved !== null ? saved === 'true' : true;
+    sound.enabled = isEnabled;
+    return isEnabled;
+  });
+
+  const handleToggleSound = () => {
+    const next = !soundEnabled;
+    setSoundEnabled(next);
+    sound.enabled = next;
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('fykzi_sound_fx', String(next));
+    }
+    if (next) {
+      sound.playClick();
+    }
+  };
 
   const handleQuickSearchClick = () => {
+    sound.playClick();
     setActiveTab('customer');
     const searchInput = document.getElementById('service-search-input');
     if (searchInput) {
@@ -174,6 +196,52 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           </div>
 
+          {/* Middle: Role Segmented Control (Desktop & Tablet) */}
+          <div className="hidden lg:flex items-center p-1 rounded-full border bg-slate-900/60 dark:bg-slate-950/70 border-slate-700/60 dark:border-slate-800 shadow-inner">
+            <button
+              onClick={() => {
+                sound.playClick();
+                setActiveTab('customer');
+              }}
+              className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full text-xs font-black transition-all cursor-pointer ${
+                activeTab === 'customer'
+                  ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-md'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <User className="w-3.5 h-3.5" />
+              <span>Customer</span>
+            </button>
+            <button
+              onClick={() => {
+                sound.playClick();
+                setActiveTab('partner');
+              }}
+              className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full text-xs font-black transition-all cursor-pointer ${
+                activeTab === 'partner'
+                  ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <Wrench className="w-3.5 h-3.5" />
+              <span>Specialist</span>
+            </button>
+            <button
+              onClick={() => {
+                sound.playClick();
+                setActiveTab('admin');
+              }}
+              className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full text-xs font-black transition-all cursor-pointer ${
+                activeTab === 'admin'
+                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-md'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>Admin Console</span>
+            </button>
+          </div>
+
           {/* 2. Right: Action Controls (Language, Day/Night, Profile) */}
           <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
             
@@ -193,7 +261,10 @@ export const Header: React.FC<HeaderProps> = ({
 
             {/* Language Switcher (Malayalam / English) */}
             <button
-              onClick={onToggleLanguage}
+              onClick={() => {
+                sound.playClick();
+                onToggleLanguage();
+              }}
               className={`px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-xl border text-xs font-black transition-all flex items-center space-x-1 cursor-pointer shrink-0 shadow-sm ${
                 isDark
                   ? 'bg-slate-900/90 border-slate-700/80 text-blue-400 hover:border-blue-500'
@@ -205,9 +276,33 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="font-black text-[11px] whitespace-nowrap">{language === 'en' ? 'ML' : 'EN'}</span>
             </button>
 
+            {/* Spatial Audio SFX Toggle */}
+            <button
+              onClick={handleToggleSound}
+              className={`p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl border text-xs font-extrabold transition-all shadow-sm flex items-center space-x-1 cursor-pointer shrink-0 ${
+                soundEnabled
+                  ? isDark
+                    ? 'bg-teal-950/70 border-teal-500/50 text-teal-300 hover:bg-teal-900/60'
+                    : 'bg-teal-50 border-teal-300 text-teal-700 hover:bg-teal-100'
+                  : isDark
+                    ? 'bg-slate-900 border-slate-800 text-slate-500 hover:text-slate-400'
+                    : 'bg-slate-100 border-slate-200 text-slate-400 hover:text-slate-600'
+              }`}
+              title={soundEnabled ? "Mute UI Audio Feedback" : "Enable Spatial Audio UI Feedback"}
+            >
+              {soundEnabled ? (
+                <Volume2 className="w-3.5 h-3.5 text-teal-400" />
+              ) : (
+                <VolumeX className="w-3.5 h-3.5 text-slate-400" />
+              )}
+            </button>
+
             {/* Day / Night Theme Toggle */}
             <button
-              onClick={onToggleTheme}
+              onClick={() => {
+                sound.playClick();
+                onToggleTheme();
+              }}
               className={`p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl border text-xs font-extrabold transition-all shadow-sm flex items-center space-x-1 cursor-pointer shrink-0 ${
                 isDark
                   ? 'bg-slate-800 border-slate-700 text-amber-300 hover:bg-slate-700 hover:border-amber-400'

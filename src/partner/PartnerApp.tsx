@@ -45,6 +45,7 @@ import { GigPartner, BookingJob, ThemeMode, KochiLocation } from '../types';
 import { KOCHI_LOCATIONS } from '../data/db';
 import { api } from '../services/api';
 import { PartnerKYCModal } from './PartnerKYCModal';
+import { sound } from '../utils/soundEffects';
 
 const PRIMARY_SERVICES_LIST = [
   {
@@ -511,7 +512,10 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
           {/* View Mode Buttons */}
           <div className="flex items-center space-x-2 w-full sm:w-auto p-1 bg-slate-950/60 rounded-2xl border border-slate-800">
             <button
-              onClick={() => setPortalView('onboarding')}
+              onClick={() => {
+                sound.playClick();
+                setPortalView('onboarding');
+              }}
               className={`flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center justify-center space-x-2 cursor-pointer ${
                 portalView === 'onboarding'
                   ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-600/30'
@@ -523,7 +527,10 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
             </button>
 
             <button
-              onClick={() => setPortalView('console')}
+              onClick={() => {
+                sound.playClick();
+                setPortalView('console');
+              }}
               className={`flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center justify-center space-x-2 cursor-pointer ${
                 portalView === 'console'
                   ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-600/30'

@@ -391,7 +391,7 @@ export function App() {
       language={language}
     >
       <div className={`min-h-screen transition-colors duration-200 flex flex-col font-sans relative w-full max-w-full overflow-x-hidden ${
-        isDark ? 'bg-slate-950 text-white' : 'bg-slate-50 text-slate-900'
+        isDark ? 'bg-slate-950 bg-mesh-dark text-white' : 'bg-[#F8FAFC] bg-mesh-light text-slate-900'
       }`}>
         <Header
           activeTab={activeTab}
