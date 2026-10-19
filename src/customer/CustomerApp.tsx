@@ -67,7 +67,9 @@ import {
   AppLanguage,
   UserSession,
   UserRole,
-  CustomerNavTab
+  CustomerNavTab,
+  PartnerToolItem,
+  PartnerCustomRates
 } from '../types';
 import { LiveMap } from '../components/LiveMap';
 import { EmergencyModal } from '../components/EmergencyModal';
@@ -256,6 +258,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
 
   // Direct Partner Booking State
   const [preferredPartner, setPreferredPartner] = useState<GigPartner | null>(null);
+  const [selectedProForToolkit, setSelectedProForToolkit] = useState<GigPartner | null>(null);
 
   // Customer Feedback Modal State
   const [feedbackJob, setFeedbackJob] = useState<BookingJob | null>(null);
@@ -1438,7 +1441,7 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
           </div>
 
           {/* Top Rated Specialists Row (When filtered or available) */}
-          {activeTradeTechnicians.length > 0 && selectedCategoryTab !== 'all' && (
+          {activeTradeTechnicians.length > 0 && (
             <div className="space-y-2.5 pt-1">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-black uppercase tracking-wider text-amber-500">
@@ -1450,12 +1453,14 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
               </div>
 
               <div className="flex items-center space-x-3 overflow-x-auto pb-2 scrollbar-none">
-                {activeTradeTechnicians.map((pro, index) => {
+                {activeTradeTechnicians.map((pro) => {
                   const initial = pro.name.charAt(0).toUpperCase();
+                  const visitFee = pro.customRates?.diagnosticFee || 199;
+                  const toolCount = pro.tools ? pro.tools.length : 0;
                   return (
                     <div
                       key={pro.id}
-                      className={`w-44 shrink-0 rounded-3xl p-3.5 border shadow-sm flex flex-col justify-between transition-all ${
+                      className={`w-48 shrink-0 rounded-3xl p-3.5 border shadow-sm flex flex-col justify-between transition-all ${
                         isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
                       }`}
                     >
@@ -1471,13 +1476,33 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                         </div>
                         <h4 className="font-black text-xs truncate">{pro.name}</h4>
                         <p className="text-[10px] text-slate-400 truncate">{pro.role}</p>
+
+                        {/* Custom Rate Card Summary */}
+                        <div className="flex items-center justify-between pt-1 text-[11px]">
+                          <span className="text-[10px] text-slate-400 font-medium">Visiting Fee</span>
+                          <span className="font-black text-teal-600 dark:text-teal-400">₹{visitFee}</span>
+                        </div>
+
+                        {/* Verified Tools Badge / Inspector trigger */}
+                        <button
+                          type="button"
+                          onClick={() => setSelectedProForToolkit(pro)}
+                          className="w-full flex items-center justify-between px-2 py-1 rounded-xl bg-teal-500/10 hover:bg-teal-500/20 text-teal-700 dark:text-teal-300 text-[10px] font-bold border border-teal-500/20 transition cursor-pointer"
+                          title="Click to view tools & custom rate card"
+                        >
+                          <span className="flex items-center space-x-1">
+                            <span>🧰</span>
+                            <span>{toolCount > 0 ? `${toolCount} Verified Tools` : 'Standard Kit'}</span>
+                          </span>
+                          <span className="text-[9px] text-teal-600 dark:text-teal-400">View →</span>
+                        </button>
                       </div>
 
                       <button
                         onClick={() => handleStartDirectBooking(pro)}
                         className="mt-2.5 w-full py-1.5 rounded-xl text-[11px] font-bold bg-[#004D40] hover:bg-teal-700 text-white shadow transition-all cursor-pointer flex items-center justify-center space-x-1"
                       >
-                        <span>⚡ Book {pro.name.split(' ')[0]}</span>
+                        <span>⚡ Book ₹{visitFee}</span>
                       </button>
                     </div>
                   );
@@ -1944,17 +1969,62 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                 />
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-teal-50 dark:bg-teal-950/20 border border-teal-200 dark:border-teal-800/30 flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400 block font-bold">Pay After Service (Cash / UPI)</span>
-                  <span className="font-black text-sm text-teal-700 dark:text-teal-400">
-                    ₹{selectedService.diagnosticFee || selectedService.estPrice || 299} (Flat Diagnostic)
+              {/* Preferred Specialist Rate & Toolkit Breakdown */}
+              {preferredPartner ? (
+                <div className="p-3.5 rounded-2xl bg-teal-50 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800/40 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-8 h-8 rounded-xl bg-[#004D40] text-white font-black text-xs flex items-center justify-center shadow">
+                        {preferredPartner.name.charAt(0)}
+                      </div>
+                      <div>
+                        <span className="text-[9px] text-teal-600 dark:text-teal-400 font-bold uppercase tracking-wider block">Assigned Specialist</span>
+                        <h4 className="font-black text-xs">{preferredPartner.name} (★ {preferredPartner.rating})</h4>
+                      </div>
+                    </div>
+                    {preferredPartner.tools && preferredPartner.tools.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setSelectedProForToolkit(preferredPartner)}
+                        className="px-2 py-1 rounded-lg text-[10px] font-bold bg-teal-600/10 text-teal-700 dark:text-teal-300 hover:bg-teal-600/20 transition flex items-center space-x-1 cursor-pointer border border-teal-500/20"
+                      >
+                        <span>🧰 {preferredPartner.tools.length} Tools</span>
+                      </button>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-[11px] pt-1.5 border-t border-teal-200/60 dark:border-teal-800/60">
+                    <div>
+                      <span className="text-slate-400 block text-[9px]">Direct Visiting Fee</span>
+                      <span className="font-black text-teal-700 dark:text-teal-400">
+                        ₹{preferredPartner.customRates?.diagnosticFee || selectedService.diagnosticFee || 199}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-slate-400 block text-[9px]">Hourly Labor Rate</span>
+                      <span className="font-black text-slate-700 dark:text-slate-300">
+                        ₹{preferredPartner.customRates?.hourlyLaborRate || 349}/hr
+                      </span>
+                    </div>
+                  </div>
+                  {preferredPartner.customRates?.pricingNotes && (
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400 italic pt-0.5">
+                      "{preferredPartner.customRates.pricingNotes}"
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <div className="p-3.5 rounded-2xl bg-teal-50 dark:bg-teal-950/20 border border-teal-200 dark:border-teal-800/30 flex items-center justify-between">
+                  <div>
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 block font-bold">Pay After Service (Cash / UPI)</span>
+                    <span className="font-black text-sm text-teal-700 dark:text-teal-400">
+                      ₹{selectedService.diagnosticFee || selectedService.estPrice || 299} (Flat Diagnostic)
+                    </span>
+                  </div>
+                  <span className="text-[10px] bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold px-2 py-0.5 rounded-full">
+                    Zero Upfront Charge
                   </span>
                 </div>
-                <span className="text-[10px] bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold px-2 py-0.5 rounded-full">
-                  Zero Upfront Charge
-                </span>
-              </div>
+              )}
 
               <div className="flex items-center space-x-2 pt-2">
                 <button
@@ -2196,6 +2266,238 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                   {enlargedPhoto.notes}
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Specialist Toolkit & Custom Rates Inspection Modal */}
+      {selectedProForToolkit && (
+        <div
+          className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200"
+          onClick={() => setSelectedProForToolkit(null)}
+        >
+          <div
+            className={`rounded-3xl max-w-lg w-full border shadow-2xl overflow-hidden my-auto ${
+              isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className={`p-5 flex items-start justify-between border-b ${
+              isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
+            }`}>
+              <div className="flex items-center space-x-3.5">
+                <div className="w-12 h-12 rounded-2xl bg-[#004D40] text-white font-black text-lg flex items-center justify-center shadow-lg shrink-0">
+                  {selectedProForToolkit.name.charAt(0)}
+                </div>
+                <div>
+                  <div className="flex items-center space-x-2">
+                    <h3 className="text-base font-black">{selectedProForToolkit.name}</h3>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-500/15 text-teal-600 dark:text-teal-400">
+                      ✓ Verified Pro
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-400 mt-0.5">{selectedProForToolkit.role}</p>
+                  <div className="flex items-center space-x-2 mt-1 text-[11px]">
+                    <span className="flex items-center text-amber-500 font-bold">
+                      <Star className="w-3.5 h-3.5 fill-amber-400 mr-1" />
+                      {selectedProForToolkit.rating}
+                    </span>
+                    <span className="text-slate-400">•</span>
+                    <span className="text-slate-400 font-medium">{selectedProForToolkit.jobsCompleted || 0} Jobs Done</span>
+                    <span className="text-slate-400">•</span>
+                    <span className={`inline-flex items-center space-x-1 font-bold ${
+                      selectedProForToolkit.isOnline ? 'text-emerald-500' : 'text-slate-400'
+                    }`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${
+                        selectedProForToolkit.isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-slate-500'
+                      }`} />
+                      <span>{selectedProForToolkit.isOnline ? 'Online & Available' : 'Offline'}</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedProForToolkit(null)}
+                className="p-1 rounded-full text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-5 space-y-4 max-h-[75vh] overflow-y-auto text-xs">
+              {/* Section 1: Rate Card declared directly by Worker */}
+              <div className={`p-4 rounded-2xl border space-y-3 ${
+                isDark ? 'bg-slate-950/60 border-slate-800' : 'bg-slate-50 border-slate-200'
+              }`}>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-teal-600 dark:text-teal-400 flex items-center space-x-1.5">
+                    <span>💰</span>
+                    <span>Direct Rates Set by Specialist</span>
+                  </span>
+                  <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                    Transparent Upfront
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2 text-center">
+                  <div className={`p-2.5 rounded-xl border ${
+                    isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
+                  }`}>
+                    <span className="text-[9px] text-slate-400 font-bold uppercase block">Visiting Fee</span>
+                    <span className="font-black text-sm text-teal-600 dark:text-teal-400 mt-0.5 block">
+                      ₹{selectedProForToolkit.customRates?.diagnosticFee ?? 199}
+                    </span>
+                    <span className="text-[9px] text-slate-400">Includes diagnosis</span>
+                  </div>
+                  <div className={`p-2.5 rounded-xl border ${
+                    isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
+                  }`}>
+                    <span className="text-[9px] text-slate-400 font-bold uppercase block">Hourly Labor</span>
+                    <span className="font-black text-sm text-slate-800 dark:text-slate-200 mt-0.5 block">
+                      ₹{selectedProForToolkit.customRates?.hourlyLaborRate ?? 349}/hr
+                    </span>
+                    <span className="text-[9px] text-slate-400">For complex works</span>
+                  </div>
+                  <div className={`p-2.5 rounded-xl border ${
+                    isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
+                  }`}>
+                    <span className="text-[9px] text-slate-400 font-bold uppercase block">Night Surge</span>
+                    <span className="font-black text-sm text-amber-500 mt-0.5 block">
+                      +₹{selectedProForToolkit.customRates?.emergencyNightSurge ?? 0}
+                    </span>
+                    <span className="text-[9px] text-slate-400">After 9:00 PM</span>
+                  </div>
+                </div>
+
+                {selectedProForToolkit.customRates?.pricingNotes && (
+                  <div className="p-3 rounded-xl bg-teal-500/10 border border-teal-500/20 text-[11px] text-teal-800 dark:text-teal-200">
+                    <span className="font-bold text-teal-700 dark:text-teal-400 block mb-0.5">Specialist Pricing Note:</span>
+                    "{selectedProForToolkit.customRates.pricingNotes}"
+                  </div>
+                )}
+              </div>
+
+              {/* Section 2: Verified Tools & Equipment */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-1.5">
+                    <span className="text-base">🧰</span>
+                    <h4 className="font-black text-xs uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                      Verified Tools & Equipment ({selectedProForToolkit.tools?.length || 0})
+                    </h4>
+                  </div>
+                  <span className="text-[10px] text-slate-400 font-medium">100% Quality Inspected</span>
+                </div>
+
+                {selectedProForToolkit.tools && selectedProForToolkit.tools.length > 0 ? (
+                  <div className="space-y-2.5">
+                    {selectedProForToolkit.tools.map((tool) => (
+                      <div
+                        key={tool.id}
+                        className={`p-3 rounded-2xl border flex gap-3 transition-all ${
+                          isDark ? 'bg-slate-950/70 border-slate-800 hover:border-slate-700' : 'bg-slate-50 border-slate-200 hover:border-teal-200'
+                        }`}
+                      >
+                        {/* Tool Photo or Fallback */}
+                        <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-900 border border-slate-800 shrink-0 flex items-center justify-center">
+                          {tool.photoUrl ? (
+                            <img
+                              src={tool.photoUrl}
+                              alt={tool.name}
+                              onError={(e) => {
+                                e.currentTarget.src = 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=400&q=80';
+                              }}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <Wrench className="w-7 h-7 text-teal-400" />
+                          )}
+                        </div>
+
+                        {/* Tool Info */}
+                        <div className="flex-1 space-y-1">
+                          <div className="flex items-start justify-between gap-1">
+                            <div>
+                              <h5 className="font-black text-xs text-slate-900 dark:text-white">{tool.name}</h5>
+                              <span className="text-[9px] font-bold text-teal-600 dark:text-teal-400 uppercase tracking-wider">
+                                {tool.category}
+                              </span>
+                            </div>
+                            <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 shrink-0">
+                              {tool.condition || 'Pro Grade'}
+                            </span>
+                          </div>
+
+                          <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                            {tool.description}
+                          </p>
+
+                          <div className="pt-1 flex items-center justify-between text-[10px]">
+                            <span className={`font-bold ${
+                              tool.isIncludedInVisitingCharge !== false
+                                ? 'text-emerald-600 dark:text-emerald-400'
+                                : 'text-amber-500'
+                            }`}>
+                              {tool.isIncludedInVisitingCharge !== false
+                                ? '✓ Included in Visiting Charge'
+                                : `+₹${tool.usageFee || 99} Equipment Surcharge`}
+                            </span>
+                            <span className="text-slate-400 font-medium">On-site ready</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className={`p-4 rounded-2xl border text-center space-y-1.5 ${
+                    isDark ? 'bg-slate-950/40 border-slate-800 text-slate-400' : 'bg-slate-50 border-slate-200 text-slate-600'
+                  }`}>
+                    <p className="font-bold text-xs">Standard Field Toolkit Verified</p>
+                    <p className="text-[11px]">
+                      This specialist carries all standard certified hand tools, multimeters, and safety equipment for their trade.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Safety & Guarantee Badge */}
+              <div className="p-3 rounded-2xl bg-teal-50 dark:bg-teal-950/20 border border-teal-200 dark:border-teal-800/30 flex items-center space-x-3">
+                <ShieldCheck className="w-6 h-6 text-teal-600 dark:text-teal-400 shrink-0" />
+                <div className="text-[10px]">
+                  <span className="font-bold text-teal-800 dark:text-teal-300 block">
+                    ₹25,000 Fykzi Damage Protection & Background Verified
+                  </span>
+                  <span className="text-slate-500 dark:text-slate-400">
+                    Police clearance certificate (PCC) verified with 100% upfront tool safety protocols.
+                  </span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center space-x-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setSelectedProForToolkit(null)}
+                  className="flex-1 py-3 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold cursor-pointer"
+                >
+                  Close
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const pro = selectedProForToolkit;
+                    setSelectedProForToolkit(null);
+                    handleStartDirectBooking(pro);
+                  }}
+                  className="flex-1 py-3 rounded-xl bg-[#004D40] hover:bg-teal-700 text-white font-black shadow-lg cursor-pointer flex items-center justify-center space-x-1.5"
+                >
+                  <span>⚡ Book Specialist (₹{selectedProForToolkit.customRates?.diagnosticFee ?? 199})</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

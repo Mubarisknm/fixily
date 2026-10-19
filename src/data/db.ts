@@ -787,6 +787,44 @@ export const MOCK_PARTNERS: GigPartner[] = [
       liabilityAgreementTimestamp: '2026-04-15T09:30:00Z'
     },
     vehicle: 'LMV Driver & Mechanic Toolkit',
+    tools: [
+      {
+        id: 't-101',
+        name: 'Launch Tech OBD2 Engine Diagnostic Scanner',
+        category: 'Mechanic & Auto-Electrical',
+        description: 'Instant ECU scanning for check engine lights, live sensor data, and battery alternator health.',
+        condition: 'Pro Grade',
+        photoUrl: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=300&auto=format&fit=crop&q=80',
+        isIncludedInVisitingCharge: true,
+        usageFee: 0
+      },
+      {
+        id: 't-102',
+        name: '3-Ton Low-Profile Hydraulic Trolley Jack',
+        category: 'Roadside Rescue',
+        description: 'Dual-piston rapid lift for roadside tyre swap on SUVs, sedans and hatchbacks without chassis damage.',
+        condition: 'Pro Grade',
+        photoUrl: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&auto=format&fit=crop&q=80',
+        isIncludedInVisitingCharge: true,
+        usageFee: 0
+      },
+      {
+        id: 't-103',
+        name: 'Heavy Duty 1000A Pure Copper Jumpstart Leads',
+        category: 'Emergency Jumpstart',
+        description: 'Surge-protected smart clamps for immediate vehicle start on drained 12V automotive batteries.',
+        condition: 'Brand New',
+        photoUrl: 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?w=300&auto=format&fit=crop&q=80',
+        isIncludedInVisitingCharge: true,
+        usageFee: 0
+      }
+    ],
+    customRates: {
+      diagnosticFee: 199,
+      hourlyLaborRate: 349,
+      emergencyNightSurge: 150,
+      pricingNotes: '₹199 flat visiting diagnostic fee includes 20-min rapid arrival, OBD2 scan & battery test.'
+    },
     walletBalance: 2840,
     escrowBalance: 350,
     withdrawableBalance: 2490,
@@ -844,6 +882,34 @@ export const MOCK_PARTNERS: GigPartner[] = [
       liabilityAgreementTimestamp: '2026-06-20T10:00:00Z'
     },
     vehicle: 'Electrical Pro Toolbag & Testing Meter',
+    tools: [
+      {
+        id: 't-201',
+        name: 'Fluke 117 True-RMS Electrician Multimeter',
+        category: 'Electrical Diagnostics',
+        description: 'Certified non-contact voltage tester, earth loop impedance & high-precision continuity buzzer.',
+        condition: 'Pro Grade',
+        photoUrl: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=300&auto=format&fit=crop&q=80',
+        isIncludedInVisitingCharge: true,
+        usageFee: 0
+      },
+      {
+        id: 't-202',
+        name: 'Bosch Professional 13mm Impact Hammer Drill',
+        category: 'Installation & Mounting',
+        description: 'Concrete masonry drilling with depth-stop for MCB distribution boxes, inverter racks & ceiling fans.',
+        condition: 'Brand New',
+        photoUrl: 'https://images.unsplash.com/photo-1504148455328-c376907d081c?w=300&auto=format&fit=crop&q=80',
+        isIncludedInVisitingCharge: true,
+        usageFee: 0
+      }
+    ],
+    customRates: {
+      diagnosticFee: 149,
+      hourlyLaborRate: 299,
+      emergencyNightSurge: 100,
+      pricingNotes: '₹149 visiting inspection fee. Diagnostic fee fully waived if wiring or MCB replacement is approved.'
+    },
     walletBalance: 1950,
     escrowBalance: 250,
     withdrawableBalance: 1700,

@@ -1,4 +1,4 @@
-import { KochiLocation, ServiceItem, GigPartner, BookingJob, AdminStats, UserSession } from '../types';
+import { KochiLocation, ServiceItem, GigPartner, BookingJob, AdminStats, UserSession, PartnerToolItem, PartnerCustomRates } from '../types';
 import { KOCHI_LOCATIONS, SERVICES, MOCK_PARTNERS, MOCK_JOBS } from '../data/db';
 
 const BASE_URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/$/, '') : '';
@@ -296,6 +296,36 @@ export const api = {
     
     const p = localPartners.find((item: GigPartner) => item.id === id);
     if (p) p.isOnline = isOnline;
+    return p || localPartners[0];
+  },
+
+  async updatePartnerTools(id: string, tools: PartnerToolItem[]): Promise<GigPartner> {
+    const data = await fetchJson(`${API_BASE}/partners/${id}/tools`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tools })
+    });
+    if (data) return data;
+
+    const p = localPartners.find((item: GigPartner) => item.id === id);
+    if (p) {
+      p.tools = tools;
+    }
+    return p || localPartners[0];
+  },
+
+  async updatePartnerRates(id: string, customRates: PartnerCustomRates): Promise<GigPartner> {
+    const data = await fetchJson(`${API_BASE}/partners/${id}/rates`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ customRates })
+    });
+    if (data) return data;
+
+    const p = localPartners.find((item: GigPartner) => item.id === id);
+    if (p) {
+      p.customRates = customRates;
+    }
     return p || localPartners[0];
   },
 

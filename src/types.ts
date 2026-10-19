@@ -149,6 +149,24 @@ export interface PartnerKYC {
   liabilityAgreementTimestamp?: string;
 }
 
+export interface PartnerToolItem {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  condition?: 'Brand New' | 'Pro Grade' | 'Excellent' | 'Good';
+  photoUrl?: string;
+  isIncludedInVisitingCharge?: boolean;
+  usageFee?: number;
+}
+
+export interface PartnerCustomRates {
+  diagnosticFee: number;
+  hourlyLaborRate: number;
+  emergencyNightSurge?: number;
+  pricingNotes?: string;
+}
+
 export interface GigPartner {
   id: string;
   name: string;
@@ -156,6 +174,8 @@ export interface GigPartner {
   role: string;
   secondaryRoles?: string[];
   customProfessions?: CustomProfession[];
+  tools?: PartnerToolItem[];
+  customRates?: PartnerCustomRates;
   rating: number;
   jobsCompleted: number;
   reviewsCount?: number;

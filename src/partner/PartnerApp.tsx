@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   UserCheck,
   ShieldCheck,
@@ -39,9 +39,18 @@ import {
   BadgeCheck,
   Smile,
   Flame,
-  CheckSquare
+  CheckSquare,
+  Trash2,
+  Edit3,
+  Tag,
+  Info,
+  Shield,
+  Sliders,
+  CheckCircle,
+  Eye,
+  Hammer
 } from 'lucide-react';
-import { GigPartner, BookingJob, ThemeMode, KochiLocation } from '../types';
+import { GigPartner, BookingJob, ThemeMode, KochiLocation, PartnerToolItem, PartnerCustomRates } from '../types';
 import { KOCHI_LOCATIONS } from '../data/db';
 import { api } from '../services/api';
 import { PartnerKYCModal } from './PartnerKYCModal';
@@ -161,6 +170,81 @@ const POPULAR_TOOLS_LIST = [
   'Two-Wheeler / Four-Wheeler Service Vehicle'
 ];
 
+export const POPULAR_TOOL_PRESETS = [
+  {
+    name: 'Launch Tech OBD2 Engine Diagnostic Scanner',
+    category: 'Mechanic & Auto-Electrical',
+    description: 'Scans all engine error codes, ECU faults, live sensor parameters and alternator output.',
+    condition: 'Pro Grade' as const,
+    photoUrl: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=400&auto=format&fit=crop&q=80',
+    isIncluded: true,
+    usageFee: 0
+  },
+  {
+    name: '3-Ton Heavy Duty Hydraulic Trolley Jack',
+    category: 'Roadside Rescue',
+    description: 'Safe dual-piston low-profile lifting for roadside tyre replacements without chassis pinch weld damage.',
+    condition: 'Pro Grade' as const,
+    photoUrl: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=400&auto=format&fit=crop&q=80',
+    isIncluded: true,
+    usageFee: 0
+  },
+  {
+    name: 'Fluke 117 True-RMS Electrician Multimeter',
+    category: 'Electrical Diagnostics',
+    description: 'Non-contact AC voltage detection, earth leakage verification and circuit continuity beeper.',
+    condition: 'Pro Grade' as const,
+    photoUrl: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=400&auto=format&fit=crop&q=80',
+    isIncluded: true,
+    usageFee: 0
+  },
+  {
+    name: 'Kärcher K3 High-Pressure Jet Foam Washer',
+    category: 'AC Cleaning & Car Detailing',
+    description: '120-bar adjustable pressure foam jet gun to clean AC condenser coils and vehicle bodywork without bending fins.',
+    condition: 'Pro Grade' as const,
+    photoUrl: 'https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?w=400&auto=format&fit=crop&q=80',
+    isIncluded: true,
+    usageFee: 0
+  },
+  {
+    name: 'Rothenberger 14-Inch Heavy-Duty Pipe Wrench',
+    category: 'Plumbing & Water Management',
+    description: 'Forged hook jaw pipe wrench with induction-hardened teeth for high-torque galvanized and PVC plumbing.',
+    condition: 'Pro Grade' as const,
+    photoUrl: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400&auto=format&fit=crop&q=80',
+    isIncluded: true,
+    usageFee: 0
+  },
+  {
+    name: 'Bosch Professional 13mm Impact Hammer Drill',
+    category: 'Installation & Carpentry',
+    description: 'Heavy duty concrete masonry drilling with depth gauge for switchboards, MCBs & fans.',
+    condition: 'Brand New' as const,
+    photoUrl: 'https://images.unsplash.com/photo-1504148455328-c376907d081c?w=400&auto=format&fit=crop&q=80',
+    isIncluded: true,
+    usageFee: 0
+  },
+  {
+    name: 'Industrial Wet & Dry Suction Vacuum Cleaner',
+    category: 'Cleaning & Detailing',
+    description: 'High-suction 1400W blower and liquid vacuum for car interiors, upholstery and water leak cleanups.',
+    condition: 'Good' as const,
+    photoUrl: 'https://images.unsplash.com/photo-1558904541-efa8c4a08931?w=400&auto=format&fit=crop&q=80',
+    isIncluded: true,
+    usageFee: 0
+  },
+  {
+    name: 'Snake Inspection Camera Endoscope (5-meter LED)',
+    category: 'Concealed Diagnostics',
+    description: 'Waterproof flexible probe camera to inspect hidden pipe leaks, inside walls, conduits and vehicle engine bays.',
+    condition: 'Pro Grade' as const,
+    photoUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=400&auto=format&fit=crop&q=80',
+    isIncluded: true,
+    usageFee: 0
+  }
+];
+
 interface PartnerAppProps {
   partners: GigPartner[];
   jobs: BookingJob[];
@@ -248,6 +332,144 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
   const withdrawableBalance = currentPartner?.withdrawableBalance !== undefined
     ? currentPartner.withdrawableBalance
     : Math.max(0, (currentPartner?.walletBalance || 0) - escrowAmount);
+
+  // Tools & Equipment Inventory State
+  const [showAddToolModal, setShowAddToolModal] = useState<boolean>(false);
+  const [toolName, setToolName] = useState<string>('');
+  const [toolCategory, setToolCategory] = useState<string>('Mechanic & Auto-Electrical');
+  const [toolDescription, setToolDescription] = useState<string>('');
+  const [toolCondition, setToolCondition] = useState<'Pro Grade' | 'Brand New' | 'Excellent' | 'Good'>('Pro Grade');
+  const [toolPhotoUrl, setToolPhotoUrl] = useState<string>('');
+  const [toolIsIncluded, setToolIsIncluded] = useState<boolean>(true);
+  const [toolUsageFee, setToolUsageFee] = useState<string>('0');
+  const [isSavingTool, setIsSavingTool] = useState<boolean>(false);
+
+  // Custom Rate Card & Charges State
+  const [showEditRatesModal, setShowEditRatesModal] = useState<boolean>(false);
+  const [customDiagnosticFeeInput, setCustomDiagnosticFeeInput] = useState<string>(
+    String(currentPartner?.customRates?.diagnosticFee || 199)
+  );
+  const [customHourlyRateInput, setCustomHourlyRateInput] = useState<string>(
+    String(currentPartner?.customRates?.hourlyLaborRate || 349)
+  );
+  const [customNightSurgeInput, setCustomNightSurgeInput] = useState<string>(
+    String(currentPartner?.customRates?.emergencyNightSurge || 150)
+  );
+  const [customPricingNotesInput, setCustomPricingNotesInput] = useState<string>(
+    currentPartner?.customRates?.pricingNotes ||
+      'Includes 20-min rapid arrival, OBD2 / multimeter digital diagnosis, and upfront repair quote. Spare parts billed at actual store MRP.'
+  );
+  const [isSavingRates, setIsSavingRates] = useState<boolean>(false);
+
+  // Sync rates when selected partner changes
+  useEffect(() => {
+    if (currentPartner?.customRates) {
+      setCustomDiagnosticFeeInput(String(currentPartner.customRates.diagnosticFee));
+      setCustomHourlyRateInput(String(currentPartner.customRates.hourlyLaborRate));
+      setCustomNightSurgeInput(String(currentPartner.customRates.emergencyNightSurge || 150));
+      if (currentPartner.customRates.pricingNotes) {
+        setCustomPricingNotesInput(currentPartner.customRates.pricingNotes);
+      }
+    }
+  }, [currentPartner?.id]);
+
+  const handlePickPresetTool = (preset: typeof POPULAR_TOOL_PRESETS[0]) => {
+    setToolName(preset.name);
+    setToolCategory(preset.category);
+    setToolDescription(preset.description);
+    setToolCondition(preset.condition);
+    setToolPhotoUrl(preset.photoUrl);
+    setToolIsIncluded(preset.isIncluded);
+    setToolUsageFee(String(preset.usageFee));
+    sound.click();
+  };
+
+  const handleSaveTool = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!toolName.trim()) {
+      alert('Please enter a tool name.');
+      return;
+    }
+    if (!toolDescription.trim()) {
+      alert('Please describe what this tool does and how you use it.');
+      return;
+    }
+
+    setIsSavingTool(true);
+    const newTool: PartnerToolItem = {
+      id: `tool-${Date.now().toString().slice(-5)}`,
+      name: toolName.trim(),
+      category: toolCategory,
+      description: toolDescription.trim(),
+      condition: toolCondition,
+      photoUrl: toolPhotoUrl.trim() || 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400&auto=format&fit=crop&q=80',
+      isIncludedInVisitingCharge: toolIsIncluded,
+      usageFee: toolIsIncluded ? 0 : Number(toolUsageFee) || 0
+    };
+
+    const currentTools = currentPartner.tools || [];
+    const updatedTools = [...currentTools, newTool];
+
+    try {
+      await api.updatePartnerTools(currentPartner.id, updatedTools);
+      currentPartner.tools = updatedTools;
+      setIsSavingTool(false);
+      setShowAddToolModal(false);
+      setToolName('');
+      setToolDescription('');
+      setToolPhotoUrl('');
+      setToolUsageFee('0');
+      onRefreshData();
+      sound.playChime();
+      alert(`✅ Tool "${newTool.name}" added to your verified equipment inventory!`);
+    } catch (err) {
+      setIsSavingTool(false);
+      alert('Failed to save tool. Please try again.');
+    }
+  };
+
+  const handleDeleteTool = async (toolId: string) => {
+    if (!confirm('Are you sure you want to remove this tool from your inventory?')) return;
+    const currentTools = currentPartner.tools || [];
+    const updatedTools = currentTools.filter(t => t.id !== toolId);
+
+    try {
+      await api.updatePartnerTools(currentPartner.id, updatedTools);
+      currentPartner.tools = updatedTools;
+      onRefreshData();
+      sound.playClick();
+    } catch (err) {
+      alert('Failed to delete tool.');
+    }
+  };
+
+  const handleSaveCustomRates = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const diag = Number(customDiagnosticFeeInput) || 199;
+    const hourly = Number(customHourlyRateInput) || 349;
+    const surge = Number(customNightSurgeInput) || 150;
+
+    setIsSavingRates(true);
+    const newRates: PartnerCustomRates = {
+      diagnosticFee: diag,
+      hourlyLaborRate: hourly,
+      emergencyNightSurge: surge,
+      pricingNotes: customPricingNotesInput.trim()
+    };
+
+    try {
+      await api.updatePartnerRates(currentPartner.id, newRates);
+      currentPartner.customRates = newRates;
+      setIsSavingRates(false);
+      setShowEditRatesModal(false);
+      onRefreshData();
+      sound.playChime();
+      alert(`✅ Your custom rates updated successfully! Visiting Fee: ₹${diag}, Labor Rate: ₹${hourly}/hr.`);
+    } catch (err) {
+      setIsSavingRates(false);
+      alert('Failed to save rates. Please try again.');
+    }
+  };
 
   const handleToggleServiceSelection = (serviceId: string) => {
     setSelectedServices(prev => {
@@ -346,6 +568,33 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
           partnerName: registered.name
         });
       }
+
+      // Initialize worker's tools with descriptions and custom rates
+      const initialTools: PartnerToolItem[] = selectedTools.map((tName, idx) => {
+        const foundPreset = POPULAR_TOOL_PRESETS.find(p => p.name.toLowerCase().includes(tName.toLowerCase().split(' ')[0]) || tName.toLowerCase().includes(p.name.toLowerCase().split(' ')[0]));
+        return {
+          id: `tool-init-${idx}-${Date.now().toString().slice(-4)}`,
+          name: tName,
+          category: primaryRole,
+          description: foundPreset ? foundPreset.description : `Professional grade ${tName} maintained in calibrated condition for doorstep services.`,
+          condition: 'Pro Grade',
+          photoUrl: foundPreset ? foundPreset.photoUrl : 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400&auto=format&fit=crop&q=80',
+          isIncludedInVisitingCharge: true,
+          usageFee: 0
+        };
+      });
+
+      const initialRates: PartnerCustomRates = {
+        diagnosticFee: Number(customDiagnosticFeeInput) || 199,
+        hourlyLaborRate: Number(customHourlyRateInput) || 349,
+        emergencyNightSurge: Number(customNightSurgeInput) || 150,
+        pricingNotes: customPricingNotesInput || 'Transparent doorstep diagnostic fee. Parts billed on actual hardware store MRP.'
+      };
+
+      registered.tools = initialTools;
+      registered.customRates = initialRates;
+      await api.updatePartnerTools(registered.id, initialTools);
+      await api.updatePartnerRates(registered.id, initialRates);
 
       setIsSubmittingApplication(false);
       setNewRegisteredPartner(registered);
@@ -1837,6 +2086,267 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
             )}
           </div>
 
+          {/* ========================================================================= */}
+          {/* 💰 WORKER CUSTOM RATE CARD & CHARGES (Rate their own charges)            */}
+          {/* ========================================================================= */}
+          <div className={`rounded-3xl border p-6 sm:p-7 shadow-xl space-y-5 transition-all ${
+            isDark
+              ? 'bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950/20 border-emerald-800/40 text-white'
+              : 'bg-white border-slate-200 text-slate-900 shadow-sm'
+          }`}>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <div className="flex items-center space-x-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
+                    <DollarSign className="w-5 h-5 text-emerald-400" />
+                  </div>
+                  <h3 className="text-lg font-black tracking-tight">
+                    My Custom Rate Card &amp; Visiting Charges
+                  </h3>
+                  <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                    Self-Rated Charges
+                  </span>
+                </div>
+                <p className={`text-xs mt-1 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                  You set your own diagnostic visiting charges, hourly rates, and emergency night surcharges. Transparent upfront rates build customer trust and guarantee fair compensation.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (currentPartner.customRates) {
+                    setCustomDiagnosticFeeInput(String(currentPartner.customRates.diagnosticFee));
+                    setCustomHourlyRateInput(String(currentPartner.customRates.hourlyLaborRate));
+                    setCustomNightSurgeInput(String(currentPartner.customRates.emergencyNightSurge || 150));
+                    setCustomPricingNotesInput(currentPartner.customRates.pricingNotes || '');
+                  }
+                  setShowEditRatesModal(true);
+                  sound.click();
+                }}
+                className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs transition-all flex items-center justify-center space-x-1.5 shadow-md shrink-0 cursor-pointer"
+              >
+                <Edit3 className="w-4 h-4" />
+                <span>Edit My Rate Card</span>
+              </button>
+            </div>
+
+            {/* 3 Rate Metric Display Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+              {/* Metric 1: Diagnostic / Visiting Fee */}
+              <div className={`p-4 rounded-2xl border transition-all ${
+                isDark ? 'bg-slate-950/80 border-slate-800' : 'bg-slate-50 border-slate-200'
+              }`}>
+                <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
+                  <span className="font-bold uppercase tracking-wider text-[10px]">Visiting / Inspection</span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    Base Visit
+                  </span>
+                </div>
+                <div className="text-2xl font-black text-emerald-400">
+                  ₹{currentPartner.customRates?.diagnosticFee || 199}
+                </div>
+                <p className="text-[11px] text-slate-400 mt-0.5">
+                  Arrival &amp; comprehensive diagnostics
+                </p>
+              </div>
+
+              {/* Metric 2: Hourly Labor Rate */}
+              <div className={`p-4 rounded-2xl border transition-all ${
+                isDark ? 'bg-slate-950/80 border-slate-800' : 'bg-slate-50 border-slate-200'
+              }`}>
+                <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
+                  <span className="font-bold uppercase tracking-wider text-[10px]">Hourly Labor Rate</span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                    Standard Labor
+                  </span>
+                </div>
+                <div className="text-2xl font-black text-blue-400">
+                  ₹{currentPartner.customRates?.hourlyLaborRate || 349}<span className="text-xs text-slate-400 font-bold">/hr</span>
+                </div>
+                <p className="text-[11px] text-slate-400 mt-0.5">
+                  For complex wiring, overhauls or repairs
+                </p>
+              </div>
+
+              {/* Metric 3: Emergency Night Surge */}
+              <div className={`p-4 rounded-2xl border transition-all ${
+                isDark ? 'bg-slate-950/80 border-slate-800' : 'bg-slate-50 border-slate-200'
+              }`}>
+                <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
+                  <span className="font-bold uppercase tracking-wider text-[10px]">Night &amp; Emergency Surge</span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                    09 PM - 06 AM
+                  </span>
+                </div>
+                <div className="text-2xl font-black text-amber-400">
+                  +₹{currentPartner.customRates?.emergencyNightSurge || 150}
+                </div>
+                <p className="text-[11px] text-slate-400 mt-0.5">
+                  Added for midnight/severe weather callouts
+                </p>
+              </div>
+            </div>
+
+            {/* Pricing Transparency Banner */}
+            <div className={`p-3.5 rounded-2xl border text-xs flex items-start space-x-3 ${
+              isDark ? 'bg-slate-950/60 border-slate-800 text-slate-300' : 'bg-emerald-50/60 border-emerald-200 text-slate-700'
+            }`}>
+              <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+              <div>
+                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-400 block">
+                  Customer Pricing Transparency Statement
+                </span>
+                <p className="text-[11px] text-slate-300 mt-0.5 italic">
+                  "{currentPartner.customRates?.pricingNotes || 'Includes 20-min rapid arrival, OBD2 / multimeter digital diagnosis, and upfront repair quote. Spare parts billed at actual store MRP.'}"
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* ========================================================================= */}
+          {/* 🧰 WORKER TOOLS & EQUIPMENT INVENTORY (Add tools, descriptions & fees)     */}
+          {/* ========================================================================= */}
+          <div className={`rounded-3xl border p-6 sm:p-7 shadow-xl space-y-5 transition-all ${
+            isDark
+              ? 'bg-gradient-to-br from-slate-900 via-slate-900 to-amber-950/20 border-amber-800/40 text-white'
+              : 'bg-white border-slate-200 text-slate-900 shadow-sm'
+          }`}>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <div className="flex items-center space-x-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">
+                    <Wrench className="w-5 h-5 text-amber-400" />
+                  </div>
+                  <h3 className="text-lg font-black tracking-tight">
+                    My Professional Tools &amp; Equipment Inventory
+                  </h3>
+                  <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                    {currentPartner.tools?.length || 0} Tools Verified
+                  </span>
+                </div>
+                <p className={`text-xs mt-1 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                  Register the diagnostic machines, power tools, and testing equipment you carry to jobs. Customers inspect your verified toolkit before booking to confirm you have the right equipment!
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setShowAddToolModal(true);
+                  sound.click();
+                }}
+                className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:brightness-110 text-slate-950 font-black text-xs transition-all flex items-center justify-center space-x-1.5 shadow-md shrink-0 cursor-pointer"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Tool or Equipment</span>
+              </button>
+            </div>
+
+            {/* Quick Popular Presets Pills */}
+            <div className="space-y-1.5">
+              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block">
+                Quick 1-Tap Tool Presets (Tap to Add):
+              </span>
+              <div className="flex items-center space-x-2 overflow-x-auto pb-1 no-scrollbar select-none">
+                {POPULAR_TOOL_PRESETS.map((preset, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => {
+                      handlePickPresetTool(preset);
+                      setShowAddToolModal(true);
+                    }}
+                    className={`text-[10px] font-bold px-3 py-1.5 rounded-xl border whitespace-nowrap transition-all cursor-pointer flex items-center space-x-1.5 ${
+                      isDark
+                        ? 'bg-slate-950/80 border-slate-800 text-slate-300 hover:border-amber-400/60 hover:text-white'
+                        : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-amber-500 hover:text-slate-900'
+                    }`}
+                  >
+                    <span>+</span>
+                    <span>{preset.name.split(' ').slice(0, 3).join(' ')}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Tools Grid */}
+            {currentPartner.tools && currentPartner.tools.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {currentPartner.tools.map((t) => (
+                  <div
+                    key={t.id}
+                    className={`p-4 rounded-2xl border flex flex-col justify-between transition-all group ${
+                      isDark
+                        ? 'bg-slate-950/90 border-slate-800 hover:border-amber-500/50'
+                        : 'bg-slate-50 border-slate-200 hover:border-amber-400 shadow-xs'
+                    }`}
+                  >
+                    <div className="space-y-3">
+                      {/* Tool Image or Icon Header */}
+                      <div className="relative rounded-xl overflow-hidden aspect-[16/9] bg-slate-900 border border-slate-800">
+                        <img
+                          src={t.photoUrl || 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400&auto=format&fit=crop&q=80'}
+                          alt={t.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-80" />
+                        <span className="absolute top-2 left-2 text-[9px] font-black uppercase px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-md text-amber-400 border border-amber-400/20">
+                          {t.category}
+                        </span>
+                        <span className="absolute top-2 right-2 text-[9px] font-black uppercase px-2 py-0.5 rounded-md bg-emerald-500/90 text-slate-950 font-bold">
+                          {t.condition || 'Pro Grade'}
+                        </span>
+                      </div>
+
+                      {/* Tool Details */}
+                      <div>
+                        <h4 className="font-black text-sm text-white group-hover:text-amber-400 transition-colors">
+                          {t.name}
+                        </h4>
+                        <p className="text-xs text-slate-400 mt-1 line-clamp-3 leading-relaxed">
+                          {t.description}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Bottom Status & Delete Button */}
+                    <div className="pt-3 mt-3 border-t border-slate-800/80 flex items-center justify-between">
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
+                        t.isIncludedInVisitingCharge !== false
+                          ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                          : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                      }`}>
+                        {t.isIncludedInVisitingCharge !== false
+                          ? '✓ Included in Visit'
+                          : `+₹${t.usageFee} Equipment Fee`}
+                      </span>
+
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteTool(t.id)}
+                        className="text-slate-500 hover:text-rose-400 p-1.5 rounded-lg hover:bg-slate-800 transition-colors cursor-pointer"
+                        title="Remove tool from inventory"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className={`p-8 text-center rounded-2xl border text-xs space-y-2 ${
+                isDark ? 'bg-slate-950 border-slate-800 text-slate-400' : 'bg-slate-50 border-slate-200 text-slate-600'
+              }`}>
+                <Wrench className="w-8 h-8 text-amber-400/60 mx-auto" />
+                <p className="font-bold text-white text-sm">No tools added to your inventory yet.</p>
+                <p className="text-[11px] text-slate-400 max-w-md mx-auto">
+                  Click <strong>"Add Tool or Equipment"</strong> or choose any preset above to showcase your equipment to Kerala customers!
+                </p>
+              </div>
+            )}
+          </div>
+
           {/* 🛠️ Worker Custom Professions & Trades (Published to Other Works Grid) */}
           <div className={`rounded-3xl border p-6 sm:p-7 shadow-xl space-y-5 transition-all ${
             isDark
@@ -2560,6 +3070,379 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
                 >
                   <CheckCircle2 className="w-4 h-4" />
                   <span>{isCompletingJob ? 'Verifying OTP...' : 'Verify & Disburse'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Add Tool or Equipment to Inventory */}
+      {showAddToolModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className={`rounded-3xl max-w-lg w-full border shadow-2xl overflow-hidden my-auto ${
+            isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+          }`}>
+            <div className={`p-5 flex items-center justify-between border-b ${
+              isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
+            }`}>
+              <div className="flex items-center space-x-2.5">
+                <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">
+                  <Wrench className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-base font-black">Add Tool to Verified Inventory</h3>
+                  <p className="text-[11px] text-slate-400">Describe equipment you bring to customer jobs</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowAddToolModal(false)}
+                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveTool} className="p-5 space-y-4 max-h-[75vh] overflow-y-auto">
+              {/* Quick Presets */}
+              <div className="space-y-1">
+                <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400">
+                  Tap to Auto-fill Quick Preset:
+                </label>
+                <div className="flex items-center space-x-1.5 overflow-x-auto pb-1 no-scrollbar select-none">
+                  {POPULAR_TOOL_PRESETS.map((preset, pIdx) => (
+                    <button
+                      key={pIdx}
+                      type="button"
+                      onClick={() => handlePickPresetTool(preset)}
+                      className={`text-[10px] font-bold px-2.5 py-1 rounded-lg border whitespace-nowrap transition-all cursor-pointer ${
+                        toolName === preset.name
+                          ? 'bg-amber-500 text-slate-950 border-amber-400 font-black'
+                          : isDark
+                          ? 'bg-slate-950 border-slate-800 text-slate-300 hover:border-amber-400'
+                          : 'bg-slate-100 border-slate-200 text-slate-700 hover:border-amber-500'
+                      }`}
+                    >
+                      {preset.name.split(' ').slice(0, 3).join(' ')}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-black uppercase tracking-wider mb-1 text-slate-400">
+                  Tool / Equipment Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={toolName}
+                  onChange={(e) => setToolName(e.target.value)}
+                  placeholder="e.g. Bosch GSB 570 Impact Drill, OBD2 Scanner, Fluke Multimeter..."
+                  className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-amber-400 font-bold ${
+                    isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+                  }`}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1 text-slate-400">
+                    Trade Category *
+                  </label>
+                  <select
+                    value={toolCategory}
+                    onChange={(e) => setToolCategory(e.target.value)}
+                    className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-amber-400 font-bold ${
+                      isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+                    }`}
+                  >
+                    <option value="Mechanic & Auto-Electrical">Mechanic &amp; Auto-Electrical</option>
+                    <option value="Roadside Rescue">Roadside Rescue &amp; Towing</option>
+                    <option value="Electrical Diagnostics">Electrical Diagnostics</option>
+                    <option value="Plumbing & Water Management">Plumbing &amp; Water Management</option>
+                    <option value="AC Cleaning & Car Detailing">AC Cleaning &amp; Car Detailing</option>
+                    <option value="Installation & Carpentry">Installation &amp; Carpentry</option>
+                    <option value="Cleaning & Sanitation">Cleaning &amp; Sanitation</option>
+                    <option value="General Diagnostics">General Pro Tools</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1 text-slate-400">
+                    Tool Condition / Grade *
+                  </label>
+                  <select
+                    value={toolCondition}
+                    onChange={(e) => setToolCondition(e.target.value as any)}
+                    className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-amber-400 font-bold ${
+                      isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+                    }`}
+                  >
+                    <option value="Pro Grade">Pro Grade (Commercial Standard)</option>
+                    <option value="Brand New">Brand New (&lt; 6 Months Old)</option>
+                    <option value="Excellent">Excellent Condition (Fully Calibrated)</option>
+                    <option value="Good">Good (Reliable Hand Tool)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-black uppercase tracking-wider mb-1 text-slate-400">
+                  Tool Description &amp; How You Use It *
+                </label>
+                <textarea
+                  rows={3}
+                  required
+                  value={toolDescription}
+                  onChange={(e) => setToolDescription(e.target.value)}
+                  placeholder="Explain what the tool does and how you use it on jobs (e.g. Safe low-profile dual-piston lifting for roadside tyre replacements without chassis pinch weld damage)."
+                  className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-amber-400 leading-relaxed ${
+                    isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+                  }`}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-black uppercase tracking-wider mb-1 text-slate-400">
+                  Tool Photo URL (Optional)
+                </label>
+                <input
+                  type="url"
+                  value={toolPhotoUrl}
+                  onChange={(e) => setToolPhotoUrl(e.target.value)}
+                  placeholder="https://..."
+                  className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-amber-400 ${
+                    isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+                  }`}
+                />
+              </div>
+
+              {/* Tool Billing & Surcharge Toggle */}
+              <div className={`p-3.5 rounded-2xl border space-y-2.5 ${
+                isDark ? 'bg-slate-950/80 border-slate-800' : 'bg-slate-50 border-slate-200'
+              }`}>
+                <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block">
+                  Tool Charge Policy for Customers:
+                </span>
+                
+                <div className="space-y-2">
+                  <label className="flex items-center space-x-2.5 cursor-pointer text-xs">
+                    <input
+                      type="radio"
+                      name="toolIncluded"
+                      checked={toolIsIncluded}
+                      onChange={() => {
+                        setToolIsIncluded(true);
+                        setToolUsageFee('0');
+                      }}
+                      className="text-amber-500"
+                    />
+                    <span className="font-bold text-white">✓ Included for Free in Visiting Diagnostic Fee</span>
+                  </label>
+
+                  <label className="flex items-center space-x-2.5 cursor-pointer text-xs">
+                    <input
+                      type="radio"
+                      name="toolIncluded"
+                      checked={!toolIsIncluded}
+                      onChange={() => setToolIsIncluded(false)}
+                      className="text-amber-500"
+                    />
+                    <span className="font-bold text-white">Specialized Equipment Usage Fee</span>
+                  </label>
+                </div>
+
+                {!toolIsIncluded && (
+                  <div className="pt-2">
+                    <label className="block text-[11px] font-bold text-amber-400 mb-1">
+                      Equipment Surcharge (₹)
+                    </label>
+                    <input
+                      type="number"
+                      min={0}
+                      value={toolUsageFee}
+                      onChange={(e) => setToolUsageFee(e.target.value)}
+                      placeholder="e.g. 150"
+                      className={`w-full text-xs p-2.5 rounded-xl border focus:outline-none focus:border-amber-400 font-mono font-bold ${
+                        isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-slate-300 text-slate-900'
+                      }`}
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center space-x-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAddToolModal(false)}
+                  className={`flex-1 py-3 rounded-xl text-xs font-bold border ${
+                    isDark ? 'border-slate-800 hover:bg-slate-800 text-slate-300' : 'border-slate-300 hover:bg-slate-100 text-slate-700'
+                  }`}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSavingTool}
+                  className="flex-1 py-3 rounded-xl text-xs font-black bg-gradient-to-r from-amber-500 to-orange-500 hover:brightness-110 text-slate-950 shadow-lg flex items-center justify-center space-x-1.5 cursor-pointer"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  <span>{isSavingTool ? 'Saving Tool...' : 'Save Tool to Inventory'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Edit Worker Custom Rate Card */}
+      {showEditRatesModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className={`rounded-3xl max-w-lg w-full border shadow-2xl overflow-hidden my-auto ${
+            isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+          }`}>
+            <div className={`p-5 flex items-center justify-between border-b ${
+              isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
+            }`}>
+              <div className="flex items-center space-x-2.5">
+                <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
+                  <DollarSign className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-base font-black">Rate Your Own Service Charges</h3>
+                  <p className="text-[11px] text-slate-400">Set transparent visiting, hourly, and night surge fees</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowEditRatesModal(false)}
+                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveCustomRates} className="p-5 space-y-4 max-h-[75vh] overflow-y-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1 text-slate-400">
+                    Visiting / Diagnostic Fee (₹) *
+                  </label>
+                  <input
+                    type="number"
+                    required
+                    min={49}
+                    max={2000}
+                    value={customDiagnosticFeeInput}
+                    onChange={(e) => setCustomDiagnosticFeeInput(e.target.value)}
+                    className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-emerald-400 font-mono font-black ${
+                      isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+                    }`}
+                  />
+                  <span className="text-[10px] text-slate-400 mt-0.5 block">
+                    Charged for arrival &amp; 30-min testing
+                  </span>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1 text-slate-400">
+                    Hourly Labor Rate (₹/hr) *
+                  </label>
+                  <input
+                    type="number"
+                    required
+                    min={99}
+                    max={2500}
+                    value={customHourlyRateInput}
+                    onChange={(e) => setCustomHourlyRateInput(e.target.value)}
+                    className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-emerald-400 font-mono font-black ${
+                      isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+                    }`}
+                  />
+                  <span className="text-[10px] text-slate-400 mt-0.5 block">
+                    For extensive repair labor beyond diagnostic
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-black uppercase tracking-wider mb-1 text-slate-400">
+                  Night &amp; Severe Weather Surge (₹)
+                </label>
+                <input
+                  type="number"
+                  min={0}
+                  max={500}
+                  value={customNightSurgeInput}
+                  onChange={(e) => setCustomNightSurgeInput(e.target.value)}
+                  className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-emerald-400 font-mono font-black ${
+                    isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+                  }`}
+                />
+                <span className="text-[10px] text-slate-400 mt-0.5 block">
+                  Applicable between 09:00 PM and 06:00 AM
+                </span>
+              </div>
+
+              <div>
+                <label className="block text-xs font-black uppercase tracking-wider mb-1 text-slate-400">
+                  Customer Pricing Transparency Statement *
+                </label>
+                <textarea
+                  rows={3}
+                  required
+                  value={customPricingNotesInput}
+                  onChange={(e) => setCustomPricingNotesInput(e.target.value)}
+                  placeholder="e.g. ₹199 flat visiting diagnostic fee includes 20-min rapid arrival, OBD2 scan & battery test. Parts billed at actual store MRP."
+                  className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-emerald-400 leading-relaxed ${
+                    isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+                  }`}
+                />
+                <span className="text-[10px] text-slate-400 mt-0.5 block">
+                  This note is shown on your profile to customers before they confirm booking.
+                </span>
+              </div>
+
+              {/* Live Preview Card */}
+              <div className={`p-3.5 rounded-2xl border text-xs space-y-1.5 ${
+                isDark ? 'bg-slate-950 border-slate-800' : 'bg-emerald-50 border-emerald-200'
+              }`}>
+                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-400 block">
+                  Customer Live Preview:
+                </span>
+                <div className="flex items-center justify-between font-bold">
+                  <span>Visiting Diagnostic Fee:</span>
+                  <span className="text-emerald-400 font-mono font-black">₹{customDiagnosticFeeInput || 199}</span>
+                </div>
+                <div className="flex items-center justify-between font-bold">
+                  <span>Hourly Labor Rate:</span>
+                  <span className="text-blue-400 font-mono font-black">₹{customHourlyRateInput || 349}/hr</span>
+                </div>
+                <div className="flex items-center justify-between font-bold">
+                  <span>Night Surcharge (09 PM - 06 AM):</span>
+                  <span className="text-amber-400 font-mono font-black">+₹{customNightSurgeInput || 150}</span>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowEditRatesModal(false)}
+                  className={`flex-1 py-3 rounded-xl text-xs font-bold border ${
+                    isDark ? 'border-slate-800 hover:bg-slate-800 text-slate-300' : 'border-slate-300 hover:bg-slate-100 text-slate-700'
+                  }`}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSavingRates}
+                  className="flex-1 py-3 rounded-xl text-xs font-black bg-gradient-to-r from-emerald-500 to-teal-400 hover:brightness-110 text-slate-950 shadow-lg flex items-center justify-center space-x-1.5 cursor-pointer"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>{isSavingRates ? 'Updating Rates...' : 'Save & Update My Rates'}</span>
                 </button>
               </div>
             </form>
