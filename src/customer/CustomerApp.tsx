@@ -766,12 +766,18 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       {customerNavTab === 'home' && (
         <div className="space-y-6 animate-in fade-in duration-300">
           
-          {/* Top Greeting & Location Header */}
+          {/* Top Greeting & Location Header (Google Stitch AI Glanceable Header) */}
           <div className="flex items-center justify-between pt-1">
             <div>
-              <span className={`text-xs font-semibold block ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                {greetingText}
-              </span>
+              <div className="flex items-center space-x-2">
+                <span className={`text-xs font-semibold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                  {greetingText}
+                </span>
+                <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                  <Sparkles className="w-2.5 h-2.5 text-blue-500 animate-pulse" />
+                  <span>Stitch AI Design</span>
+                </span>
+              </div>
               <h2 className="text-xl sm:text-2xl font-black tracking-tight leading-snug">
                 {displayUserName}
               </h2>
@@ -1257,9 +1263,14 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
 
             <div className="flex items-start justify-between relative z-10">
               <div className="space-y-1">
-                <span className="text-[10px] font-black uppercase tracking-widest text-teal-300/80 block">
-                  FYKZI
-                </span>
+                <div className="flex items-center space-x-2">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-teal-300/80 block">
+                    FYKZI
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-white/10 text-teal-200 border border-white/20">
+                    Stitch with Google AI
+                  </span>
+                </div>
                 <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white leading-tight">
                   Explore Services
                 </h1>
@@ -1517,9 +1528,14 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
           {/* Top Header (Matching Reference Screen 2) */}
           <div className="flex items-start justify-between pt-1 px-1">
             <div className="space-y-0.5">
-              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
-                My Orders
-              </h1>
+              <div className="flex items-center space-x-2">
+                <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
+                  My Orders
+                </h1>
+                <span className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20">
+                  Stitch AI
+                </span>
+              </div>
               <p className="text-xs text-slate-400 font-medium">
                 Track and manage your bookings
               </p>

@@ -3,28 +3,37 @@
 @tailwind utilities;
 
 :root {
-  --color-primary: #2563EB;
+  --color-primary: #1A73E8;
+  --color-primary-dark: #1557B0;
   --color-dark: #0F172A;
-  --color-bg: #F8FAFC;
-  --color-accent: #22C55E;
+  --color-bg: #F8FAFD;
+  --color-surface: #FFFFFF;
+  --color-accent: #10B981;
+  --stitch-teal: #004D40;
+  --stitch-teal-light: #E0F2F1;
+  --stitch-border: rgba(226, 232, 240, 0.85);
+  --stitch-border-dark: rgba(30, 41, 59, 0.8);
 }
 
 html {
-  background-color: #F8FAFC;
+  background-color: #F8FAFD;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
 }
 
 html.dark {
-  background-color: #0F172A;
+  background-color: #0B0F19;
 }
 
 body {
-  background-color: #F8FAFC;
+  background-color: #F8FAFD;
   color: #0F172A;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 html.dark body {
-  background-color: #0F172A;
-  color: #F8FAFC;
+  background-color: #0B0F19;
+  color: #F1F5F9;
 }
 
 .custom-leaflet-marker {
@@ -592,18 +601,41 @@ html.dark body {
 
 .bg-mesh-dark {
   background-image: 
-    radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.18) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(13, 148, 136, 0.22) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(245, 158, 11, 0.12) 0px, transparent 50%),
-    radial-gradient(at 0% 100%, rgba(15, 23, 42, 0.8) 0px, transparent 50%);
+    radial-gradient(at 0% 0%, rgba(26, 115, 232, 0.14) 0px, transparent 55%),
+    radial-gradient(at 100% 0%, rgba(0, 77, 64, 0.25) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.12) 0px, transparent 60%),
+    radial-gradient(at 0% 100%, rgba(11, 15, 25, 0.95) 0px, transparent 50%);
 }
 
 .bg-mesh-light {
   background-image: 
-    radial-gradient(at 0% 0%, rgba(191, 219, 254, 0.45) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(204, 251, 241, 0.5) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(254, 243, 199, 0.35) 0px, transparent 50%),
-    radial-gradient(at 0% 100%, rgba(241, 245, 249, 0.6) 0px, transparent 50%);
+    radial-gradient(at 0% 0%, rgba(224, 242, 241, 0.6) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(232, 240, 254, 0.7) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(240, 253, 250, 0.5) 0px, transparent 60%),
+    radial-gradient(at 0% 100%, rgba(248, 250, 253, 0.8) 0px, transparent 50%);
+}
+
+/* Google Stitch AI Design System Surfaces */
+.stitch-card {
+  border-radius: 1.75rem;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stitch-surface {
+  background-color: #FFFFFF;
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.03);
+}
+
+.dark .stitch-surface {
+  background-color: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(30, 41, 59, 0.85);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+}
+
+.stitch-glass {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 /* Radar Sweep Animation */
