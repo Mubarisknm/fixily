@@ -1589,27 +1589,45 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
                 </div>
               </div>
 
-              {/* Duty Switcher Widget */}
-              <div className="w-full md:w-auto bg-slate-950 border border-slate-800 rounded-2xl p-4 flex items-center justify-between space-x-6">
+              {/* Duty Switcher Widget (Tactile ON/OFF Pill Toggle) */}
+              <div className="w-full md:w-auto bg-slate-950/80 border border-slate-800 rounded-2xl p-3.5 sm:p-4 flex items-center justify-between gap-5 backdrop-blur-md">
                 <div>
-                  <div className="text-[10px] uppercase font-bold text-slate-400">Duty Radar Status</div>
+                  <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Duty Radar Status</div>
                   <div className="text-sm font-black flex items-center space-x-2 mt-0.5">
                     <span className={`w-2.5 h-2.5 rounded-full ${currentPartner.isOnline ? 'bg-emerald-400 animate-pulse shadow-lg shadow-emerald-500/50' : 'bg-rose-500'}`} />
-                    <span className={currentPartner.isOnline ? 'text-emerald-400 font-extrabold' : 'text-rose-400'}>
-                      {currentPartner.isOnline ? 'ONLINE & RECEIVING JOBS' : 'OFFLINE'}
+                    <span className={currentPartner.isOnline ? 'text-emerald-400 font-black' : 'text-slate-400 font-bold'}>
+                      {currentPartner.isOnline ? 'LIVE & RECEIVING' : 'RESTING / OFF'}
                     </span>
                   </div>
                 </div>
 
+                {/* Tactile Sliding ON / OFF Switch */}
                 <button
+                  type="button"
                   onClick={handleToggleDuty}
-                  className={`p-3.5 rounded-xl transition-all cursor-pointer ${
+                  className={`relative inline-flex h-10 w-24 shrink-0 cursor-pointer items-center rounded-full p-1 transition-all duration-300 focus:outline-none shadow-lg ${
                     currentPartner.isOnline
-                      ? 'bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 hover:brightness-110 font-black shadow-lg shadow-emerald-500/30'
-                      : 'bg-gradient-to-r from-rose-600 to-rose-700 text-white hover:brightness-110 font-black shadow-lg'
+                      ? 'bg-gradient-to-r from-emerald-500 to-teal-400 shadow-[0_0_20px_rgba(16,185,129,0.45)]'
+                      : 'bg-slate-800 border border-slate-700/80'
                   }`}
+                  role="switch"
+                  aria-checked={currentPartner.isOnline}
                 >
-                  <Power className="w-5 h-5" />
+                  <span className="sr-only">Toggle Online Duty</span>
+                  <span
+                    className={`text-[11px] font-black uppercase tracking-wider absolute transition-opacity duration-200 ${
+                      currentPartner.isOnline ? 'left-3 text-slate-950 font-black' : 'right-3 text-slate-400 font-bold'
+                    }`}
+                  >
+                    {currentPartner.isOnline ? 'ON' : 'OFF'}
+                  </span>
+                  <span
+                    className={`inline-block h-8 w-8 transform rounded-full bg-white shadow-md transition-transform duration-300 flex items-center justify-center ${
+                      currentPartner.isOnline ? 'translate-x-14 text-emerald-600' : 'translate-x-0 text-slate-400'
+                    }`}
+                  >
+                    <Power className="w-4 h-4 stroke-[2.5]" />
+                  </span>
                 </button>
               </div>
 

@@ -56,7 +56,8 @@ import {
   CheckCircle,
   Layers,
   Inbox,
-  ZoomIn
+  ZoomIn,
+  PlayCircle
 } from 'lucide-react';
 import {
   ServiceItem,
@@ -79,6 +80,8 @@ import { InteractivePriceCalculator } from '../components/InteractivePriceCalcul
 import { LiveFleetRadar } from '../components/LiveFleetRadar';
 import { AIDiagnosticAssistant } from '../components/AIDiagnosticAssistant';
 import { InteractiveFykziPerks } from '../components/InteractiveFykziPerks';
+import { StitchVerticalFeed } from '../components/StitchVerticalFeed';
+import { StitchDiscover } from '../components/StitchDiscover';
 import { useTranslation } from '../utils/translations';
 import { api } from '../services/api';
 import { sendPushNotification } from '../utils/pushNotifications';
@@ -343,6 +346,27 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       setCustomerNavTab('orders');
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const navigateToFeed = () => {
+    if (setCustomerNavTab) {
+      setCustomerNavTab('feed');
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const [servicesViewMode, setServicesViewMode] = useState<'stitch' | 'classic'>('stitch');
+
+  const handleSelectServiceItem = (service: ServiceItem) => {
+    setSelectedService(service);
+    setSelectedTier(service.tiers && service.tiers.length > 0 ? service.tiers[0].name : service.title);
+    setBookingStep(1);
+    const matching = getMatchedTechniciansForCategory(service.category, service.title);
+    if (matching.length > 0 && matching[0].isOnline) {
+      setPreferredPartner(matching[0]);
+    } else {
+      setPreferredPartner(null);
+    }
   };
 
   // Trade-specific helper to match and rank top technicians for any category / search query
@@ -853,6 +877,48 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             onSelectService={(serviceKeyword) => navigateToServices(serviceKeyword)}
           />
 
+          {/* Google Stitch Neon Noir Vertical Feed Spotlight Card */}
+          <div
+            onClick={navigateToFeed}
+            className="relative rounded-3xl p-5 sm:p-6 overflow-hidden bg-gradient-to-r from-[#131313] via-[#1f1f1f] to-[#0e0e0e] border border-[#ff4b89]/30 shadow-[0_10px_35px_rgba(255,75,137,0.25)] cursor-pointer group transition-all duration-300 hover:scale-[1.01]"
+          >
+            <div className="absolute top-0 right-0 w-64 h-full opacity-40 group-hover:opacity-60 transition-opacity">
+              <img
+                src="https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=800&q=80"
+                alt="Stitch Reels"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#131313] via-[#131313]/60 to-transparent"></div>
+            </div>
+
+            <div className="relative z-10 max-w-md space-y-2">
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ff4b89]/20 border border-[#ff4b89]/40 text-[#ffb1c3] text-[10px] font-black uppercase tracking-widest">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#ff4b89] animate-ping"></span>
+                  NEW • GOOGLE STITCH REELS
+                </span>
+                <span className="text-[10px] font-bold text-[#00dbe9]">24/7 Live Feed</span>
+              </div>
+
+              <h3 className="font-headline text-2xl sm:text-3xl font-black text-white leading-tight">
+                Watch Kerala Technicians In Action
+              </h3>
+              <p className="text-[#e5bcc4] text-xs font-medium line-clamp-2">
+                Emergency jumpstarts, high-pressure foam jet washes, and instant puncture rescues. Swipe reels and book in 1 tap.
+              </p>
+
+              <div className="pt-1 flex items-center gap-3">
+                <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#ffb1c3] to-[#ff4b89] text-[#66002c] font-black text-xs neon-glow shadow-lg group-hover:scale-105 transition-transform">
+                  <PlayCircle className="w-4 h-4 fill-[#66002c] text-white" />
+                  <span>Launch Vertical Feed</span>
+                </div>
+                <span className="text-xs text-white/60 font-semibold group-hover:text-white transition-colors">
+                  Tap to watch →
+                </span>
+              </div>
+            </div>
+          </div>
+
           {/* Search Bar + Quick Tag Jump Pills */}
           <div className="space-y-2">
             <div
@@ -1251,15 +1317,69 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       )}
 
       {/* ========================================================================= */}
-      {/* VIEW 2: SERVICES PAGE ("Explore Services" - Matching Reference Screen 1)   */}
+      {/* VIEW: GOOGLE STITCH VERTICAL FEED ("Reels" - Full-Bleed CineSwipe Feed)    */}
+      {/* ========================================================================= */}
+      {customerNavTab === 'feed' && (
+        <div className="animate-in fade-in duration-300">
+          <StitchVerticalFeed
+            services={services}
+            selectedLocation={selectedLocation}
+            onSelectService={handleSelectServiceItem}
+          />
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* VIEW 2: SERVICES PAGE ("Explore Services" - Google Stitch Discover Mode)    */}
       {/* ========================================================================= */}
       {customerNavTab === 'services' && (
         <div className="space-y-4 animate-in fade-in duration-300">
           
-          {/* Top Curved Green Banner Header (Matching Reference Screen 1) */}
-          <div className="relative rounded-3xl p-6 bg-gradient-to-b from-[#00382E] via-[#004D40] to-[#0A5C4F] text-white shadow-lg overflow-hidden">
-            {/* Background ambient glow */}
-            <div className="absolute -right-8 -top-8 w-40 h-40 bg-teal-400/20 rounded-full blur-2xl pointer-events-none" />
+          {/* View Mode Switcher Pill */}
+          <div className="flex items-center justify-between bg-black/40 p-1.5 rounded-full border border-white/10 backdrop-blur-md max-w-md mx-auto">
+            <button
+              onClick={() => {
+                sound.click();
+                setServicesViewMode('stitch');
+              }}
+              className={`flex-1 py-2 px-4 rounded-full text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                servicesViewMode === 'stitch'
+                  ? 'bg-gradient-to-r from-[#ffb1c3] to-[#ff4b89] text-[#66002c] shadow-[0_0_15px_rgba(255,75,137,0.4)]'
+                  : 'text-[#e5bcc4] hover:text-white'
+              }`}
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Stitch Discover</span>
+            </button>
+            <button
+              onClick={() => {
+                sound.click();
+                setServicesViewMode('classic');
+              }}
+              className={`flex-1 py-2 px-4 rounded-full text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                servicesViewMode === 'classic'
+                  ? 'bg-[#004D40] text-white shadow-md'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <Layers className="w-3.5 h-3.5" />
+              <span>Classic View</span>
+            </button>
+          </div>
+
+          {servicesViewMode === 'stitch' ? (
+            <StitchDiscover
+              services={services}
+              selectedLocation={selectedLocation}
+              onSelectService={handleSelectServiceItem}
+              onSwitchToFeed={navigateToFeed}
+            />
+          ) : (
+            <>
+              {/* Top Curved Green Banner Header (Matching Reference Screen 1) */}
+              <div className="relative rounded-3xl p-6 bg-gradient-to-b from-[#00382E] via-[#004D40] to-[#0A5C4F] text-white shadow-lg overflow-hidden">
+                {/* Background ambient glow */}
+                <div className="absolute -right-8 -top-8 w-40 h-40 bg-teal-400/20 rounded-full blur-2xl pointer-events-none" />
 
             <div className="flex items-start justify-between relative z-10">
               <div className="space-y-1">
@@ -1516,6 +1636,8 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
               </div>
             )}
           </div>
+          </>
+          )}
         </div>
       )}
 

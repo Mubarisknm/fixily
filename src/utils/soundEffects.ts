@@ -103,6 +103,23 @@ class SoundSystem {
       // Fallback
     }
   }
+
+  // Micro-interaction aliases
+  click() {
+    this.playClick();
+  }
+
+  pop() {
+    this.playRadarPing();
+  }
+
+  beep() {
+    this.playClick();
+  }
+
+  success() {
+    this.playChime();
+  }
 }
 
 export const sound = new SoundSystem();

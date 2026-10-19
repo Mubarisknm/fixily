@@ -22,16 +22,18 @@ import {
   Zap,
   Package,
   Bell,
-  Settings
+  Settings,
+  PlayCircle,
+  Compass
 } from 'lucide-react';
-import { ThemeMode, AppLanguage, UserSession, UserRole, KochiLocation } from '../types';
+import { ThemeMode, AppLanguage, UserSession, UserRole, KochiLocation, CustomerNavTab } from '../types';
 import { useTranslation } from '../utils/translations';
 
 interface MobileBottomNavProps {
   activeTab: 'customer' | 'partner' | 'admin';
   setActiveTab: (tab: 'customer' | 'partner' | 'admin') => void;
-  customerNavTab?: 'home' | 'services' | 'orders';
-  setCustomerNavTab?: (tab: 'home' | 'services' | 'orders') => void;
+  customerNavTab?: CustomerNavTab;
+  setCustomerNavTab?: (tab: CustomerNavTab) => void;
   activeJobsCount: number;
   onOpenEmergency: () => void;
   theme: ThemeMode;
@@ -82,6 +84,14 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleNavFeed = () => {
+    setActiveTab('customer');
+    if (setCustomerNavTab) {
+      setCustomerNavTab('feed');
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleNavServices = () => {
     setActiveTab('customer');
     if (setCustomerNavTab) {
@@ -99,81 +109,112 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   };
 
   const isHomeActive = activeTab === 'customer' && customerNavTab === 'home' && !showAccountDrawer;
+  const isFeedActive = activeTab === 'customer' && customerNavTab === 'feed' && !showAccountDrawer;
   const isServicesActive = activeTab === 'customer' && customerNavTab === 'services' && !showAccountDrawer;
   const isOrdersActive = activeTab === 'customer' && customerNavTab === 'orders' && !showAccountDrawer;
   const isProfileActive = showAccountDrawer || activeTab !== 'customer';
 
   return (
     <>
-      {/* Floating Minimalist Mobile Bottom Navigation Dock */}
+      {/* Floating Minimalist Mobile Bottom Navigation Dock (Google Stitch Neon Noir) */}
       <div className="fixed bottom-4 left-3 right-3 sm:left-auto sm:right-auto sm:max-w-md sm:mx-auto z-40 flex items-center justify-center pointer-events-none">
         
         {/* Floating Main Pill Bar */}
         <nav
           aria-label="Mobile Bottom Navigation"
-          className={`w-full max-w-sm sm:max-w-md rounded-full px-4 py-2 border shadow-2xl backdrop-blur-2xl pointer-events-auto transition-all duration-300 flex items-center justify-around ${
+          className={`w-full max-w-sm sm:max-w-md rounded-full px-3 sm:px-5 py-2.5 border shadow-2xl backdrop-blur-2xl pointer-events-auto transition-all duration-300 flex items-center justify-between ${
             isDark
-              ? 'bg-[#0F172A]/90 border-slate-800/90 text-slate-400 shadow-[0_12px_40px_rgba(0,0,0,0.8)]'
+              ? 'bg-[#1b1b1b]/85 border-[#5c3f45]/25 text-[#c8c6c5] shadow-[0_12px_45px_rgba(0,0,0,0.95)]'
               : 'bg-white/95 border-slate-200 text-slate-600 shadow-[0_12px_40px_rgba(37,99,235,0.15)]'
           }`}
         >
           {/* Tab 1: Home */}
           <button
             onClick={handleNavHome}
-            className={`flex flex-col items-center justify-center px-3 py-1 rounded-full transition-all active:scale-95 cursor-pointer ${
+            className={`flex flex-col items-center justify-center px-2 py-0.5 rounded-full transition-all active:scale-95 cursor-pointer relative group ${
               isHomeActive
-                ? 'text-blue-600 dark:text-blue-400 font-extrabold scale-105'
-                : 'hover:text-blue-500 font-medium'
+                ? isDark ? 'text-[#ffb1c3] font-black scale-105' : 'text-blue-600 font-extrabold scale-105'
+                : 'hover:text-[#ffb1c3] font-medium opacity-70 hover:opacity-100'
             }`}
           >
-            <Home className={`w-5 h-5 mb-0.5 ${isHomeActive ? 'stroke-[2.5]' : 'stroke-[2]'}`} />
-            <span className="text-[10px] leading-tight font-bold">
+            {isHomeActive && isDark && (
+              <div className="absolute inset-0 bg-[#ffb1c3]/20 blur-md rounded-full scale-125"></div>
+            )}
+            <Home className={`w-5 h-5 mb-0.5 relative z-10 ${isHomeActive ? 'stroke-[2.5]' : 'stroke-[2]'}`} />
+            <span className="text-[10px] leading-tight font-bold relative z-10">
               {language === 'ml' ? 'ഹോം' : 'Home'}
             </span>
           </button>
 
-          {/* Tab 2: Services / Expertise */}
+          {/* Tab 2: Feed / Live Reel (Google Stitch CineSwipe Reel) */}
           <button
-            onClick={handleNavServices}
-            className={`flex flex-col items-center justify-center px-3 py-1 rounded-full transition-all active:scale-95 cursor-pointer ${
-              isServicesActive
-                ? 'text-blue-600 dark:text-blue-400 font-extrabold scale-105'
-                : 'hover:text-blue-500 font-medium'
+            onClick={handleNavFeed}
+            className={`flex flex-col items-center justify-center px-2 py-0.5 rounded-full transition-all active:scale-95 cursor-pointer relative group ${
+              isFeedActive
+                ? isDark ? 'text-[#ff4b89] font-black scale-105' : 'text-blue-600 font-extrabold scale-105'
+                : 'hover:text-[#ff4b89] font-medium opacity-70 hover:opacity-100'
             }`}
           >
-            <Grid className={`w-5 h-5 mb-0.5 ${isServicesActive ? 'stroke-[2.5]' : 'stroke-[2]'}`} />
-            <span className="text-[10px] leading-tight font-bold">
-              {language === 'ml' ? 'സർവീസുകൾ' : 'Services'}
+            {isFeedActive && (
+              <div className="absolute inset-0 bg-[#ff4b89]/25 blur-md rounded-full scale-150"></div>
+            )}
+            <div className="relative">
+              <PlayCircle className={`w-5 h-5 mb-0.5 relative z-10 ${isFeedActive ? 'stroke-[2.5] text-[#ff4b89]' : 'stroke-[2]'}`} />
+              <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-[#ff4b89] animate-ping" />
+            </div>
+            <span className={`text-[10px] leading-tight font-bold relative z-10 ${isFeedActive && isDark ? 'text-[#ff4b89]' : ''}`}>
+              {language === 'ml' ? 'റീൽസ്' : 'Feed'}
             </span>
           </button>
 
-          {/* Tab 3: Orders (With Active Badge) */}
+          {/* Tab 3: Services / Discover */}
           <button
-            onClick={handleNavBookings}
-            className={`relative flex flex-col items-center justify-center px-3 py-1 rounded-full transition-all active:scale-95 cursor-pointer ${
-              isOrdersActive
-                ? 'text-blue-600 dark:text-blue-400 font-extrabold scale-105'
-                : 'hover:text-blue-500 font-medium'
+            onClick={handleNavServices}
+            className={`flex flex-col items-center justify-center px-2 py-0.5 rounded-full transition-all active:scale-95 cursor-pointer relative group ${
+              isServicesActive
+                ? isDark ? 'text-[#00dbe9] font-black scale-105' : 'text-blue-600 font-extrabold scale-105'
+                : 'hover:text-[#00dbe9] font-medium opacity-70 hover:opacity-100'
             }`}
           >
-            <Package className={`w-5 h-5 mb-0.5 ${isOrdersActive ? 'stroke-[2.5]' : 'stroke-[2]'}`} />
+            {isServicesActive && isDark && (
+              <div className="absolute inset-0 bg-[#00dbe9]/20 blur-md rounded-full scale-125"></div>
+            )}
+            <Compass className={`w-5 h-5 mb-0.5 relative z-10 ${isServicesActive ? 'stroke-[2.5]' : 'stroke-[2]'}`} />
+            <span className="text-[10px] leading-tight font-bold relative z-10">
+              {language === 'ml' ? 'ഡിസ്കവർ' : 'Discover'}
+            </span>
+          </button>
+
+          {/* Tab 4: Orders (With Active Badge) */}
+          <button
+            onClick={handleNavBookings}
+            className={`relative flex flex-col items-center justify-center px-2 py-0.5 rounded-full transition-all active:scale-95 cursor-pointer relative group ${
+              isOrdersActive
+                ? isDark ? 'text-[#ffb1c3] font-black scale-105' : 'text-blue-600 font-extrabold scale-105'
+                : 'hover:text-[#ffb1c3] font-medium opacity-70 hover:opacity-100'
+            }`}
+          >
+            {isOrdersActive && isDark && (
+              <div className="absolute inset-0 bg-[#ffb1c3]/20 blur-md rounded-full scale-125"></div>
+            )}
+            <Package className={`w-5 h-5 mb-0.5 relative z-10 ${isOrdersActive ? 'stroke-[2.5]' : 'stroke-[2]'}`} />
             {activeJobsCount > 0 && (
-              <span className="absolute -top-1 right-2 w-4 h-4 bg-blue-600 text-white text-[9px] font-black rounded-full flex items-center justify-center shadow-sm animate-bounce">
+              <span className="absolute -top-1 right-1 w-4 h-4 bg-[#ff4b89] text-white text-[9px] font-black rounded-full flex items-center justify-center shadow-sm animate-bounce z-20">
                 {activeJobsCount}
               </span>
             )}
-            <span className="text-[10px] leading-tight font-bold">
+            <span className="text-[10px] leading-tight font-bold relative z-10">
               {language === 'ml' ? 'ഓർഡർ' : 'Orders'}
             </span>
           </button>
 
-          {/* Tab 4: Profile / Account */}
+          {/* Tab 5: Profile / Account */}
           <button
             onClick={() => setShowAccountDrawer(true)}
-            className={`flex flex-col items-center justify-center px-3 py-1 rounded-full transition-all active:scale-95 cursor-pointer ${
+            className={`flex flex-col items-center justify-center px-2 py-0.5 rounded-full transition-all active:scale-95 cursor-pointer relative group ${
               isProfileActive
-                ? 'text-blue-600 dark:text-blue-400 font-extrabold scale-105'
-                : 'hover:text-blue-500 font-medium'
+                ? isDark ? 'text-[#ffb1c3] font-black scale-105' : 'text-blue-600 font-extrabold scale-105'
+                : 'hover:text-[#ffb1c3] font-medium opacity-70 hover:opacity-100'
             }`}
           >
             <div className="relative">
