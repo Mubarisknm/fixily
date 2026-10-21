@@ -299,7 +299,7 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
                     <p className={`text-[11px] mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                       {isCustomPhoto && customPhotoFileName
                         ? `Loaded: "${customPhotoFileName}"`
-                        : 'Upload your own clear photo from your phone or PC, or choose a preset.'}
+                        : 'Upload your own clear photo from your phone or PC.'}
                     </p>
                   </div>
 
@@ -334,56 +334,6 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
                       <Camera className="w-3.5 h-3.5" />
                       <span>Take Photo</span>
                     </button>
-
-                    {/* Preset Avatars */}
-                    <div className="flex items-center space-x-1 pl-2 border-l border-slate-700">
-                      <span className="text-[10px] text-slate-400 mr-1 hidden sm:inline">Presets:</span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setPhotoUrl('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80');
-                          setIsCustomPhoto(false);
-                          setCustomPhotoFileName('');
-                        }}
-                        className={`text-[10px] font-bold px-2 py-1 rounded transition-colors ${
-                          !isCustomPhoto && photoUrl.includes('photo-1507003211169')
-                            ? 'bg-amber-500 text-slate-950'
-                            : isDark ? 'bg-slate-800 text-slate-300 hover:bg-slate-700' : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
-                        }`}
-                      >
-                        Male 1
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setPhotoUrl('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80');
-                          setIsCustomPhoto(false);
-                          setCustomPhotoFileName('');
-                        }}
-                        className={`text-[10px] font-bold px-2 py-1 rounded transition-colors ${
-                          !isCustomPhoto && photoUrl.includes('photo-1500648767791')
-                            ? 'bg-amber-500 text-slate-950'
-                            : isDark ? 'bg-slate-800 text-slate-300 hover:bg-slate-700' : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
-                        }`}
-                      >
-                        Male 2
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setPhotoUrl('https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80');
-                          setIsCustomPhoto(false);
-                          setCustomPhotoFileName('');
-                        }}
-                        className={`text-[10px] font-bold px-2 py-1 rounded transition-colors ${
-                          !isCustomPhoto && photoUrl.includes('photo-1573496359142')
-                            ? 'bg-amber-500 text-slate-950'
-                            : isDark ? 'bg-slate-800 text-slate-300 hover:bg-slate-700' : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
-                        }`}
-                      >
-                        Female 1
-                      </button>
-                    </div>
                   </div>
                 </div>
               </div>
