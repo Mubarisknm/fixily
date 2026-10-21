@@ -56,7 +56,9 @@ import {
   CheckCircle,
   Layers,
   Inbox,
-  ZoomIn
+  ZoomIn,
+  Menu,
+  Mic
 } from 'lucide-react';
 import {
   ServiceItem,
@@ -770,28 +772,15 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
       {customerNavTab === 'home' && (
         <div className="space-y-6 animate-in fade-in duration-300">
           
-          {/* Top Greeting & Location Header (Google Stitch AI Glanceable Header) */}
-          <div className="flex items-center justify-between pt-1">
-            <div>
-              <div className="flex items-center space-x-2">
-                <span className={`text-xs font-semibold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                  {greetingText}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (setCustomerNavTab) setCustomerNavTab('discover');
-                  }}
-                  className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-pink-500/10 text-pink-600 dark:text-[#ffb1c3] border border-pink-500/30 hover:scale-105 transition-all cursor-pointer shadow-xs"
-                  title="Open Stitch AI Discover Feed"
-                >
-                  <Sparkles className="w-2.5 h-2.5 text-pink-500 animate-pulse" />
-                  <span>Stitch AI Feed</span>
-                </button>
-              </div>
-              <h2 className="text-xl sm:text-2xl font-black tracking-tight leading-snug">
-                {displayUserName}
-              </h2>
+          {/* ========================================================================= */}
+          {/* SWIGGY-STYLE TOP HEADER WITH FYKZI CATEGORIES & MIDNIGHT THEME             */}
+          {/* ========================================================================= */}
+          <div className="relative -mx-4 -mt-2 sm:mx-0 sm:mt-0 p-4 sm:p-5 rounded-b-[28px] sm:rounded-3xl bg-gradient-to-b from-[#0b051b] via-[#12082b] to-[#180a38] text-white shadow-2xl overflow-hidden border-b sm:border border-purple-900/30">
+            {/* Ambient Purple Light Flare */}
+            <div className="absolute -top-24 left-1/4 w-80 h-44 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
+            
+            {/* Top Bar: Location on left, Circular Menu Button on right (no free card) */}
+            <div className="flex items-start justify-between relative z-10 mb-4 sm:mb-5">
               <button
                 type="button"
                 onClick={() => {
@@ -801,114 +790,164 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                     onOpenLocationModal();
                   }
                 }}
-                className="flex items-center space-x-1.5 mt-0.5 text-left cursor-pointer active:opacity-70 group"
+                className="text-left group cursor-pointer active:opacity-80 max-w-[80%]"
                 title="Tap to change address & location"
               >
-                {selectedLocation.isLiveGps ? (
-                  <span className="relative flex h-2 w-2 shrink-0">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                  </span>
-                ) : (
-                  <span className="text-[10px] font-bold tracking-wider uppercase text-slate-400">
-                    CURRENT -
-                  </span>
-                )}
-                <span className="text-xs font-black text-teal-600 dark:text-teal-400 truncate max-w-[200px] group-hover:underline">
-                  {selectedLocation.name.replace(/^Live:\s*/i, '').replace(/\s*Area$/i, '').split('(')[0].trim()}
-                </span>
-                <ChevronDown className="w-3 h-3 text-teal-600 dark:text-teal-400 shrink-0" />
+                <div className="flex items-center space-x-1.5">
+                  <h1 className="text-lg sm:text-2xl font-black text-white tracking-tight leading-none group-hover:text-purple-200 transition-colors truncate">
+                    {selectedLocation.name.replace(/^Live:\s*/i, '').replace(/\s*Area$/i, '').split(',')[0].split('(')[0].trim() || 'Kent Baywatch Suites'}
+                  </h1>
+                  <ChevronRight className="w-5 h-5 text-white/90 group-hover:translate-x-0.5 transition-transform shrink-0" />
+                </div>
+                <p className="text-[11px] sm:text-xs text-purple-200/70 truncate mt-1 font-medium max-w-xs sm:max-w-md">
+                  {selectedLocation.name.includes(',')
+                    ? `${selectedLocation.name.split(',').slice(1).join(',').trim()}, Kerala, India`
+                    : `${selectedLocation.name}, ${selectedLocation.district || 'Kochi'}, Kerala, India`}
+                </p>
               </button>
-            </div>
 
-            <div className="flex items-center space-x-2">
+              {/* Top Right: Circular Menu Button (Only this, Free card removed) */}
               <button
-                onClick={() => {
-                  if (onOpenNotificationSettings) {
-                    onOpenNotificationSettings();
-                  } else if (currentUser && myActiveJobs.length > 0) {
-                    navigateToOrders();
-                  } else {
-                    alert('No new notifications right now.');
-                  }
-                }}
-                className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all cursor-pointer relative ${
-                  isDark ? 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100 shadow-sm'
-                }`}
-                title="Notifications & Reminders"
-              >
-                <Bell className="w-4 h-4" />
-                {myActiveJobs.length > 0 && (
-                  <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                )}
-              </button>
-
-              <div
+                type="button"
                 onClick={() => {
                   if (!currentUser && onOpenAuthModal) {
                     onOpenAuthModal('customer');
+                  } else if (onOpenNotificationSettings) {
+                    onOpenNotificationSettings();
+                  } else if (setCustomerNavTab) {
+                    setCustomerNavTab('orders');
                   }
                 }}
-                className="w-10 h-10 rounded-full bg-[#004D40] hover:bg-teal-700 text-white font-black text-sm flex items-center justify-center shadow-md cursor-pointer transition-transform hover:scale-105"
-                title={currentUser ? currentUser.name : 'Click to Login'}
+                className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 border border-white/15 flex items-center justify-center text-white cursor-pointer shadow-md transition-all shrink-0 ml-2"
+                title={currentUser ? currentUser.name : 'Menu & Account'}
               >
-                {userAvatarInitial}
-              </div>
-            </div>
-          </div>
-
-          {/* Real-time Kerala Live Activity Marquee Ticker */}
-          <LiveDispatchTicker
-            theme={theme}
-            currentDistrict={selectedLocation.district || 'Ernakulam'}
-            onSelectService={(serviceKeyword) => navigateToServices(serviceKeyword)}
-          />
-
-          {/* Search Bar + Quick Tag Jump Pills */}
-          <div className="space-y-2">
-            <div
-              onClick={() => navigateToServices()}
-              className={`relative flex items-center rounded-full border px-4 py-3 shadow-sm transition-all cursor-pointer group ${
-                isDark
-                  ? 'bg-slate-900/90 border-slate-800 text-white hover:border-teal-500/70 ring-1 ring-slate-800'
-                  : 'bg-white border-slate-200 text-slate-900 hover:border-teal-400 shadow-[0_2px_10px_rgba(0,0,0,0.04)]'
-              }`}
-            >
-              <Search className="w-4 h-4 text-teal-600 mr-2.5 shrink-0 group-hover:scale-110 transition-transform" />
-              <span className="text-xs sm:text-sm font-semibold text-slate-400 truncate flex-1">
-                Search "Driver", "Electrician", "Mechanic", "AC Repair"...
-              </span>
-              <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-full bg-[#004D40]/10 text-[#004D40] dark:text-teal-400 border border-teal-500/20">
-                Browse
-              </span>
+                <Menu className="w-5 h-5 text-white" />
+              </button>
             </div>
 
-            {/* Quick Interactive Problem Tags */}
-            <div className="flex items-center space-x-1.5 overflow-x-auto pb-1 scrollbar-none select-none">
+            {/* Category Cards (Renamed with Fykzi Categories) */}
+            <div className="flex items-end space-x-2 sm:space-x-3 overflow-x-auto pb-1 scrollbar-none select-none relative z-10 -mx-1 px-1">
               {[
-                { label: '⚡ Battery Jumpstart', query: 'Mechanic' },
-                { label: '🛞 Flat Tyre / Towing', query: 'Mechanic' },
-                { label: '👨‍✈️ Acting Driver', query: 'Driver' },
-                { label: '❄️ AC Repair', query: 'AC Repair' },
-                { label: '🚰 Water Leak', query: 'Plumber' },
-                { label: '🔌 Electrician', query: 'Electrician' }
-              ].map((tag, i) => (
+                {
+                  id: 'Mechanic & Roadside Assistance',
+                  title: 'Mechanic',
+                  badge: '20m ETA',
+                  icon: '🏍️',
+                  filterKey: 'mechanic'
+                },
+                {
+                  id: 'Electrical Services',
+                  title: 'Electrician',
+                  badge: 'Verified',
+                  icon: '⚡',
+                  filterKey: 'electrician'
+                },
+                {
+                  id: 'Plumbing & Water Management',
+                  title: 'Plumber',
+                  badge: 'Fixed Rate',
+                  icon: '🚰',
+                  filterKey: 'plumber'
+                },
+                {
+                  id: 'Driver',
+                  title: 'Driver',
+                  badge: 'Hourly/Day',
+                  icon: '👨‍✈️',
+                  filterKey: 'driver'
+                },
+                {
+                  id: 'Appliance Care & Servicing',
+                  title: 'AC Repair',
+                  badge: 'Gas & Service',
+                  icon: '❄️',
+                  filterKey: 'ac repair'
+                },
+                {
+                  id: 'all',
+                  title: 'All Services',
+                  badge: '12+ Trades',
+                  icon: '🌟',
+                  filterKey: 'all'
+                }
+              ].map((cat) => {
+                const isActive = selectedCategoryTab === cat.id || (selectedCategoryTab === 'all' && cat.id === 'all');
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => {
+                      setSelectedCategoryTab(cat.id);
+                    }}
+                    className={`shrink-0 cursor-pointer transition-all duration-200 text-center relative flex flex-col items-center justify-between ${
+                      isActive
+                        ? 'w-24 sm:w-28 pt-3 pb-3 px-2 rounded-t-[24px] sm:rounded-t-[28px] rounded-b-lg bg-gradient-to-b from-[#2e1358] via-[#220d43] to-[#16082e] border-t-2 border-x border-purple-400/40 shadow-[0_-4px_20px_rgba(168,85,247,0.35)] scale-102 z-20'
+                        : 'w-22 sm:w-24 py-2.5 px-2 rounded-[20px] sm:rounded-[22px] bg-[#160a2c]/80 hover:bg-[#20103e] border border-white/10 opacity-75 hover:opacity-100 z-10'
+                    }`}
+                  >
+                    {/* Top spotlight for active category */}
+                    {isActive && (
+                      <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-12 h-3 bg-purple-400/60 blur-xs rounded-full pointer-events-none" />
+                    )}
+
+                    {/* 3D Visual Icon */}
+                    <div className={`transition-transform duration-200 flex items-center justify-center ${isActive ? 'scale-115 -translate-y-0.5' : 'scale-100'}`}>
+                      <span className="text-3xl sm:text-4xl filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.4)]">
+                        {cat.icon}
+                      </span>
+                    </div>
+
+                    {/* Category Title */}
+                    <span
+                      className={`text-xs sm:text-sm font-bold tracking-tight mt-1.5 transition-colors ${
+                        isActive ? 'text-white font-extrabold' : 'text-purple-200/70 font-semibold'
+                      }`}
+                    >
+                      {cat.title}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Search Bar Row (Clean White Pill with Search, Divider, and Orange Mic) */}
+            <div className="mt-3 relative z-10">
+              <div className="relative flex items-center bg-white text-slate-800 rounded-[20px] sm:rounded-[24px] px-4 py-3 sm:py-3.5 shadow-2xl transition-all border border-slate-100">
+                <Search className="w-5 h-5 text-slate-400 shrink-0 mr-3" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search for 'Mechanic', 'Electrician', 'Plumber'..."
+                  className="w-full bg-transparent text-xs sm:text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none"
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    className="p-1 text-slate-400 hover:text-slate-600 mr-2"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+                {/* Thin vertical separator line */}
+                <div className="h-5 sm:h-6 w-px bg-slate-200 mx-2 sm:mx-3 shrink-0" />
+                {/* Mic Icon in Orange/Coral */}
                 <button
-                  key={i}
                   type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigateToServices(tag.query);
+                  onClick={() => {
+                    if (!searchQuery) {
+                      setSearchQuery('Mechanic');
+                    } else {
+                      setSearchQuery('');
+                    }
                   }}
-                  className={`text-[10px] font-bold px-2.5 py-1 rounded-full border whitespace-nowrap transition-all cursor-pointer ${
-                    isDark
-                      ? 'bg-slate-900/80 border-slate-800 text-slate-300 hover:border-teal-500/60 hover:text-white'
-                      : 'bg-white border-slate-200 text-slate-600 hover:border-teal-400 hover:text-teal-700 shadow-xs'
-                  }`}
+                  className="p-1 text-[#f97316] hover:text-[#ea580c] active:scale-90 transition-transform cursor-pointer shrink-0"
+                  title="Voice Search"
                 >
-                  {tag.label}
+                  <Mic className="w-5 h-5 text-[#f97316]" />
                 </button>
-              ))}
+              </div>
             </div>
           </div>
 
