@@ -22,7 +22,7 @@ import {
   Image as ImageIcon,
   RefreshCw
 } from 'lucide-react';
-import { GigPartner, ThemeMode } from '../types';
+import { GigPartner, ThemeMode, DEFAULT_BLANK_AVATAR } from '../types';
 import { api } from '../services/api';
 
 interface PartnerKYCModalProps {
@@ -86,9 +86,7 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
   const [vehicle, setVehicle] = useState<string>('');
 
   // Own Photo Upload State
-  const [photoUrl, setPhotoUrl] = useState<string>(
-    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80'
-  );
+  const [photoUrl, setPhotoUrl] = useState<string>(DEFAULT_BLANK_AVATAR);
   const [isCustomPhoto, setIsCustomPhoto] = useState<boolean>(false);
   const [customPhotoFileName, setCustomPhotoFileName] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -277,7 +275,7 @@ export const PartnerKYCModal: React.FC<PartnerKYCModalProps> = ({
                     src={photoUrl}
                     alt="Partner Avatar Preview"
                     onError={(e) => {
-                      e.currentTarget.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80';
+                      e.currentTarget.src = DEFAULT_BLANK_AVATAR;
                     }}
                     className="w-20 h-20 rounded-2xl object-cover border-2 border-amber-400 shadow-lg shadow-amber-500/20"
                   />

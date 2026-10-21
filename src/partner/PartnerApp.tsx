@@ -50,7 +50,7 @@ import {
   Eye,
   Hammer
 } from 'lucide-react';
-import { GigPartner, BookingJob, ThemeMode, KochiLocation, PartnerToolItem, PartnerCustomRates } from '../types';
+import { GigPartner, BookingJob, ThemeMode, KochiLocation, PartnerToolItem, PartnerCustomRates, DEFAULT_BLANK_AVATAR } from '../types';
 import { KOCHI_LOCATIONS } from '../data/db';
 import { api } from '../services/api';
 import { PartnerKYCModal } from './PartnerKYCModal';
@@ -1804,7 +1804,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
                   src={currentPartner.photoUrl}
                   alt={currentPartner.name}
                   onError={(e) => {
-                    e.currentTarget.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80';
+                    e.currentTarget.src = DEFAULT_BLANK_AVATAR;
                   }}
                   className="w-16 h-16 rounded-2xl object-cover border-2 border-amber-400/80 shadow-lg shadow-amber-500/10"
                 />

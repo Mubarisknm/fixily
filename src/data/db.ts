@@ -1,5 +1,5 @@
 // Mock Database & Business Logic Store for Fykzi Kerala
-import { KochiLocation, ServiceItem, GigPartner, BookingJob } from '../types';
+import { KochiLocation, ServiceItem, GigPartner, BookingJob, DEFAULT_BLANK_AVATAR } from '../types';
 
 export const KOCHI_LOCATIONS: KochiLocation[] = [
   // 1. Ernakulam District (Metropolitan, Suburbs & Coastal/Rural)
@@ -914,7 +914,7 @@ export const MOCK_PARTNERS: GigPartner[] = [
     escrowBalance: 250,
     withdrawableBalance: 1700,
     todaysEarnings: 850,
-    photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
+    photoUrl: DEFAULT_BLANK_AVATAR,
     aadhaarMasked: '•••• •••• 4419'
   },
   {

@@ -22,7 +22,7 @@ import {
   Activity,
   RefreshCw
 } from 'lucide-react';
-import { GigPartner, BookingJob, AdminStats, KochiLocation } from '../types';
+import { GigPartner, BookingJob, AdminStats, KochiLocation, DEFAULT_BLANK_AVATAR } from '../types';
 import { LiveMap } from '../components/LiveMap';
 import { api } from '../services/api';
 import { sound } from '../utils/soundEffects';
@@ -427,7 +427,7 @@ export const AdminConsole: React.FC<AdminConsoleProps> = ({
                         src={p.photoUrl}
                         alt=""
                         onError={(e) => {
-                          e.currentTarget.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80';
+                          e.currentTarget.src = DEFAULT_BLANK_AVATAR;
                         }}
                         className="w-8 h-8 rounded-full object-cover border border-slate-700"
                       />
