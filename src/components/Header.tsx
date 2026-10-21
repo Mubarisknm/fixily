@@ -1,31 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ShieldCheck,
-  UserCheck,
   MapPin,
   Wrench,
   Sun,
   Moon,
   Search,
-  Siren,
+  ChevronRight,
   ChevronDown,
-  Crosshair,
-  Check,
   X,
-  Compass,
-  Navigation,
   Globe,
   Lock,
   User,
   LogOut,
-  AlertCircle,
-  Smartphone,
-  Monitor,
-  Sparkles,
-  Mail,
   Bell,
   Volume2,
-  VolumeX
+  VolumeX,
+  Menu,
+  Mic,
+  MicOff,
+  Zap,
+  Sparkles,
+  CheckCircle2,
+  SlidersHorizontal,
+  Navigation,
+  Compass,
+  ArrowRight
 } from 'lucide-react';
 import { KochiLocation, ThemeMode, AppLanguage, UserSession, UserRole } from '../types';
 import { useTranslation } from '../utils/translations';
@@ -82,8 +82,13 @@ export const Header: React.FC<HeaderProps> = ({
   const isDark = theme === 'dark';
 
   const [showLocationModal, setShowLocationModal] = useState<boolean>(false);
-  const [gpsToast, setGpsToast] = useState<string | null>(null);
-  const [showUserDropdown, setShowUserDropdown] = useState<boolean>(false);
+  const [showMenuDrawer, setShowMenuDrawer] = useState<boolean>(false);
+  const [activeCategoryTab, setActiveCategoryTab] = useState<'services' | 'rescue' | 'pros'>('services');
+  const [instantFilterActive, setInstantFilterActive] = useState<boolean>(false);
+  const [headerSearchQuery, setHeaderSearchQuery] = useState<string>('');
+  const [isListening, setIsListening] = useState<boolean>(false);
+  const [voiceToast, setVoiceToast] = useState<string | null>(null);
+
   const [soundEnabled, setSoundEnabled] = useState<boolean>(() => {
     const saved = typeof window !== 'undefined' ? localStorage.getItem('fykzi_sound_fx') : null;
     const isEnabled = saved !== null ? saved === 'true' : true;
@@ -103,383 +108,667 @@ export const Header: React.FC<HeaderProps> = ({
     }
   };
 
-  const handleQuickSearchClick = () => {
+  // Synchronize category tab with global tab
+  useEffect(() => {
+    if (activeTab === 'partner') {
+      setActiveCategoryTab('pros');
+    } else if (activeTab === 'customer') {
+      if (activeCategoryTab === 'pros') {
+        setActiveCategoryTab('services');
+      }
+    }
+  }, [activeTab]);
+
+  const handleSelectCategory = (cat: 'services' | 'rescue' | 'pros') => {
     sound.playClick();
+    setActiveCategoryTab(cat);
+
+    if (cat === 'services') {
+      setActiveTab('customer');
+      const servicesSection = document.getElementById('services-grid-section') || document.getElementById('customer-services-container');
+      if (servicesSection) {
+        servicesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    } else if (cat === 'rescue') {
+      setActiveTab('customer');
+      if (onOpenEmergency) {
+        onOpenEmergency();
+      }
+    } else if (cat === 'pros') {
+      // Find specialists or scroll to partners section
+      setActiveTab('customer');
+      const partnerSection = document.getElementById('specialist-radar-section') || document.getElementById('partner-showcase-section');
+      if (partnerSection) {
+        partnerSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        const searchInput = document.getElementById('services-page-search') as HTMLInputElement;
+        if (searchInput) {
+          searchInput.value = 'Mechanic';
+          searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+          searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+    }
+  };
+
+  const handleSearchSubmit = (queryToUse?: string) => {
+    sound.playClick();
+    const q = (queryToUse !== undefined ? queryToUse : headerSearchQuery).trim();
     setActiveTab('customer');
-    const searchInput = document.getElementById('service-search-input');
+
+    const searchInput = (document.getElementById('services-page-search') || document.getElementById('service-search-input')) as HTMLInputElement | null;
     if (searchInput) {
+      searchInput.value = q;
+      searchInput.dispatchEvent(new Event('input', { bubbles: true }));
       searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
       searchInput.focus();
     } else {
-      window.scrollTo({ top: 150, behavior: 'smooth' });
+      window.scrollTo({ top: 200, behavior: 'smooth' });
     }
   };
 
-  const handleSwitchToPartner = () => {
-    setShowUserDropdown(false);
-    setActiveTab('partner');
-  };
+  const handleVoiceSearch = () => {
+    sound.playClick();
+    const SpeechRec = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRec) {
+      setVoiceToast('Speech recognition not supported in this browser');
+      setTimeout(() => setVoiceToast(null), 3000);
+      return;
+    }
 
-  const handleSwitchToAdmin = () => {
-    setShowUserDropdown(false);
-    if (currentUser?.role === 'admin') {
-      setActiveTab('admin');
-    } else {
-      onOpenAuthModal('admin');
+    try {
+      const recognition = new SpeechRec();
+      recognition.lang = language === 'ml' ? 'ml-IN' : 'en-IN';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      setIsListening(true);
+      setVoiceToast('Listening... Speak a service name');
+
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setIsListening(false);
+        setHeaderSearchQuery(transcript);
+        setVoiceToast(`Searching: "${transcript}"`);
+        setTimeout(() => setVoiceToast(null), 2500);
+        handleSearchSubmit(transcript);
+      };
+
+      recognition.onerror = () => {
+        setIsListening(false);
+        setVoiceToast('Voice input cancelled or unavailable');
+        setTimeout(() => setVoiceToast(null), 2500);
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+
+      recognition.start();
+    } catch {
+      setIsListening(false);
     }
   };
 
-  const cleanLocationName = (selectedLocation?.name || 'Kerala')
+  const cleanLocationName = (selectedLocation?.name || 'Kent Baywatch Suites')
     .replace(/^Live:\s*/i, '')
     .replace(/\s*Area$/i, '')
     .split('(')[0]
     .trim();
 
+  const locationSubtitle = [
+    cleanLocationName,
+    selectedLocation?.district || selectedLocation?.city || 'Kochi',
+    'Kerala, India'
+  ].filter(Boolean).join(', ');
+
   return (
     <header className={`sticky top-0 z-50 transition-all duration-300 border-b backdrop-blur-xl ${
       isDark
-        ? 'bg-[#0F172A]/90 text-white border-slate-800/80 shadow-[0_4px_25px_rgba(0,0,0,0.4)]'
-        : 'bg-[#F8FAFC]/90 text-slate-900 border-slate-200/90 shadow-[0_4px_20px_rgba(37,99,235,0.06)]'
+        ? 'bg-[#0B0F19]/95 text-white border-slate-800/80 shadow-[0_4px_30px_rgba(0,0,0,0.5)]'
+        : 'bg-[#F8FAFC]/95 text-slate-900 border-slate-200/90 shadow-[0_4px_25px_rgba(0,0,0,0.05)]'
     }`}>
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-14 sm:h-16 gap-2">
+      <div className="max-w-4xl mx-auto px-3.5 sm:px-6 py-2 sm:py-3 space-y-2.5">
+        
+        {/* ======================================================== */}
+        {/* ROW 1: LOCATION HEADER & CIRCULAR MENU BUTTON (Swiggy Style) */}
+        {/* ======================================================== */}
+        <div className="flex items-center justify-between gap-3">
           
-          {/* 1. Left: Brand Logo & Interactive Location Selector */}
-          <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
-            <div
-              onClick={() => setActiveTab('customer')}
-              className="cursor-pointer group shrink-0 transition-transform active:scale-95"
-              title="Fykzi Kerala — Home"
-            >
-              <FykziLogo isDark={isDark} size="md" variant="full" />
+          {/* Left: Location Title + Chevron + Subtitle */}
+          <div
+            onClick={() => {
+              sound.playClick();
+              if (onOpenLocationModal) {
+                onOpenLocationModal();
+              } else {
+                setShowLocationModal(true);
+              }
+            }}
+            className="flex items-start space-x-2.5 cursor-pointer group min-w-0 flex-1 select-none"
+            title="Tap to change delivery location & explore Kerala map"
+          >
+            {/* Small subtle brand mark */}
+            <div className="mt-0.5 shrink-0 group-hover:scale-105 transition-transform">
+              <FykziLogo isDark={isDark} size="sm" variant="icon" />
             </div>
 
-            {/* Active Kerala Location Selector Pill (Compact & Live Blinking) */}
-            <button
-              onClick={() => {
-                if (onOpenLocationModal) {
-                  onOpenLocationModal();
-                } else {
-                  setShowLocationModal(true);
-                }
-              }}
-              className={`flex items-center space-x-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full border text-xs font-bold transition-all shadow-sm cursor-pointer card-3d-interactive shrink-0 max-w-[125px] sm:max-w-[190px] ${
-                selectedLocation.isLiveGps
-                  ? isDark
-                    ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-200 hover:border-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.15)]'
-                    : 'bg-emerald-50/90 border-emerald-300 text-emerald-950 hover:bg-emerald-100'
-                  : isDark
-                  ? 'bg-slate-900/90 border-slate-700/80 text-blue-200 hover:border-blue-400 hover:bg-slate-800'
-                  : 'bg-blue-50/80 border-blue-200 text-blue-900 hover:bg-blue-100'
-              }`}
-              title="Tap to change area or explore Kerala live map"
-            >
-              {selectedLocation.isLiveGps ? (
-                <span className="relative flex h-2 w-2 shrink-0">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                </span>
-              ) : (
-                <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                  selectedLocation.isServiced !== false ? 'bg-blue-500' : 'bg-amber-500'
-                }`} />
-              )}
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center space-x-1.5">
+                <h1 className="text-base sm:text-lg font-black tracking-tight truncate group-hover:text-teal-500 transition-colors">
+                  {cleanLocationName}
+                </h1>
+                <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-teal-500 group-hover:translate-x-0.5 transition-all shrink-0" />
+                
+                {selectedLocation.isLiveGps && (
+                  <span className="relative flex h-2 w-2 shrink-0 ml-1">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                  </span>
+                )}
+              </div>
 
-              <MapPin className={`w-3.5 h-3.5 shrink-0 ${
-                selectedLocation.isLiveGps ? 'text-emerald-500' : 'text-blue-500'
-              }`} />
-
-              <span className="truncate font-black text-[11px] sm:text-xs">
-                {cleanLocationName}
-              </span>
-              <ChevronDown className="w-3 h-3 opacity-60 shrink-0" />
-            </button>
+              <p className="text-[11px] sm:text-xs text-slate-400 dark:text-slate-400 truncate">
+                {locationSubtitle}
+              </p>
+            </div>
           </div>
 
-          {/* Middle: Role Segmented Control (Desktop & Tablet) */}
-          <div className="hidden lg:flex items-center p-1 rounded-full border bg-slate-900/60 dark:bg-slate-950/70 border-slate-700/60 dark:border-slate-800 shadow-inner">
+          {/* Right: Circular Menu Hamburger Button (replaces cluttered right buttons) */}
+          <div className="flex items-center space-x-2 shrink-0">
             <button
               onClick={() => {
                 sound.playClick();
-                setActiveTab('customer');
+                setShowMenuDrawer(true);
               }}
-              className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full text-xs font-black transition-all cursor-pointer ${
-                activeTab === 'customer'
-                  ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <User className="w-3.5 h-3.5" />
-              <span>Customer</span>
-            </button>
-            <button
-              onClick={() => {
-                sound.playClick();
-                setActiveTab('partner');
-              }}
-              className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full text-xs font-black transition-all cursor-pointer ${
-                activeTab === 'partner'
-                  ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <Wrench className="w-3.5 h-3.5" />
-              <span>Specialist</span>
-            </button>
-            <button
-              onClick={() => {
-                sound.playClick();
-                setActiveTab('admin');
-              }}
-              className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full text-xs font-black transition-all cursor-pointer ${
-                activeTab === 'admin'
-                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Admin Console</span>
-            </button>
-          </div>
-
-          {/* 2. Right: Action Controls (Language, Day/Night, Profile) */}
-          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
-            
-            {/* Quick Search Button (Desktop only) */}
-            <button
-              onClick={handleQuickSearchClick}
-              className={`hidden md:flex items-center space-x-1 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+              className={`w-10 h-10 rounded-full border flex items-center justify-center transition-all cursor-pointer relative shadow-sm ${
                 isDark
-                  ? 'bg-slate-900/80 border-slate-800 text-slate-300 hover:border-blue-500 hover:text-white'
-                  : 'bg-white border-slate-200 text-slate-700 hover:border-blue-300 hover:text-blue-600 shadow-sm'
+                  ? 'bg-slate-900 border-slate-700/80 text-white hover:bg-slate-800 hover:border-teal-500/50'
+                  : 'bg-white border-slate-200 text-slate-800 hover:bg-slate-100 hover:border-slate-300'
               }`}
-              title="Search services, technicians and repairs"
+              title="Open Navigation Menu & Account"
             >
-              <Search className="w-3.5 h-3.5 text-blue-500 shrink-0" />
-              <span>Search</span>
-            </button>
-
-            {/* Language Switcher (Malayalam / English) */}
-            <button
-              onClick={() => {
-                sound.playClick();
-                onToggleLanguage();
-              }}
-              className={`px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-xl border text-xs font-black transition-all flex items-center space-x-1 cursor-pointer shrink-0 shadow-sm ${
-                isDark
-                  ? 'bg-slate-900/90 border-slate-700/80 text-blue-400 hover:border-blue-500'
-                  : 'bg-white border-slate-200 text-blue-600 hover:border-blue-300'
-              }`}
-              title="Toggle English / മലയാളം"
-            >
-              <Globe className="w-3.5 h-3.5 text-blue-500 shrink-0" />
-              <span className="font-black text-[11px] whitespace-nowrap">{language === 'en' ? 'ML' : 'EN'}</span>
-            </button>
-
-            {/* Spatial Audio SFX Toggle */}
-            <button
-              onClick={handleToggleSound}
-              className={`p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl border text-xs font-extrabold transition-all shadow-sm flex items-center space-x-1 cursor-pointer shrink-0 ${
-                soundEnabled
-                  ? isDark
-                    ? 'bg-teal-950/70 border-teal-500/50 text-teal-300 hover:bg-teal-900/60'
-                    : 'bg-teal-50 border-teal-300 text-teal-700 hover:bg-teal-100'
-                  : isDark
-                    ? 'bg-slate-900 border-slate-800 text-slate-500 hover:text-slate-400'
-                    : 'bg-slate-100 border-slate-200 text-slate-400 hover:text-slate-600'
-              }`}
-              title={soundEnabled ? "Mute UI Audio Feedback" : "Enable Spatial Audio UI Feedback"}
-            >
-              {soundEnabled ? (
-                <Volume2 className="w-3.5 h-3.5 text-teal-400" />
-              ) : (
-                <VolumeX className="w-3.5 h-3.5 text-slate-400" />
-              )}
-            </button>
-
-            {/* Day / Night Theme Toggle */}
-            <button
-              onClick={() => {
-                sound.playClick();
-                onToggleTheme();
-              }}
-              className={`p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl border text-xs font-extrabold transition-all shadow-sm flex items-center space-x-1 cursor-pointer shrink-0 ${
-                isDark
-                  ? 'bg-slate-800 border-slate-700 text-amber-300 hover:bg-slate-700 hover:border-amber-400'
-                  : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100 hover:border-blue-200'
-              }`}
-              title={isDark ? "Switch to Day Light Mode" : "Switch to Night Dark Mode"}
-            >
-              {isDark ? (
-                <Sun className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-              ) : (
-                <Moon className="w-3.5 h-3.5 text-blue-600 fill-blue-600" />
-              )}
-            </button>
-
-            {/* User Profile / Google Sign-In Button */}
-            <div className="relative shrink-0">
-              {currentUser ? (
-                <div>
-                  <button
-                    onClick={() => setShowUserDropdown(!showUserDropdown)}
-                    className={`flex items-center space-x-1.5 px-2 py-1 sm:px-3 sm:py-1.5 rounded-2xl border text-xs font-black transition-all card-3d-interactive cursor-pointer ${
-                      isDark
-                        ? 'bg-blue-950/60 border-blue-700/60 text-blue-200 hover:bg-blue-900/50'
-                        : 'bg-blue-50 border-blue-200 text-blue-900 hover:bg-blue-100'
-                    }`}
-                  >
-                    {currentUser.avatar ? (
-                      <img
-                        src={currentUser.avatar}
-                        alt={currentUser.name}
-                        onError={(e) => {
-                          e.currentTarget.src = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80';
-                        }}
-                        className="w-5 h-5 rounded-full object-cover ring-1 ring-blue-500"
-                      />
-                    ) : (
-                      <div className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-bold">
-                        {currentUser.name.charAt(0)}
-                      </div>
-                    )}
-                    <span className="max-w-[45px] sm:max-w-[85px] truncate text-[11px] sm:text-xs">
-                      {currentUser.name.split(' ')[0]}
-                    </span>
-                    <ChevronDown className="w-3 h-3 opacity-60 hidden sm:inline" />
-                  </button>
-
-                  {/* 3D Glassmorphic Dropdown Menu */}
-                  {showUserDropdown && (
-                    <div className={`absolute right-0 mt-2 w-64 rounded-3xl border shadow-2xl p-2.5 z-50 text-xs animate-in fade-in slide-in-from-top-2 duration-200 ${
-                      isDark
-                        ? 'bg-gradient-to-b from-slate-900 to-slate-950 border-slate-800 text-white shadow-[0_20px_50px_rgba(0,0,0,0.8)]'
-                        : 'bg-white border-slate-200 text-slate-900 shadow-[0_20px_50px_rgba(37,99,235,0.15)]'
-                    }`}>
-                      <div className="p-2.5 border-b border-slate-100 dark:border-slate-800">
-                        <div className="font-black text-sm">{currentUser.name}</div>
-                        <div className="text-[11px] text-slate-400">
-                          {currentUser.email || currentUser.phone || 'Verified User'}
-                        </div>
-                        <div className="flex items-center space-x-1 text-[10px] text-emerald-500 font-bold mt-1">
-                          <span>✓</span>
-                          <span>
-                            {currentUser.authProvider === 'google'
-                              ? 'Google Authenticated'
-                              : currentUser.authProvider === 'email'
-                              ? 'Email Verified'
-                              : 'Phone OTP Verified'}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="py-1.5 space-y-1">
-                        <button
-                          onClick={() => {
-                            setActiveTab('customer');
-                            setShowUserDropdown(false);
-                          }}
-                          className={`w-full text-left px-3 py-2 rounded-xl font-bold flex items-center space-x-2 transition-colors cursor-pointer ${
-                            activeTab === 'customer'
-                              ? 'bg-blue-600 text-white shadow-sm'
-                              : isDark ? 'hover:bg-slate-800' : 'hover:bg-slate-100'
-                          }`}
-                        >
-                          <User className="w-3.5 h-3.5" />
-                          <span>Customer Service Portal</span>
-                        </button>
-
-                        <button
-                          onClick={() => {
-                            setShowUserDropdown(false);
-                            if (onOpenManageAddress) {
-                              onOpenManageAddress();
-                            } else if (onOpenLocationModal) {
-                              onOpenLocationModal();
-                            }
-                          }}
-                          className={`w-full text-left px-3 py-2 rounded-xl font-bold flex items-center space-x-2 transition-colors cursor-pointer ${
-                            isDark ? 'hover:bg-slate-800' : 'hover:bg-slate-100'
-                          }`}
-                        >
-                          <MapPin className="w-3.5 h-3.5 text-blue-500" />
-                          <span>Manage Address &amp; Location</span>
-                        </button>
-
-                        <button
-                          onClick={() => {
-                            setShowUserDropdown(false);
-                            onOpenNotificationSettings?.();
-                          }}
-                          className={`w-full text-left px-3 py-2 rounded-xl font-bold flex items-center space-x-2 transition-colors cursor-pointer ${
-                            isDark ? 'hover:bg-slate-800' : 'hover:bg-slate-100'
-                          }`}
-                        >
-                          <Bell className="w-3.5 h-3.5 text-amber-500" />
-                          <span>Notifications &amp; Reminders</span>
-                        </button>
-
-                        <button
-                          onClick={handleSwitchToPartner}
-                          className={`w-full text-left px-3 py-2 rounded-xl font-bold flex items-center space-x-2 transition-colors cursor-pointer ${
-                            activeTab === 'partner'
-                              ? 'bg-blue-600 text-white shadow-sm'
-                              : isDark ? 'hover:bg-slate-800' : 'hover:bg-slate-100'
-                          }`}
-                        >
-                          <Lock className="w-3.5 h-3.5 text-blue-400" />
-                          <span>Partner Portal &amp; Apply</span>
-                        </button>
-
-                        <button
-                          onClick={handleSwitchToAdmin}
-                          className={`w-full text-left px-3 py-2 rounded-xl font-bold flex items-center space-x-2 transition-colors cursor-pointer ${
-                            activeTab === 'admin'
-                              ? 'bg-blue-600 text-white shadow-sm'
-                              : isDark ? 'hover:bg-slate-800' : 'hover:bg-slate-100'
-                          }`}
-                        >
-                          <ShieldCheck className="w-3.5 h-3.5 text-rose-400" />
-                          <span>Admin Console</span>
-                        </button>
-                      </div>
-
-                      <div className="pt-1.5 border-t border-slate-100 dark:border-slate-800">
-                        <button
-                          onClick={() => {
-                            setShowUserDropdown(false);
-                            onLogout();
-                          }}
-                          className="w-full text-left px-3 py-2 rounded-xl text-rose-500 font-bold hover:bg-rose-500/10 flex items-center space-x-2 cursor-pointer transition-colors"
-                        >
-                          <LogOut className="w-3.5 h-3.5" />
-                          <span>{t('logout_btn')}</span>
-                        </button>
-                      </div>
-                    </div>
-                  )}
+              {currentUser?.avatar ? (
+                <img
+                  src={currentUser.avatar}
+                  alt={currentUser.name}
+                  className="w-8 h-8 rounded-full object-cover ring-2 ring-teal-500"
+                />
+              ) : currentUser ? (
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-teal-600 to-emerald-600 text-white font-black text-xs flex items-center justify-center">
+                  {currentUser.name.charAt(0).toUpperCase()}
                 </div>
               ) : (
-                <button
-                  onClick={() => onOpenAuthModal('customer')}
-                  className="flex items-center space-x-1 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs shadow-md shadow-blue-600/30 transition-all card-3d-interactive cursor-pointer shrink-0"
-                >
-                  <User className="w-3.5 h-3.5" />
-                  <span>Login</span>
-                </button>
+                <Menu className="w-5 h-5 text-slate-700 dark:text-slate-200" />
               )}
-            </div>
 
+              {/* Status Indicator */}
+              <span className={`absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 ${
+                isDark ? 'border-[#0B0F19]' : 'border-white'
+              } ${currentUser ? 'bg-emerald-500' : 'bg-teal-500'}`} />
+            </button>
           </div>
 
         </div>
+
+        {/* ======================================================== */}
+        {/* ROW 2: 3 CATEGORY TABS (Swiggy Curved Card / Pill Style) */}
+        {/* ======================================================== */}
+        <div className="grid grid-cols-3 gap-2 sm:gap-3">
+          
+          {/* Tab 1: Doorstep Services */}
+          <button
+            type="button"
+            onClick={() => handleSelectCategory('services')}
+            className={`flex items-center justify-center space-x-2 sm:space-x-3 py-2.5 px-2 rounded-2xl border transition-all cursor-pointer select-none ${
+              activeCategoryTab === 'services' && activeTab === 'customer'
+                ? isDark
+                  ? 'bg-gradient-to-r from-teal-950/80 to-slate-900 border-teal-500/60 text-white shadow-lg shadow-teal-950/40'
+                  : 'bg-teal-50/90 border-teal-400 text-teal-950 shadow-md shadow-teal-500/10'
+                : isDark
+                  ? 'bg-slate-900/60 border-slate-800/80 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                  : 'bg-white border-slate-200/80 text-slate-600 hover:text-slate-900 hover:bg-slate-50 shadow-xs'
+            }`}
+          >
+            <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center text-sm shrink-0 transition-transform ${
+              activeCategoryTab === 'services' && activeTab === 'customer' ? 'scale-110' : ''
+            } ${
+              isDark ? 'bg-teal-500/20 text-teal-300' : 'bg-teal-100 text-teal-700'
+            }`}>
+              🛠️
+            </div>
+            <div className="text-left min-w-0">
+              <div className="text-xs sm:text-sm font-black truncate leading-tight">
+                Services
+              </div>
+              <div className="text-[10px] font-semibold text-slate-400 truncate hidden xs:block">
+                Doorstep
+              </div>
+            </div>
+          </button>
+
+          {/* Tab 2: 15-Min Rescue */}
+          <button
+            type="button"
+            onClick={() => handleSelectCategory('rescue')}
+            className={`flex items-center justify-center space-x-2 sm:space-x-3 py-2.5 px-2 rounded-2xl border transition-all cursor-pointer select-none ${
+              activeCategoryTab === 'rescue'
+                ? isDark
+                  ? 'bg-gradient-to-r from-rose-950/80 to-slate-900 border-rose-500/60 text-white shadow-lg shadow-rose-950/40'
+                  : 'bg-rose-50/90 border-rose-400 text-rose-950 shadow-md shadow-rose-500/10'
+                : isDark
+                  ? 'bg-slate-900/60 border-slate-800/80 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                  : 'bg-white border-slate-200/80 text-slate-600 hover:text-slate-900 hover:bg-slate-50 shadow-xs'
+            }`}
+          >
+            <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center text-sm shrink-0 transition-transform ${
+              activeCategoryTab === 'rescue' ? 'scale-110' : ''
+            } ${
+              isDark ? 'bg-rose-500/20 text-rose-300' : 'bg-rose-100 text-rose-700'
+            }`}>
+              ⚡
+            </div>
+            <div className="text-left min-w-0">
+              <div className="text-xs sm:text-sm font-black truncate leading-tight">
+                15-Min Rescue
+              </div>
+              <div className="text-[10px] font-semibold text-slate-400 truncate hidden xs:block">
+                Breakdown
+              </div>
+            </div>
+          </button>
+
+          {/* Tab 3: Verified Pros */}
+          <button
+            type="button"
+            onClick={() => handleSelectCategory('pros')}
+            className={`flex items-center justify-center space-x-2 sm:space-x-3 py-2.5 px-2 rounded-2xl border transition-all cursor-pointer select-none ${
+              activeCategoryTab === 'pros' || activeTab === 'partner'
+                ? isDark
+                  ? 'bg-gradient-to-r from-indigo-950/80 to-slate-900 border-indigo-500/60 text-white shadow-lg shadow-indigo-950/40'
+                  : 'bg-indigo-50/90 border-indigo-400 text-indigo-950 shadow-md shadow-indigo-500/10'
+                : isDark
+                  ? 'bg-slate-900/60 border-slate-800/80 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                  : 'bg-white border-slate-200/80 text-slate-600 hover:text-slate-900 hover:bg-slate-50 shadow-xs'
+            }`}
+          >
+            <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center text-sm shrink-0 transition-transform ${
+              activeCategoryTab === 'pros' || activeTab === 'partner' ? 'scale-110' : ''
+            } ${
+              isDark ? 'bg-indigo-500/20 text-indigo-300' : 'bg-indigo-100 text-indigo-700'
+            }`}>
+              🛡️
+            </div>
+            <div className="text-left min-w-0">
+              <div className="text-xs sm:text-sm font-black truncate leading-tight">
+                Verified Pros
+              </div>
+              <div className="text-[10px] font-semibold text-slate-400 truncate hidden xs:block">
+                Specialists
+              </div>
+            </div>
+          </button>
+
+        </div>
+
+        {/* ======================================================== */}
+        {/* ROW 3: PROMINENT SEARCH PILL + MIC + INSTANT FILTER PILL */}
+        {/* ======================================================== */}
+        <div className={`flex items-center rounded-2xl border px-3 sm:px-4 py-2 sm:py-2.5 shadow-sm transition-all ${
+          isDark
+            ? 'bg-slate-900/90 border-slate-700/80 text-white focus-within:border-teal-500 shadow-[0_4px_20px_rgba(0,0,0,0.3)]'
+            : 'bg-white border-slate-200/90 text-slate-900 focus-within:border-teal-500 shadow-[0_4px_16px_rgba(0,0,0,0.06)]'
+        }`}>
+          
+          {/* Search Icon */}
+          <Search className="w-4 h-4 text-slate-400 mr-2.5 shrink-0" />
+
+          {/* Search Input */}
+          <input
+            id="fykzi-header-search-bar"
+            type="text"
+            value={headerSearchQuery}
+            onChange={(e) => setHeaderSearchQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSearchSubmit();
+              }
+            }}
+            placeholder="Search for 'AC Repair', 'Mechanic', 'Electrician'..."
+            className="w-full bg-transparent text-xs sm:text-sm font-semibold focus:outline-none placeholder:text-slate-400 truncate"
+          />
+
+          {/* Clear button if typed */}
+          {headerSearchQuery && (
+            <button
+              onClick={() => {
+                setHeaderSearchQuery('');
+                handleSearchSubmit('');
+              }}
+              className="p-1 text-slate-400 hover:text-slate-200 rounded-full mr-1 cursor-pointer"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
+
+          {/* Divider */}
+          <div className="h-5 w-[1px] bg-slate-200 dark:bg-slate-700 mx-2 shrink-0" />
+
+          {/* Orange Microphone Voice Search Icon */}
+          <button
+            type="button"
+            onClick={handleVoiceSearch}
+            className={`p-1.5 rounded-full transition-all cursor-pointer shrink-0 relative ${
+              isListening ? 'bg-orange-500 text-white animate-pulse' : 'text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-950/40'
+            }`}
+            title="Search with Voice"
+          >
+            {isListening ? (
+              <MicOff className="w-4 h-4 text-white" />
+            ) : (
+              <Mic className="w-4 h-4 text-orange-500 fill-orange-500/20" />
+            )}
+          </button>
+
+          {/* Instant Filter Pill (Swiggy 'VEG' style toggle button) */}
+          <button
+            type="button"
+            onClick={() => {
+              sound.playClick();
+              setInstantFilterActive(!instantFilterActive);
+              handleSearchSubmit(!instantFilterActive ? 'Emergency' : '');
+            }}
+            className={`ml-2 px-2.5 py-1 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-wider flex items-center space-x-1 border transition-all cursor-pointer shrink-0 select-none ${
+              instantFilterActive
+                ? 'bg-emerald-600 text-white border-emerald-500 shadow-sm shadow-emerald-600/30'
+                : isDark
+                  ? 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700'
+                  : 'bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200'
+            }`}
+            title="Filter by instant 15-minute dispatch"
+          >
+            <span className={`w-1.5 h-1.5 rounded-full ${instantFilterActive ? 'bg-white' : 'bg-emerald-500'}`} />
+            <span>15-MIN</span>
+          </button>
+
+        </div>
+
       </div>
 
-      {/* GPS Matching Toast */}
-      {gpsToast && (
-        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-emerald-600 text-white text-xs font-black px-4 py-2 rounded-2xl shadow-xl flex items-center space-x-2 animate-bounce">
-          <Check className="w-4 h-4" />
-          <span>{gpsToast}</span>
+      {/* Voice Recognition Notification Toast */}
+      {voiceToast && (
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 text-white border border-teal-500/50 text-xs font-black px-4 py-2.5 rounded-2xl shadow-2xl flex items-center space-x-2 animate-in fade-in">
+          <Mic className="w-4 h-4 text-orange-400 animate-pulse" />
+          <span>{voiceToast}</span>
+        </div>
+      )}
+
+      {/* ======================================================== */}
+      {/* SLIDE-OUT NAVIGATION DRAWER (Clean Menu & Account Settings) */}
+      {/* ======================================================== */}
+      {showMenuDrawer && (
+        <div className="fixed inset-0 z-[100] flex justify-end animate-in fade-in duration-200">
+          {/* Backdrop */}
+          <div
+            onClick={() => setShowMenuDrawer(false)}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm cursor-pointer"
+          />
+
+          {/* Drawer Content */}
+          <div className={`relative w-full max-w-sm h-full flex flex-col z-10 shadow-2xl overflow-y-auto animate-in slide-in-from-right duration-300 ${
+            isDark ? 'bg-slate-950 text-white border-l border-slate-800' : 'bg-white text-slate-900 border-l border-slate-200'
+          }`}>
+            
+            {/* Drawer Header */}
+            <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <FykziLogo isDark={isDark} size="sm" variant="full" />
+              </div>
+              <button
+                onClick={() => setShowMenuDrawer(false)}
+                className="p-1.5 rounded-full text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* User Profile Card */}
+            <div className="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40">
+              {currentUser ? (
+                <div className="flex items-center space-x-3">
+                  {currentUser.avatar ? (
+                    <img
+                      src={currentUser.avatar}
+                      alt={currentUser.name}
+                      className="w-12 h-12 rounded-full object-cover ring-2 ring-teal-500"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-teal-600 to-emerald-600 text-white font-black text-lg flex items-center justify-center">
+                      {currentUser.name.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <div className="font-black text-sm truncate">{currentUser.name}</div>
+                    <div className="text-xs text-slate-400 truncate">
+                      {currentUser.phone || currentUser.email || 'Verified Member'}
+                    </div>
+                    <div className="flex items-center space-x-1 text-[10px] text-emerald-500 font-bold mt-0.5">
+                      <CheckCircle2 className="w-3 h-3" />
+                      <span>Verified Account</span>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <div className="font-black text-sm">Welcome to Fykzi Kerala</div>
+                  <p className="text-xs text-slate-400">
+                    Sign in to book doorstep services, track live mechanics & manage toolkits.
+                  </p>
+                  <button
+                    onClick={() => {
+                      setShowMenuDrawer(false);
+                      onOpenAuthModal('customer');
+                    }}
+                    className="w-full py-2.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-black text-xs shadow-md shadow-teal-600/30 flex items-center justify-center space-x-2 cursor-pointer transition-all"
+                  >
+                    <User className="w-4 h-4" />
+                    <span>Login / Register</span>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Portal Switcher Navigation */}
+            <div className="p-4 space-y-1.5 border-b border-slate-200 dark:border-slate-800">
+              <div className="text-[10px] font-black uppercase tracking-wider text-slate-400 px-2 mb-1">
+                Portals & Modes
+              </div>
+
+              <button
+                onClick={() => {
+                  sound.playClick();
+                  setActiveTab('customer');
+                  setShowMenuDrawer(false);
+                }}
+                className={`w-full flex items-center justify-between p-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  activeTab === 'customer'
+                    ? 'bg-teal-600 text-white shadow-sm'
+                    : isDark ? 'hover:bg-slate-900 text-slate-300' : 'hover:bg-slate-100 text-slate-700'
+                }`}
+              >
+                <div className="flex items-center space-x-2.5">
+                  <User className="w-4 h-4 text-teal-400" />
+                  <span>Customer Services Portal</span>
+                </div>
+                {activeTab === 'customer' && <span className="text-[10px] font-black uppercase">Active</span>}
+              </button>
+
+              <button
+                onClick={() => {
+                  sound.playClick();
+                  setActiveTab('partner');
+                  setShowMenuDrawer(false);
+                }}
+                className={`w-full flex items-center justify-between p-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  activeTab === 'partner'
+                    ? 'bg-blue-600 text-white shadow-sm'
+                    : isDark ? 'hover:bg-slate-900 text-slate-300' : 'hover:bg-slate-100 text-slate-700'
+                }`}
+              >
+                <div className="flex items-center space-x-2.5">
+                  <Wrench className="w-4 h-4 text-blue-400" />
+                  <span>Specialist Partner Portal</span>
+                </div>
+                {activeTab === 'partner' && <span className="text-[10px] font-black uppercase">Active</span>}
+              </button>
+
+              <button
+                onClick={() => {
+                  sound.playClick();
+                  setShowMenuDrawer(false);
+                  if (currentUser?.role === 'admin') {
+                    setActiveTab('admin');
+                  } else {
+                    onOpenAuthModal('admin');
+                  }
+                }}
+                className={`w-full flex items-center justify-between p-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  activeTab === 'admin'
+                    ? 'bg-purple-600 text-white shadow-sm'
+                    : isDark ? 'hover:bg-slate-900 text-slate-300' : 'hover:bg-slate-100 text-slate-700'
+                }`}
+              >
+                <div className="flex items-center space-x-2.5">
+                  <ShieldCheck className="w-4 h-4 text-purple-400" />
+                  <span>Admin Operations Console</span>
+                </div>
+                {activeTab === 'admin' && <span className="text-[10px] font-black uppercase">Active</span>}
+              </button>
+            </div>
+
+            {/* Quick Settings & Toggles */}
+            <div className="p-4 space-y-1.5 border-b border-slate-200 dark:border-slate-800">
+              <div className="text-[10px] font-black uppercase tracking-wider text-slate-400 px-2 mb-1">
+                Quick Preferences
+              </div>
+
+              {/* Language Toggle */}
+              <button
+                onClick={() => {
+                  sound.playClick();
+                  onToggleLanguage();
+                }}
+                className={`w-full flex items-center justify-between p-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  isDark ? 'hover:bg-slate-900 text-slate-300' : 'hover:bg-slate-100 text-slate-700'
+                }`}
+              >
+                <div className="flex items-center space-x-2.5">
+                  <Globe className="w-4 h-4 text-blue-400" />
+                  <span>App Language</span>
+                </div>
+                <span className="px-2 py-0.5 rounded-full text-[11px] font-black bg-blue-500/10 text-blue-500 border border-blue-500/20">
+                  {language === 'en' ? 'മലയാളം' : 'English'}
+                </span>
+              </button>
+
+              {/* Theme Toggle */}
+              <button
+                onClick={() => {
+                  sound.playClick();
+                  onToggleTheme();
+                }}
+                className={`w-full flex items-center justify-between p-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  isDark ? 'hover:bg-slate-900 text-slate-300' : 'hover:bg-slate-100 text-slate-700'
+                }`}
+              >
+                <div className="flex items-center space-x-2.5">
+                  {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-blue-600" />}
+                  <span>Display Theme</span>
+                </div>
+                <span className="text-xs font-bold text-slate-400">
+                  {isDark ? 'Night (Dark)' : 'Day (Light)'}
+                </span>
+              </button>
+
+              {/* Sound FX Toggle */}
+              <button
+                onClick={handleToggleSound}
+                className={`w-full flex items-center justify-between p-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  isDark ? 'hover:bg-slate-900 text-slate-300' : 'hover:bg-slate-100 text-slate-700'
+                }`}
+              >
+                <div className="flex items-center space-x-2.5">
+                  {soundEnabled ? <Volume2 className="w-4 h-4 text-teal-400" /> : <VolumeX className="w-4 h-4 text-slate-400" />}
+                  <span>Spatial Audio SFX</span>
+                </div>
+                <span className="text-xs font-bold text-slate-400">
+                  {soundEnabled ? 'Enabled' : 'Muted'}
+                </span>
+              </button>
+            </div>
+
+            {/* Location & Preferences */}
+            <div className="p-4 space-y-1.5 flex-1">
+              <div className="text-[10px] font-black uppercase tracking-wider text-slate-400 px-2 mb-1">
+                Location & Alerts
+              </div>
+
+              <button
+                onClick={() => {
+                  setShowMenuDrawer(false);
+                  if (onOpenManageAddress) {
+                    onOpenManageAddress();
+                  } else if (onOpenLocationModal) {
+                    onOpenLocationModal();
+                  } else {
+                    setShowLocationModal(true);
+                  }
+                }}
+                className={`w-full flex items-center justify-between p-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  isDark ? 'hover:bg-slate-900 text-slate-300' : 'hover:bg-slate-100 text-slate-700'
+                }`}
+              >
+                <div className="flex items-center space-x-2.5">
+                  <MapPin className="w-4 h-4 text-emerald-400" />
+                  <span>Manage Address & GPS</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-slate-400" />
+              </button>
+
+              <button
+                onClick={() => {
+                  setShowMenuDrawer(false);
+                  onOpenNotificationSettings?.();
+                }}
+                className={`w-full flex items-center justify-between p-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  isDark ? 'hover:bg-slate-900 text-slate-300' : 'hover:bg-slate-100 text-slate-700'
+                }`}
+              >
+                <div className="flex items-center space-x-2.5">
+                  <Bell className="w-4 h-4 text-amber-400" />
+                  <span>Notifications & Reminders</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-slate-400" />
+              </button>
+            </div>
+
+            {/* Logout Footer */}
+            {currentUser && (
+              <div className="p-4 border-t border-slate-200 dark:border-slate-800">
+                <button
+                  onClick={() => {
+                    setShowMenuDrawer(false);
+                    onLogout();
+                  }}
+                  className="w-full flex items-center justify-center space-x-2 py-2.5 rounded-xl text-rose-500 font-bold hover:bg-rose-500/10 cursor-pointer transition-colors text-xs"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Sign Out</span>
+                </button>
+              </div>
+            )}
+
+          </div>
         </div>
       )}
 
