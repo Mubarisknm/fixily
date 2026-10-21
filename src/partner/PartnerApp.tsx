@@ -250,16 +250,38 @@ interface PartnerAppProps {
   jobs: BookingJob[];
   onRefreshData: () => void;
   theme?: ThemeMode;
+  currentUser?: any;
 }
 
 export const PartnerApp: React.FC<PartnerAppProps> = ({
   partners,
   jobs,
   onRefreshData,
-  theme = 'dark'
+  theme = 'dark',
+  currentUser
 }) => {
   const isDark = theme === 'dark';
-  const [selectedPartnerId, setSelectedPartnerId] = useState<string>(partners[0]?.id || 'p-101');
+  // Automatically match selected partner with logged-in user if available
+  const matchingPartner = partners.find(p =>
+    (currentUser?.id && p.id === currentUser.id) ||
+    (currentUser?.phone && p.phone && p.phone.replace(/\D/g, '').slice(-10) === currentUser.phone.replace(/\D/g, '').slice(-10))
+  );
+
+  const [selectedPartnerId, setSelectedPartnerId] = useState<string>(
+    matchingPartner?.id || partners[0]?.id || 'p-101'
+  );
+
+  useEffect(() => {
+    if (currentUser?.phone || currentUser?.id) {
+      const match = partners.find(p =>
+        (currentUser.id && p.id === currentUser.id) ||
+        (currentUser.phone && p.phone && p.phone.replace(/\D/g, '').slice(-10) === currentUser.phone.replace(/\D/g, '').slice(-10))
+      );
+      if (match) {
+        setSelectedPartnerId(match.id);
+      }
+    }
+  }, [currentUser, partners]);
   const [showPrecheckModal, setShowPrecheckModal] = useState<BookingJob | null>(null);
   const [showKYCModal, setShowKYCModal] = useState<boolean>(false);
   const [withdrawalAmount, setWithdrawalAmount] = useState<string>('');
@@ -284,7 +306,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
   const [isPublishingProfession, setIsPublishingProfession] = useState<boolean>(false);
 
   // Partner Portal View Mode & Onboarding Workflow State
-  const [portalView, setPortalView] = useState<'onboarding' | 'console'>('onboarding');
+  const [portalView, setPortalView] = useState<'onboarding' | 'console'>('console');
   const [onboardingStep, setOnboardingStep] = useState<number>(1); // 1: Contact, 2: Services, 3: Experience, 4: Success
 
   // Step 1: Contact Information State

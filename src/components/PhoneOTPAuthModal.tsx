@@ -85,6 +85,22 @@ export const PhoneOTPAuthModal: React.FC<PhoneOTPAuthModalProps> = ({
   const [googleManualEmail, setGoogleManualEmail] = useState<string>('');
   const [googleManualName, setGoogleManualName] = useState<string>('');
 
+  // Sync selectedRole and reset state whenever modal is opened or targetRole changes
+  useEffect(() => {
+    if (isOpen) {
+      if (targetRole) {
+        setSelectedRole(targetRole);
+      }
+      setPhoneStep('input');
+      setEmailStep('input');
+      setPhoneOtp('');
+      setEmailOtp('');
+      setErrorMsg(null);
+      setSuccessMsg(null);
+      setActiveOtpCode(null);
+    }
+  }, [isOpen, targetRole]);
+
   // Countdown timer for OTP Resend
   useEffect(() => {
     let timer: any;
@@ -540,8 +556,8 @@ export const PhoneOTPAuthModal: React.FC<PhoneOTPAuthModalProps> = ({
           </div>
         )}
 
-        {/* Role Selector in Register Mode */}
-        {targetRole !== 'admin' && authMode === 'register' && (
+        {/* Role Selector */}
+        {targetRole !== 'admin' && (
           <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
             <button
               type="button"
@@ -552,8 +568,8 @@ export const PhoneOTPAuthModal: React.FC<PhoneOTPAuthModalProps> = ({
                   : 'border-slate-200 dark:border-slate-800 text-slate-500 font-bold hover:bg-slate-100 dark:hover:bg-slate-900'
               }`}
             >
-              <span className="block text-[10px] uppercase tracking-wider text-slate-400">I want to</span>
-              <span>Book Services</span>
+              <span className="block text-[10px] uppercase tracking-wider text-slate-400">Account Type</span>
+              <span>Customer (Bookings)</span>
             </button>
 
             <button
@@ -565,8 +581,8 @@ export const PhoneOTPAuthModal: React.FC<PhoneOTPAuthModalProps> = ({
                   : 'border-slate-200 dark:border-slate-800 text-slate-500 font-bold hover:bg-slate-100 dark:hover:bg-slate-900'
               }`}
             >
-              <span className="block text-[10px] uppercase tracking-wider text-slate-400">I want to</span>
-              <span>Work as Partner</span>
+              <span className="block text-[10px] uppercase tracking-wider text-slate-400">Account Type</span>
+              <span>Service Partner (Console)</span>
             </button>
           </div>
         )}
@@ -757,7 +773,7 @@ export const PhoneOTPAuthModal: React.FC<PhoneOTPAuthModalProps> = ({
                   ) : (
                     <>
                       <Check className="w-3.5 h-3.5" />
-                      <span>Verify &amp; Enter Fykzi</span>
+                      <span>{selectedRole === 'partner' ? 'Verify & Open Partner Portal' : 'Verify & Enter Fykzi'}</span>
                     </>
                   )}
                 </button>
@@ -1000,7 +1016,7 @@ export const PhoneOTPAuthModal: React.FC<PhoneOTPAuthModalProps> = ({
                   ) : (
                     <>
                       <CheckCircle2 className="w-4 h-4" />
-                      <span>Verify Email &amp; Log In</span>
+                      <span>{selectedRole === 'partner' ? 'Verify & Open Partner Portal' : 'Verify Email & Log In'}</span>
                     </>
                   )}
                 </button>

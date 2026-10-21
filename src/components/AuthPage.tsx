@@ -507,6 +507,8 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   : 'Create Your Fykzi Account'
                 : authMethod === 'admin'
                 ? 'Operations Admin Gate'
+                : selectedRole === 'partner'
+                ? 'Sign In to Partner Portal'
                 : 'Sign In to Fykzi'}
             </h2>
             <p className="text-xs text-slate-400 font-semibold mt-1">
@@ -589,8 +591,8 @@ export const AuthPage: React.FC<AuthPageProps> = ({
             </div>
           )}
 
-          {/* Role Selection in Register Mode */}
-          {authMode === 'register' && authMethod !== 'admin' && (
+          {/* Role Selection for Sign In & Register */}
+          {authMethod !== 'admin' && (
             <div className="mt-3.5 grid grid-cols-2 gap-2 text-xs">
               <button
                 type="button"
@@ -601,7 +603,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     : 'border-slate-200 dark:border-slate-800 text-slate-500 font-bold hover:bg-slate-100 dark:hover:bg-slate-900'
                 }`}
               >
-                <span className="block text-[10px] uppercase tracking-wider text-slate-400 font-bold">I am a</span>
+                <span className="block text-[10px] uppercase tracking-wider text-slate-400 font-bold">Account Mode</span>
                 <span className="font-black text-xs">Customer</span>
                 <span className="block text-[10px] text-slate-400 font-normal mt-0.5">Book Doorstep Services</span>
               </button>
@@ -615,9 +617,9 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     : 'border-slate-200 dark:border-slate-800 text-slate-500 font-bold hover:bg-slate-100 dark:hover:bg-slate-900'
                 }`}
               >
-                <span className="block text-[10px] uppercase tracking-wider text-slate-400 font-bold">I am a</span>
+                <span className="block text-[10px] uppercase tracking-wider text-slate-400 font-bold">Account Mode</span>
                 <span className="font-black text-xs">Service Partner</span>
-                <span className="block text-[10px] text-slate-400 font-normal mt-0.5">Offer Trades &amp; Earn</span>
+                <span className="block text-[10px] text-slate-400 font-normal mt-0.5">Partner Console &amp; Jobs</span>
               </button>
             </div>
           )}
@@ -869,7 +871,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     ) : (
                       <>
                         <Check className="w-3.5 h-3.5" />
-                        <span>Verify &amp; Enter Fykzi</span>
+                        <span>{selectedRole === 'partner' ? 'Verify & Open Partner Portal' : 'Verify & Enter Fykzi'}</span>
                       </>
                     )}
                   </button>
@@ -1133,7 +1135,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     ) : (
                       <>
                         <CheckCircle2 className="w-4 h-4" />
-                        <span>Verify Email &amp; Sign In</span>
+                        <span>{selectedRole === 'partner' ? 'Verify Email & Open Partner Portal' : 'Verify Email & Sign In'}</span>
                       </>
                     )}
                   </button>
