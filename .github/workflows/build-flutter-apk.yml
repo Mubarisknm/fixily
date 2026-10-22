@@ -30,9 +30,10 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Install Dependencies
+      - name: Scaffold Native Android & iOS Platforms
         run: |
           cd mobile
+          flutter create . --org in.fykzi --project-name fykzi --platforms=android,ios
           flutter pub get
 
       - name: Build Android APK
