@@ -352,58 +352,161 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
     const q = (query || '').toLowerCase().trim();
     const cat = (category || '').toLowerCase().trim();
 
-    return partners.filter((p) => {
-      const role = (p.role || '').toLowerCase();
-      const name = (p.name || '').toLowerCase();
+    // Helper: identify primary trade of partner
+    const getPartnerTradeKey = (p: GigPartner): string => {
+      const r = (p.role || '').toLowerCase();
+      if (r.includes('ac') || r.includes('air condition') || r.includes('cooling') || r.includes('hvac')) return 'ac';
+      if (r.includes('electric') || r.includes('wiring') || r.includes('inverter') || r.includes('switchgear')) return 'electrician';
+      if (r.includes('plumb') || r.includes('pipeline') || r.includes('sanitary') || r.includes('drain')) return 'plumber';
+      if (r.includes('bike') || r.includes('two-wheeler') || r.includes('motorcycle')) return 'bike_mechanic';
+      if (r.includes('driver') || r.includes('chauffeur')) return 'driver';
+      if (r.includes('car') || r.includes('detailing') || r.includes('auto detail')) return 'car_spa';
+      if (r.includes('mechanic') || r.includes('breakdown')) return 'auto_mechanic';
+      if (r.includes('washing') || r.includes('appliance')) return 'appliance';
+      if (r.includes('carpenter') || r.includes('wood') || r.includes('lock')) return 'carpenter';
+      if (r.includes('clean') || r.includes('housekeep')) return 'cleaning';
+      if (r.includes('roof') || r.includes('waterproof')) return 'roofing';
+      if (r.includes('companion') || r.includes('elderly') || r.includes('care')) return 'care';
+      return 'other';
+    };
 
-      if (q) {
-        if (name.includes(q) || role.includes(q)) return true;
-        if (q.includes('driver') && (role.includes('driver') || role.includes('chauffeur'))) return true;
-        if (q.includes('mechanic') && (role.includes('mechanic') || role.includes('breakdown'))) return true;
-        if (q.includes('electric') && (role.includes('electric') || role.includes('wiring'))) return true;
-        if (q.includes('plumb') && (role.includes('plumb') || role.includes('pipe'))) return true;
-        if (q.includes('ac') && (role.includes('ac') || role.includes('appliance'))) return true;
-        if (q.includes('clean') && (role.includes('clean') || role.includes('housekeep'))) return true;
-      }
+    // Case 1: Search query is provided
+    if (q) {
+      // Analyze search intent
+      const isAcSearch = q.includes('ac') || q.includes('air condition') || q.includes('cooling') || q.includes('hvac');
+      const isElectricSearch = q.includes('electric') || q.includes('wiring') || q.includes('inverter') || q.includes('fan');
+      const isPlumbSearch = q.includes('plumb') || q.includes('pipe') || q.includes('drain') || q.includes('leak') || q.includes('tap');
+      const isBikeSearch = q.includes('bike') || q.includes('two wheeler') || q.includes('scooter') || q.includes('motorcycle');
+      const isDriverSearch = q.includes('driver') || q.includes('chauffeur');
+      const isCleanSearch = q.includes('clean') || q.includes('maid') || q.includes('wash') || q.includes('housekeep');
+      const isCarpenterSearch = q.includes('carpenter') || q.includes('wood') || q.includes('lock') || q.includes('door');
+      const isCarSpaSearch = q.includes('car spa') || q.includes('car wash') || q.includes('detailing');
+      const isWashingSearch = q.includes('washing') || q.includes('dryer') || (q.includes('appliance') && !isAcSearch);
+      const isGenericMechanicSearch = !isAcSearch && !isBikeSearch && q.includes('mechanic');
 
-      if (cat === 'all') return true;
-      if (cat === 'driver' || cat.includes('driver')) {
-        return role.includes('driver') || role.includes('chauffeur');
-      }
-      if (cat.includes('mechanic') || cat.includes('roadside') || cat.includes('bike')) {
-        return role.includes('mechanic') || role.includes('breakdown') || role.includes('auto') || role.includes('bike');
-      }
-      if (cat.includes('electric')) {
-        return role.includes('electrician') || role.includes('wiring') || role.includes('electrical');
-      }
-      if (cat.includes('plumb')) {
-        return role.includes('plumber') || role.includes('pipeline') || role.includes('plumbing');
-      }
-      if (cat.includes('appliance') || cat.includes('ac') || cat.includes('washing')) {
-        return role.includes('ac') || role.includes('appliance') || role.includes('technician') || role.includes('washing');
-      }
-      if (cat.includes('water') || cat.includes('purifier')) {
-        return role.includes('tank') || role.includes('water') || role.includes('plumber');
-      }
-      if (cat.includes('vehicle') || cat.includes('car')) {
-        return role.includes('car') || role.includes('detailing') || role.includes('wash') || role.includes('mechanic');
-      }
-      if (cat.includes('clean')) {
-        return role.includes('clean') || role.includes('sanitiz') || role.includes('housekeep');
-      }
-      if (cat.includes('carpenter')) {
-        return role.includes('carpenter') || role.includes('wood') || role.includes('lock');
-      }
-      if (cat.includes('other')) {
-        return Boolean(p.customProfessions && p.customProfessions.length > 0) || role.includes('solar') || role.includes('garden') || role.includes('custom') || role.includes('freelance');
-      }
+      const scoredPartners = partners
+        .map((p) => {
+          const role = (p.role || '').toLowerCase();
+          const name = (p.name || '').toLowerCase();
+          const trade = getPartnerTradeKey(p);
+          let relevance = 0;
 
-      return false;
-    }).sort((a, b) => {
-      if (a.isOnline !== b.isOnline) return a.isOnline ? -1 : 1;
-      if (a.isTopRated !== b.isTopRated) return a.isTopRated ? -1 : 1;
-      return (b.rating || 4.5) - (a.rating || 4.5);
+          // Check if partner matches the specific search intent
+          if (isAcSearch) {
+            if (trade === 'ac') {
+              relevance = 100;
+              // If user searched "ac mechanic" and worker explicitly is an "ac mechanic", give boost
+              if (q.includes('mechanic') && (role.includes('mechanic') || role.includes('specialist') || role.includes('technician'))) {
+                relevance += 20;
+              }
+            }
+          } else if (isElectricSearch) {
+            if (trade === 'electrician') relevance = 100;
+          } else if (isPlumbSearch) {
+            if (trade === 'plumber') relevance = 100;
+          } else if (isBikeSearch) {
+            if (trade === 'bike_mechanic') relevance = 100;
+          } else if (isDriverSearch) {
+            if (trade === 'driver') relevance = 100;
+          } else if (isCarSpaSearch) {
+            if (trade === 'car_spa') relevance = 100;
+          } else if (isCleanSearch) {
+            if (trade === 'cleaning' || trade === 'car_spa') relevance = 100;
+          } else if (isCarpenterSearch) {
+            if (trade === 'carpenter') relevance = 100;
+          } else if (isWashingSearch) {
+            if (trade === 'appliance' || trade === 'ac') relevance = 100;
+          } else if (isGenericMechanicSearch) {
+            if (trade === 'auto_mechanic' || trade === 'bike_mechanic') relevance = 100;
+            else if (trade === 'ac') relevance = 60;
+          } else {
+            // Direct text match in name, role, or secondary roles
+            if (name.includes(q)) relevance = 90;
+            else if (role.includes(q)) relevance = 80;
+          }
+
+          return { partner: p, relevance };
+        })
+        .filter((item) => item.relevance > 0);
+
+      // Sort matching partners:
+      // 1. Relevance to searched specific worker trade
+      // 2. Online status
+      // 3. Top-rated AND more work completed first:
+      //    Score: (rating * 100) + (jobsCompleted * 0.8)
+      scoredPartners.sort((a, b) => {
+        if (b.relevance !== a.relevance) return b.relevance - a.relevance;
+        if (a.partner.isOnline !== b.partner.isOnline) return a.partner.isOnline ? -1 : 1;
+        
+        const scoreA = ((a.partner.rating || 4.5) * 100) + ((a.partner.jobsCompleted || 0) * 0.8);
+        const scoreB = ((b.partner.rating || 4.5) * 100) + ((b.partner.jobsCompleted || 0) * 0.8);
+        return scoreB - scoreA;
+      });
+
+      return scoredPartners.map((item) => item.partner);
+    }
+
+    // Case 2: Specific category tab selected (not 'all')
+    if (cat && cat !== 'all') {
+      const filtered = partners.filter((p) => {
+        const trade = getPartnerTradeKey(p);
+        const role = (p.role || '').toLowerCase();
+
+        if (cat.includes('electric')) return trade === 'electrician';
+        if (cat.includes('plumb')) return trade === 'plumber';
+        if (cat.includes('mechanic') || cat.includes('roadside') || cat.includes('bike')) {
+          return trade === 'bike_mechanic' || trade === 'auto_mechanic';
+        }
+        if (cat.includes('appliance') || cat.includes('ac')) {
+          return trade === 'ac' || trade === 'appliance';
+        }
+        if (cat.includes('water') || cat.includes('purifier')) {
+          return trade === 'plumber' || role.includes('water') || role.includes('purifier');
+        }
+        if (cat.includes('driver')) return trade === 'driver';
+        if (cat.includes('vehicle') || cat.includes('car')) return trade === 'car_spa' || trade === 'auto_mechanic';
+        if (cat.includes('clean')) return trade === 'cleaning';
+        if (cat.includes('carpenter')) return trade === 'carpenter';
+        if (cat.includes('other')) return trade === 'other' || trade === 'care' || trade === 'roofing';
+
+        return role.includes(cat);
+      });
+
+      // Sort by top-rated & more work completed
+      filtered.sort((a, b) => {
+        if (a.isOnline !== b.isOnline) return a.isOnline ? -1 : 1;
+        const scoreA = ((a.rating || 4.5) * 100) + ((a.jobsCompleted || 0) * 0.8);
+        const scoreB = ((b.rating || 4.5) * 100) + ((b.jobsCompleted || 0) * 0.8);
+        return scoreB - scoreA;
+      });
+
+      return filtered;
+    }
+
+    // Case 3: "All Services" with no search query
+    // User requested: "do not show all the top rated workers first"
+    // Instead of dumping all workers where Sister Mary Varghese was #1,
+    // we curate the top representative specialist for each primary core trade
+    // (Top AC Mechanic, Top Electrician, Top Plumber, Top Bike Mechanic, Top Driver, Top Carpenter),
+    // each being the highest rated & most work completed in their trade!
+    const coreTrades = ['ac', 'electrician', 'plumber', 'bike_mechanic', 'driver', 'carpenter'];
+    const curatedTopPerTrade: GigPartner[] = [];
+
+    coreTrades.forEach((tradeKey) => {
+      const candidates = partners.filter((p) => getPartnerTradeKey(p) === tradeKey);
+      if (candidates.length > 0) {
+        // Sort candidates within trade by top rated & more work completed
+        candidates.sort((a, b) => {
+          if (a.isOnline !== b.isOnline) return a.isOnline ? -1 : 1;
+          const scoreA = ((a.rating || 4.5) * 100) + ((a.jobsCompleted || 0) * 0.8);
+          const scoreB = ((b.rating || 4.5) * 100) + ((b.jobsCompleted || 0) * 0.8);
+          return scoreB - scoreA;
+        });
+        curatedTopPerTrade.push(candidates[0]);
+      }
     });
+
+    return curatedTopPerTrade;
   };
 
   const activeTradeTechnicians = useMemo(() => {
@@ -411,11 +514,11 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
   }, [partners, selectedCategoryTab, searchQuery]);
 
   const activeCategoryBadgeTitle = useMemo(() => {
+    if (searchQuery.trim()) {
+      return `TOP RATED PROS FOR "${searchQuery.toUpperCase()}"`;
+    }
     const matched = EXPERTISE_CATEGORIES.find(c => c.id === selectedCategoryTab);
     if (matched && matched.badgeTitle) return matched.badgeTitle;
-    if (searchQuery.trim()) {
-      return `TOP RATED SPECIALISTS FOR "${searchQuery.toUpperCase()}"`;
-    }
     return 'TOP RATED VERIFIED SPECIALISTS IN KERALA';
   }, [selectedCategoryTab, searchQuery]);
 
@@ -1452,10 +1555,15 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                           <div className="w-9 h-9 rounded-2xl bg-[#004D40] text-white font-black text-sm flex items-center justify-center shadow">
                             {initial}
                           </div>
-                          <span className="bg-amber-400/20 text-amber-500 text-[10px] font-black px-2 py-0.5 rounded-full flex items-center space-x-1">
-                            <Star className="w-3 h-3 fill-amber-400" />
-                            <span>{pro.rating}</span>
-                          </span>
+                          <div className="flex flex-col items-end">
+                            <span className="bg-amber-400/20 text-amber-500 text-[10px] font-black px-2 py-0.5 rounded-full flex items-center space-x-1">
+                              <Star className="w-3 h-3 fill-amber-400" />
+                              <span>{pro.rating}</span>
+                            </span>
+                            <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 mt-0.5">
+                              {pro.jobsCompleted || 0} jobs done
+                            </span>
+                          </div>
                         </div>
                         <h4 className="font-black text-xs truncate">{pro.name}</h4>
                         <p className="text-[10px] text-slate-400 truncate">{pro.role}</p>

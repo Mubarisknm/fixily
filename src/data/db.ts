@@ -730,9 +730,9 @@ export const MOCK_PARTNERS: GigPartner[] = [
     id: 'p-101',
     name: 'Anand Kumar',
     phone: '+91 98470 11223',
-    role: 'Freelance Acting Driver & Mechanic',
-    rating: 4.9,
-    jobsCompleted: 34,
+    role: 'Freelance Acting Driver & Roadside Car Mechanic',
+    rating: 4.91,
+    jobsCompleted: 78,
     reviewsCount: 18,
     isOnline: true,
     isTopRated: true,
@@ -837,9 +837,9 @@ export const MOCK_PARTNERS: GigPartner[] = [
     name: 'Suresh Babu',
     phone: '+91 98471 22334',
     role: 'Electrician & Inverter/Wiring Technician',
-    rating: 4.8,
-    jobsCompleted: 28,
-    reviewsCount: 15,
+    rating: 4.94,
+    jobsCompleted: 91,
+    reviewsCount: 78,
     isOnline: true,
     isTopRated: true,
     hourlyRateMultiplier: 1.20,
@@ -852,11 +852,11 @@ export const MOCK_PARTNERS: GigPartner[] = [
     ],
     targetAchievement: {
       weeklyTarget: 15,
-      completedJobsThisWeek: 9,
+      completedJobsThisWeek: 13,
       bonusAmount: 1500,
       isBonusUnlocked: false,
-      tierLevel: 'SILVER_PRO' as const,
-      commissionDiscountPercent: 4
+      tierLevel: 'GOLD_TOP_RATED' as const,
+      commissionDiscountPercent: 5
     },
     reviews: [
       {
@@ -889,7 +889,7 @@ export const MOCK_PARTNERS: GigPartner[] = [
         category: 'Electrical Diagnostics',
         description: 'Certified non-contact voltage tester, earth loop impedance & high-precision continuity buzzer.',
         condition: 'Pro Grade',
-        photoUrl: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=300&auto=format&fit=crop&q=80',
+        photoUrl: '',
         isIncludedInVisitingCharge: true,
         usageFee: 0
       },
@@ -899,7 +899,7 @@ export const MOCK_PARTNERS: GigPartner[] = [
         category: 'Installation & Mounting',
         description: 'Concrete masonry drilling with depth-stop for MCB distribution boxes, inverter racks & ceiling fans.',
         condition: 'Brand New',
-        photoUrl: 'https://images.unsplash.com/photo-1504148455328-c376907d081c?w=300&auto=format&fit=crop&q=80',
+        photoUrl: '',
         isIncludedInVisitingCharge: true,
         usageFee: 0
       }
@@ -910,12 +910,482 @@ export const MOCK_PARTNERS: GigPartner[] = [
       emergencyNightSurge: 100,
       pricingNotes: '₹149 visiting inspection fee. Diagnostic fee fully waived if wiring or MCB replacement is approved.'
     },
-    walletBalance: 1950,
+    walletBalance: 3950,
     escrowBalance: 250,
-    withdrawableBalance: 1700,
-    todaysEarnings: 850,
+    withdrawableBalance: 3700,
+    todaysEarnings: 1250,
     photoUrl: DEFAULT_BLANK_AVATAR,
     aadhaarMasked: '•••• •••• 4419'
+  },
+  {
+    id: 'p-103',
+    name: 'Rajesh K. Nair',
+    phone: '+91 98472 33445',
+    role: 'Certified AC Mechanic & Inverter HVAC Specialist',
+    rating: 4.96,
+    jobsCompleted: 98,
+    reviewsCount: 84,
+    isOnline: true,
+    isTopRated: true,
+    hourlyRateMultiplier: 1.25,
+    damageLiabilityAgreed: true,
+    currentLocation: { name: 'Kaloor Stadium Link Rd', lat: 9.9982, lng: 76.2995 },
+    availableSlots: [
+      'Today, 02:00 PM - 05:00 PM',
+      'Today, 05:30 PM - 08:00 PM',
+      'Tomorrow, 09:00 AM - 01:00 PM',
+      'Tomorrow, 02:00 PM - 06:00 PM'
+    ],
+    targetAchievement: {
+      weeklyTarget: 16,
+      completedJobsThisWeek: 14,
+      bonusAmount: 1800,
+      isBonusUnlocked: true,
+      tierLevel: 'GOLD_TOP_RATED' as const,
+      commissionDiscountPercent: 5
+    },
+    reviews: [
+      {
+        id: 'rev-ac-1',
+        customerName: 'George Joseph',
+        rating: 5,
+        comment: 'Master AC mechanic! Diagnosed inverter PCB sensor fault and fixed gas leak in under 45 mins. Ice cold cooling restored.',
+        serviceTitle: 'AC Foam Jet Cleaning & Appliance Care',
+        createdAt: '2026-10-14'
+      },
+      {
+        id: 'rev-ac-2',
+        customerName: 'Amina Faisal',
+        rating: 5,
+        comment: 'Very professional, clean foam jet wash without making any mess in the living room. Best AC technician in Kochi.',
+        serviceTitle: 'Split AC Deep Clean + Gas Pressure Check',
+        createdAt: '2026-10-09'
+      }
+    ],
+    kyc: {
+      aadhaarVerified: true,
+      aadhaarNumber: '•••• •••• 5532',
+      govtIdType: 'AADHAAR' as const,
+      govtIdNumber: '•••• •••• 5532',
+      govtIdFileAttached: true,
+      pccStatus: 'VERIFIED' as const,
+      pccRefNo: 'KL-PCC-2024-77182',
+      pccExpiry: '2027-06-20',
+      pccCheckedByFykzi: true,
+      bankVerified: true,
+      damageLiabilityAgreed: true,
+      liabilityAgreementTimestamp: '2026-02-10T10:00:00Z'
+    },
+    vehicle: 'Honda Activa with HVAC Vacuum & Pressure Rig',
+    tools: [
+      {
+        id: 't-ac-1',
+        name: 'Karcher 120-Bar High Pressure Foam Jet Washer',
+        category: 'AC Cleaning & Car Detailing',
+        description: 'Adjustable pressure foam jet gun to deep clean AC cooling coils and blower fins without bending delicate aluminum fins.',
+        condition: 'Pro Grade',
+        photoUrl: '',
+        isIncludedInVisitingCharge: true,
+        usageFee: 0
+      },
+      {
+        id: 't-ac-2',
+        name: 'Robinair Digital 4-Way Manifold Gauge & Vacuum Pump',
+        category: 'HVAC Diagnostics',
+        description: 'Precision digital micron gauge for R32/R410A refrigerant leak testing and moisture-free evacuation.',
+        condition: 'Pro Grade',
+        photoUrl: '',
+        isIncludedInVisitingCharge: true,
+        usageFee: 0
+      }
+    ],
+    customRates: {
+      diagnosticFee: 199,
+      hourlyLaborRate: 349,
+      emergencyNightSurge: 150,
+      pricingNotes: '₹199 flat visiting diagnostic fee includes coil pressure testing, electrical current draw check, and jet filter clean.'
+    },
+    walletBalance: 4250,
+    escrowBalance: 600,
+    withdrawableBalance: 3650,
+    todaysEarnings: 1750,
+    photoUrl: DEFAULT_BLANK_AVATAR,
+    aadhaarMasked: '•••• •••• 5532'
+  },
+  {
+    id: 'p-104',
+    name: 'Harikrishnan K.',
+    phone: '+91 98473 44556',
+    role: 'Air Conditioner & Refrigeration Master Mechanic',
+    rating: 4.88,
+    jobsCompleted: 64,
+    reviewsCount: 52,
+    isOnline: true,
+    isTopRated: true,
+    hourlyRateMultiplier: 1.20,
+    damageLiabilityAgreed: true,
+    currentLocation: { name: 'Vyttila Hub', lat: 9.9657, lng: 76.3218 },
+    availableSlots: [
+      'Today, 03:00 PM - 06:00 PM',
+      'Tomorrow, 10:00 AM - 02:00 PM'
+    ],
+    targetAchievement: {
+      weeklyTarget: 14,
+      completedJobsThisWeek: 11,
+      bonusAmount: 1400,
+      isBonusUnlocked: false,
+      tierLevel: 'GOLD_TOP_RATED' as const,
+      commissionDiscountPercent: 4
+    },
+    reviews: [
+      {
+        id: 'rev-ac-3',
+        customerName: 'Sanjay Pillai',
+        rating: 5,
+        comment: 'Prompt arrival at Vyttila, found the indoor coil gas leakage and recharged R32 gas at exact factory pressure.',
+        serviceTitle: 'Split AC Deep Clean + Gas Pressure Check',
+        createdAt: '2026-10-11'
+      }
+    ],
+    kyc: {
+      aadhaarVerified: true,
+      aadhaarNumber: '•••• •••• 7712',
+      govtIdType: 'AADHAAR' as const,
+      govtIdNumber: '•••• •••• 7712',
+      govtIdFileAttached: true,
+      pccStatus: 'VERIFIED' as const,
+      pccRefNo: 'KL-PCC-2024-66231',
+      pccExpiry: '2027-08-14',
+      pccCheckedByFykzi: true,
+      bankVerified: true,
+      damageLiabilityAgreed: true,
+      liabilityAgreementTimestamp: '2026-03-12T11:00:00Z'
+    },
+    vehicle: 'Suzuki Access with AC Toolkit',
+    tools: [
+      {
+        id: 't-ac-3',
+        name: 'Fieldpiece Heated Diode Refrigerant Leak Detector',
+        category: 'HVAC Diagnostics',
+        description: 'Pinpoints pinpoint pinhole leaks in copper coils for R32, R410A, and R22 refrigerants.',
+        condition: 'Pro Grade',
+        photoUrl: '',
+        isIncludedInVisitingCharge: true,
+        usageFee: 0
+      }
+    ],
+    customRates: {
+      diagnosticFee: 199,
+      hourlyLaborRate: 299,
+      emergencyNightSurge: 120,
+      pricingNotes: '₹199 diagnostic fee includes electrical checks and gas pressure verification.'
+    },
+    walletBalance: 3100,
+    escrowBalance: 400,
+    withdrawableBalance: 2700,
+    todaysEarnings: 1300,
+    photoUrl: DEFAULT_BLANK_AVATAR,
+    aadhaarMasked: '•••• •••• 7712'
+  },
+  {
+    id: 'p-105',
+    name: 'Pradeep Kumar',
+    phone: '+91 98474 55667',
+    role: 'Senior Master Plumber & Pipeline Specialist',
+    rating: 4.93,
+    jobsCompleted: 88,
+    reviewsCount: 71,
+    isOnline: true,
+    isTopRated: true,
+    hourlyRateMultiplier: 1.25,
+    damageLiabilityAgreed: true,
+    currentLocation: { name: 'Palarivattom Bypass Junction', lat: 10.0050, lng: 76.3100 },
+    availableSlots: [
+      'Today, 02:30 PM - 05:30 PM',
+      'Tomorrow, 09:00 AM - 01:00 PM'
+    ],
+    targetAchievement: {
+      weeklyTarget: 15,
+      completedJobsThisWeek: 13,
+      bonusAmount: 1500,
+      isBonusUnlocked: false,
+      tierLevel: 'GOLD_TOP_RATED' as const,
+      commissionDiscountPercent: 5
+    },
+    reviews: [
+      {
+        id: 'rev-plumb-1',
+        customerName: 'Ramesh Menon',
+        rating: 5,
+        comment: 'Solved a concealed bathroom pipe leakage that two other plumbers could not locate. Very neat work.',
+        serviceTitle: 'Plumbing & Water Management',
+        createdAt: '2026-10-12'
+      }
+    ],
+    kyc: {
+      aadhaarVerified: true,
+      aadhaarNumber: '•••• •••• 8841',
+      govtIdType: 'AADHAAR' as const,
+      govtIdNumber: '•••• •••• 8841',
+      govtIdFileAttached: true,
+      pccStatus: 'VERIFIED' as const,
+      pccRefNo: 'KL-PCC-2024-55190',
+      pccExpiry: '2027-05-18',
+      pccCheckedByFykzi: true,
+      bankVerified: true,
+      damageLiabilityAgreed: true,
+      liabilityAgreementTimestamp: '2026-02-14T10:00:00Z'
+    },
+    vehicle: 'Plumbing Mobile Workshop Kit',
+    tools: [
+      {
+        id: 't-plumb-1',
+        name: 'Ridgid Power Drain Auger & Inspection Camera',
+        category: 'Plumbing & Drainage',
+        description: 'Deep line motorized snake cable with waterproof endoscopic video probe for block clearance.',
+        condition: 'Pro Grade',
+        photoUrl: '',
+        isIncludedInVisitingCharge: true,
+        usageFee: 0
+      }
+    ],
+    customRates: {
+      diagnosticFee: 149,
+      hourlyLaborRate: 299,
+      emergencyNightSurge: 100,
+      pricingNotes: '₹149 visiting inspection charge. Pipe welding and replacement quoted transparently on spot.'
+    },
+    walletBalance: 3800,
+    escrowBalance: 500,
+    withdrawableBalance: 3300,
+    todaysEarnings: 1500,
+    photoUrl: DEFAULT_BLANK_AVATAR,
+    aadhaarMasked: '•••• •••• 8841'
+  },
+  {
+    id: 'p-109',
+    name: 'Shaji Mathew',
+    phone: '+91 98476 77889',
+    role: 'Royal Enfield & Two-Wheeler Master Mechanic',
+    rating: 4.93,
+    jobsCompleted: 84,
+    reviewsCount: 66,
+    isOnline: true,
+    isTopRated: true,
+    hourlyRateMultiplier: 1.25,
+    damageLiabilityAgreed: true,
+    currentLocation: { name: 'Aluva Roadside Depot', lat: 10.1076, lng: 76.3516 },
+    availableSlots: [
+      'Today, 02:00 PM - 06:00 PM',
+      'Tomorrow, 09:00 AM - 01:00 PM'
+    ],
+    targetAchievement: {
+      weeklyTarget: 15,
+      completedJobsThisWeek: 13,
+      bonusAmount: 1500,
+      isBonusUnlocked: false,
+      tierLevel: 'GOLD_TOP_RATED' as const,
+      commissionDiscountPercent: 5
+    },
+    reviews: [
+      {
+        id: 'rev-bike-1',
+        customerName: 'Jithin Raj',
+        rating: 5,
+        comment: 'My Thunderbird broke down near Aluva flyover. Shaji arrived in 18 minutes, fixed the clutch cable and tuned the carb on the spot!',
+        serviceTitle: 'Doorstep Car & Bike Mechanic',
+        createdAt: '2026-10-15'
+      }
+    ],
+    kyc: {
+      aadhaarVerified: true,
+      aadhaarNumber: '•••• •••• 3321',
+      govtIdType: 'AADHAAR' as const,
+      govtIdNumber: '•••• •••• 3321',
+      govtIdFileAttached: true,
+      pccStatus: 'VERIFIED' as const,
+      pccRefNo: 'KL-PCC-2024-44102',
+      pccExpiry: '2027-09-12',
+      pccCheckedByFykzi: true,
+      bankVerified: true,
+      damageLiabilityAgreed: true,
+      liabilityAgreementTimestamp: '2026-03-05T09:00:00Z'
+    },
+    vehicle: 'Rescue Two-Wheeler with Mobile Tool Chest',
+    tools: [
+      {
+        id: 't-bike-1',
+        name: 'Motorcycle Clutch & Chain Tension Alignment Rig',
+        category: 'Two-Wheeler Mechanics',
+        description: 'Roadside chain link riveter, spark plug compression tester and emergency throttle cables.',
+        condition: 'Pro Grade',
+        photoUrl: '',
+        isIncludedInVisitingCharge: true,
+        usageFee: 0
+      }
+    ],
+    customRates: {
+      diagnosticFee: 199,
+      hourlyLaborRate: 320,
+      emergencyNightSurge: 120,
+      pricingNotes: '₹199 includes 20-min rapid roadside arrival, multi-point breakdown inspection & minor fixes.'
+    },
+    walletBalance: 3600,
+    escrowBalance: 450,
+    withdrawableBalance: 3150,
+    todaysEarnings: 1400,
+    photoUrl: DEFAULT_BLANK_AVATAR,
+    aadhaarMasked: '•••• •••• 3321'
+  },
+  {
+    id: 'p-110',
+    name: 'Sasi Achari',
+    phone: '+91 98477 88990',
+    role: 'Master Carpenter & Smart Locksmith',
+    rating: 4.92,
+    jobsCompleted: 76,
+    reviewsCount: 59,
+    isOnline: true,
+    isTopRated: true,
+    hourlyRateMultiplier: 1.25,
+    damageLiabilityAgreed: true,
+    currentLocation: { name: 'Thripunithura Fort Rd', lat: 9.9482, lng: 76.3486 },
+    availableSlots: [
+      'Today, 03:00 PM - 06:00 PM',
+      'Tomorrow, 09:30 AM - 01:30 PM'
+    ],
+    targetAchievement: {
+      weeklyTarget: 14,
+      completedJobsThisWeek: 12,
+      bonusAmount: 1400,
+      isBonusUnlocked: false,
+      tierLevel: 'GOLD_TOP_RATED' as const,
+      commissionDiscountPercent: 5
+    },
+    reviews: [
+      {
+        id: 'rev-carp-1',
+        customerName: 'Mohan Kumar',
+        rating: 5,
+        comment: 'Flawless mortise lock installation and modular cupboard hinge leveling. Highly skilled craftsman.',
+        serviceTitle: 'Carpenter & Locksmith',
+        createdAt: '2026-10-13'
+      }
+    ],
+    kyc: {
+      aadhaarVerified: true,
+      aadhaarNumber: '•••• •••• 6614',
+      govtIdType: 'AADHAAR' as const,
+      govtIdNumber: '•••• •••• 6614',
+      govtIdFileAttached: true,
+      pccStatus: 'VERIFIED' as const,
+      pccRefNo: 'KL-PCC-2024-33291',
+      pccExpiry: '2027-07-25',
+      pccCheckedByFykzi: true,
+      bankVerified: true,
+      damageLiabilityAgreed: true,
+      liabilityAgreementTimestamp: '2026-02-28T10:00:00Z'
+    },
+    vehicle: 'Woodcraft Pro Kit',
+    tools: [
+      {
+        id: 't-carp-1',
+        name: 'DeWalt Precision Plunge Router & Mortise Jig',
+        category: 'Carpentry & Joinery',
+        description: 'Accurate door lock recessing, hinge pocketing, and hardwood edging without splinters.',
+        condition: 'Pro Grade',
+        photoUrl: '',
+        isIncludedInVisitingCharge: true,
+        usageFee: 0
+      }
+    ],
+    customRates: {
+      diagnosticFee: 149,
+      hourlyLaborRate: 299,
+      emergencyNightSurge: 100,
+      pricingNotes: '₹149 visiting fee covers measurement, alignment check, and lock mechanism triage.'
+    },
+    walletBalance: 3400,
+    escrowBalance: 400,
+    withdrawableBalance: 3000,
+    todaysEarnings: 1350,
+    photoUrl: DEFAULT_BLANK_AVATAR,
+    aadhaarMasked: '•••• •••• 6614'
+  },
+  {
+    id: 'p-112',
+    name: 'Vipin Das',
+    phone: '+91 98479 00112',
+    role: 'AC Coil Cleaning & Gas Charging Technician',
+    rating: 4.75,
+    jobsCompleted: 35,
+    reviewsCount: 26,
+    isOnline: true,
+    isTopRated: false,
+    hourlyRateMultiplier: 1.15,
+    damageLiabilityAgreed: true,
+    currentLocation: { name: 'Kalamassery Premier Junction', lat: 10.0480, lng: 76.3260 },
+    availableSlots: [
+      'Today, 02:00 PM - 05:00 PM',
+      'Tomorrow, 10:00 AM - 02:00 PM'
+    ],
+    targetAchievement: {
+      weeklyTarget: 12,
+      completedJobsThisWeek: 8,
+      bonusAmount: 1000,
+      isBonusUnlocked: false,
+      tierLevel: 'SILVER_PRO' as const,
+      commissionDiscountPercent: 3
+    },
+    reviews: [
+      {
+        id: 'rev-ac-4',
+        customerName: 'Kavitha Unni',
+        rating: 5,
+        comment: 'Good service for split AC water leak fix and filter wash.',
+        serviceTitle: 'Split AC High-Pressure Foam Jet Clean',
+        createdAt: '2026-10-08'
+      }
+    ],
+    kyc: {
+      aadhaarVerified: true,
+      aadhaarNumber: '•••• •••• 9918',
+      govtIdType: 'AADHAAR' as const,
+      govtIdNumber: '•••• •••• 9918',
+      govtIdFileAttached: true,
+      pccStatus: 'VERIFIED' as const,
+      pccRefNo: 'KL-PCC-2024-22019',
+      pccExpiry: '2027-11-05',
+      pccCheckedByFykzi: true,
+      bankVerified: true,
+      damageLiabilityAgreed: true,
+      liabilityAgreementTimestamp: '2026-04-01T12:00:00Z'
+    },
+    vehicle: 'Hero Splendor with AC Service Bag',
+    tools: [
+      {
+        id: 't-ac-4',
+        name: 'AC Jet Cleaning Bag & Water Shield',
+        category: 'AC Cleaning',
+        description: 'Drape bag to catch dirty water during indoor unit foam wash without staining walls.',
+        condition: 'Good',
+        photoUrl: '',
+        isIncludedInVisitingCharge: true,
+        usageFee: 0
+      }
+    ],
+    customRates: {
+      diagnosticFee: 199,
+      hourlyLaborRate: 279,
+      emergencyNightSurge: 100,
+      pricingNotes: '₹199 diagnostic inspection fee.'
+    },
+    walletBalance: 2100,
+    escrowBalance: 300,
+    withdrawableBalance: 1800,
+    todaysEarnings: 900,
+    photoUrl: DEFAULT_BLANK_AVATAR,
+    aadhaarMasked: '•••• •••• 9918'
   },
   {
     id: 'p-106',
