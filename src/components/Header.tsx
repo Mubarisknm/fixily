@@ -269,50 +269,6 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           </div>
 
-          {/* Right: Notification Bell & Profile Avatar (Matching Second Image Icon) */}
-          <div className="flex items-center space-x-2 shrink-0">
-            {/* Notification Bell Icon */}
-            <button
-              onClick={() => {
-                sound.playClick();
-                if (onOpenNotificationSettings) {
-                  onOpenNotificationSettings();
-                } else {
-                  alert('No new notifications right now.');
-                }
-              }}
-              className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all cursor-pointer relative shadow-sm ${
-                isDark
-                  ? 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800'
-                  : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100 shadow-sm'
-              }`}
-              title="Notifications & Reminders"
-            >
-              <Bell className="w-4 h-4" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-            </button>
-
-            {/* Profile Avatar Icon (Next to Notification Icon, exactly matching Second Image) */}
-            <button
-              onClick={() => {
-                sound.playClick();
-                setDrawerVisible(true);
-              }}
-              className="w-10 h-10 rounded-full bg-[#004D40] hover:bg-teal-700 text-white font-black text-sm flex items-center justify-center shadow-md cursor-pointer transition-transform hover:scale-105"
-              title={currentUser ? `${currentUser.name} - Open Menu & Portals` : 'Click to Login & Open Menu'}
-            >
-              {currentUser?.avatar ? (
-                <img
-                  src={currentUser.avatar}
-                  alt={currentUser.name}
-                  className="w-full h-full rounded-full object-cover"
-                />
-              ) : (
-                <span>{currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : 'V'}</span>
-              )}
-            </button>
-          </div>
-
         </div>
 
         {/* ======================================================== */}
