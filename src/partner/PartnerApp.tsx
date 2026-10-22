@@ -2210,18 +2210,12 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
                     }`}
                   >
                     <div className="space-y-3">
-                      {/* Tool Image or Icon Header */}
-                      <div className="relative rounded-xl overflow-hidden aspect-[16/9] bg-slate-900 border border-slate-800">
-                        <img
-                          src={t.photoUrl || 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400&auto=format&fit=crop&q=80'}
-                          alt={t.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-80" />
-                        <span className="absolute top-2 left-2 text-[9px] font-black uppercase px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-md text-amber-400 border border-amber-400/20">
+                      {/* Clean Badge Header without picture */}
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 truncate">
                           {t.category}
                         </span>
-                        <span className="absolute top-2 right-2 text-[9px] font-black uppercase px-2 py-0.5 rounded-md bg-emerald-500/90 text-slate-950 font-bold">
+                        <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shrink-0">
                           {t.condition || 'Pro Grade'}
                         </span>
                       </div>
@@ -3131,20 +3125,7 @@ export const PartnerApp: React.FC<PartnerAppProps> = ({
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-black uppercase tracking-wider mb-1 text-slate-400">
-                  Tool Photo URL (Optional)
-                </label>
-                <input
-                  type="url"
-                  value={toolPhotoUrl}
-                  onChange={(e) => setToolPhotoUrl(e.target.value)}
-                  placeholder="https://..."
-                  className={`w-full text-xs p-3 rounded-xl border focus:outline-none focus:border-amber-400 ${
-                    isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
-                  }`}
-                />
-              </div>
+              
 
               {/* Tool Billing & Surcharge Toggle */}
               <div className={`p-3.5 rounded-2xl border space-y-2.5 ${

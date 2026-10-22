@@ -2402,20 +2402,9 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                           isDark ? 'bg-slate-950/70 border-slate-800 hover:border-slate-700' : 'bg-slate-50 border-slate-200 hover:border-teal-200'
                         }`}
                       >
-                        {/* Tool Photo or Fallback */}
-                        <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-900 border border-slate-800 shrink-0 flex items-center justify-center">
-                          {tool.photoUrl ? (
-                            <img
-                              src={tool.photoUrl}
-                              alt={tool.name}
-                              onError={(e) => {
-                                e.currentTarget.src = 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=400&q=80';
-                              }}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <Wrench className="w-7 h-7 text-teal-400" />
-                          )}
+                        {/* Clean Tool Icon Header without picture */}
+                        <div className="w-10 h-10 rounded-xl bg-teal-500/10 border border-teal-500/20 shrink-0 flex items-center justify-center">
+                          <Wrench className="w-5 h-5 text-teal-400" />
                         </div>
 
                         {/* Tool Info */}
