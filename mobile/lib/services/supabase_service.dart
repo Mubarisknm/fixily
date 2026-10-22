@@ -1,4 +1,4 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase/supabase.dart';
 import '../core/constants.dart';
 import '../models/partner.dart';
 import '../models/job_order.dart';
@@ -8,22 +8,20 @@ class SupabaseService {
   factory SupabaseService() => _instance;
   SupabaseService._internal();
 
-  bool _isInitialized = false;
+  SupabaseClient? _client;
 
   Future<void> initialize() async {
     try {
-      await Supabase.initialize(
-        url: FykziConstants.supabaseUrl,
-        anonKey: FykziConstants.supabaseAnonKey,
+      _client = SupabaseClient(
+        FykziConstants.supabaseUrl,
+        FykziConstants.supabaseAnonKey,
       );
-      _isInitialized = true;
     } catch (e) {
-      // Graceful fallback to offline/mock database
-      _isInitialized = false;
+      _client = null;
     }
   }
 
-  SupabaseClient? get client => _isInitialized ? Supabase.instance.client : null;
+  SupabaseClient? get client => _client;
 
   /// Fetch technicians from Supabase PostgreSQL
   Future<List<Partner>> getPartners({String? category}) async {

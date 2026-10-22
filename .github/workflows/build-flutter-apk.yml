@@ -30,23 +30,10 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Scaffold Native Android & iOS Platforms
+      - name: Scaffold Native Platforms & Get Packages
         run: |
           cd mobile
           flutter create . --org in.fykzi --project-name fykzi --platforms=android,ios
-          cat << 'EOF' >> android/build.gradle
-
-          subprojects {
-              afterEvaluate { project ->
-                  if (project.hasProperty('android')) {
-                      project.android {
-                          compileSdkVersion 34
-                          buildToolsVersion '34.0.0'
-                      }
-                  }
-              }
-          }
-          EOF
           flutter pub get
 
       - name: Build Android APK
