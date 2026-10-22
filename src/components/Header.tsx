@@ -83,7 +83,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   const [showLocationModal, setShowLocationModal] = useState<boolean>(false);
   const [showMenuDrawer, setShowMenuDrawer] = useState<boolean>(false);
-  const [activeCategoryTab, setActiveCategoryTab] = useState<'services' | 'rescue' | 'pros'>('services');
+  const [activeCategoryTab, setActiveCategoryTab] = useState<'services' | 'rescue' | 'partner'>('services');
   const [instantFilterActive, setInstantFilterActive] = useState<boolean>(false);
   const [headerSearchQuery, setHeaderSearchQuery] = useState<string>('');
   const [isListening, setIsListening] = useState<boolean>(false);
@@ -111,15 +111,15 @@ export const Header: React.FC<HeaderProps> = ({
   // Synchronize category tab with global tab
   useEffect(() => {
     if (activeTab === 'partner') {
-      setActiveCategoryTab('pros');
+      setActiveCategoryTab('partner');
     } else if (activeTab === 'customer') {
-      if (activeCategoryTab === 'pros') {
+      if (activeCategoryTab === 'partner') {
         setActiveCategoryTab('services');
       }
     }
   }, [activeTab]);
 
-  const handleSelectCategory = (cat: 'services' | 'rescue' | 'pros') => {
+  const handleSelectCategory = (cat: 'services' | 'rescue' | 'partner') => {
     sound.playClick();
     setActiveCategoryTab(cat);
 
@@ -134,20 +134,9 @@ export const Header: React.FC<HeaderProps> = ({
       if (onOpenEmergency) {
         onOpenEmergency();
       }
-    } else if (cat === 'pros') {
-      // Find specialists or scroll to partners section
-      setActiveTab('customer');
-      const partnerSection = document.getElementById('specialist-radar-section') || document.getElementById('partner-showcase-section');
-      if (partnerSection) {
-        partnerSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } else {
-        const searchInput = document.getElementById('services-page-search') as HTMLInputElement;
-        if (searchInput) {
-          searchInput.value = 'Mechanic';
-          searchInput.dispatchEvent(new Event('input', { bubbles: true }));
-          searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-      }
+    } else if (cat === 'partner') {
+      // Directly switch to the Partner Portal
+      setActiveTab('partner');
     }
   };
 
@@ -378,33 +367,34 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           </button>
 
-          {/* Tab 3: Verified Pros */}
+          {/* Tab 3: Partner Portal (Specialist Pro) */}
           <button
             type="button"
-            onClick={() => handleSelectCategory('pros')}
+            onClick={() => handleSelectCategory('partner')}
             className={`flex items-center justify-center space-x-2 sm:space-x-3 py-2.5 px-2 rounded-2xl border transition-all cursor-pointer select-none ${
-              activeCategoryTab === 'pros' || activeTab === 'partner'
+              activeCategoryTab === 'partner' || activeTab === 'partner'
                 ? isDark
-                  ? 'bg-gradient-to-r from-indigo-950/80 to-slate-900 border-indigo-500/60 text-white shadow-lg shadow-indigo-950/40'
-                  : 'bg-indigo-50/90 border-indigo-400 text-indigo-950 shadow-md shadow-indigo-500/10'
+                  ? 'bg-gradient-to-r from-blue-950/80 to-slate-900 border-blue-500/60 text-white shadow-lg shadow-blue-950/40'
+                  : 'bg-blue-50/90 border-blue-400 text-blue-950 shadow-md shadow-blue-500/10'
                 : isDark
                   ? 'bg-slate-900/60 border-slate-800/80 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
                   : 'bg-white border-slate-200/80 text-slate-600 hover:text-slate-900 hover:bg-slate-50 shadow-xs'
             }`}
+            title="Open Specialist & Partner Portal"
           >
             <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center text-sm shrink-0 transition-transform ${
-              activeCategoryTab === 'pros' || activeTab === 'partner' ? 'scale-110' : ''
+              activeCategoryTab === 'partner' || activeTab === 'partner' ? 'scale-110' : ''
             } ${
-              isDark ? 'bg-indigo-500/20 text-indigo-300' : 'bg-indigo-100 text-indigo-700'
+              isDark ? 'bg-blue-500/20 text-blue-300' : 'bg-blue-100 text-blue-700'
             }`}>
-              🛡️
+              🔧
             </div>
             <div className="text-left min-w-0">
               <div className="text-xs sm:text-sm font-black truncate leading-tight">
-                Verified Pros
+                Partner Portal
               </div>
               <div className="text-[10px] font-semibold text-slate-400 truncate hidden xs:block">
-                Specialists
+                Specialist Pro
               </div>
             </div>
           </button>
