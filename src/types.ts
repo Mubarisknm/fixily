@@ -1,7 +1,7 @@
 export type ThemeMode = 'light' | 'dark';
 export type AppLanguage = 'en' | 'ml';
 export type UserRole = 'customer' | 'partner' | 'admin';
-export type CustomerNavTab = 'home' | 'discover' | 'services' | 'orders';
+export type CustomerNavTab = 'home' | 'services' | 'orders';
 
 export const DEFAULT_BLANK_AVATAR = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' rx='24' fill='%231e293b'/%3E%3Ccircle cx='64' cy='46' r='22' fill='%2364748b'/%3E%3Cpath d='M24 112c0-22 18-36 40-36s40 14 40 36' fill='%2364748b'/%3E%3C/svg%3E";
 

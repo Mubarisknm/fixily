@@ -22,8 +22,7 @@ import {
   Zap,
   Package,
   Bell,
-  Settings,
-  Compass
+  Settings
 } from 'lucide-react';
 import { ThemeMode, AppLanguage, UserSession, UserRole, KochiLocation, CustomerNavTab } from '../types';
 import { useTranslation } from '../utils/translations';
@@ -83,14 +82,6 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleNavDiscover = () => {
-    setActiveTab('customer');
-    if (setCustomerNavTab) {
-      setCustomerNavTab('discover');
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   const handleNavServices = () => {
     setActiveTab('customer');
     if (setCustomerNavTab) {
@@ -108,7 +99,6 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   };
 
   const isHomeActive = activeTab === 'customer' && customerNavTab === 'home' && !showAccountDrawer;
-  const isDiscoverActive = activeTab === 'customer' && customerNavTab === 'discover' && !showAccountDrawer;
   const isServicesActive = activeTab === 'customer' && customerNavTab === 'services' && !showAccountDrawer;
   const isOrdersActive = activeTab === 'customer' && customerNavTab === 'orders' && !showAccountDrawer;
   const isProfileActive = showAccountDrawer || activeTab !== 'customer';
@@ -142,27 +132,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             </span>
           </button>
 
-          {/* Tab 2: Discover (Stitch AI Vertical Feed & Masonry) */}
-          <button
-            onClick={handleNavDiscover}
-            className={`relative flex flex-col items-center justify-center px-2 sm:px-3 py-1 rounded-full transition-all active:scale-95 cursor-pointer ${
-              isDiscoverActive
-                ? 'text-[#ff4b89] dark:text-[#ffb1c3] font-extrabold scale-105'
-                : 'hover:text-[#ff4b89] font-medium'
-            }`}
-          >
-            <div className="relative">
-              {isDiscoverActive && (
-                <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#ff4b89] dark:bg-[#ffb1c3] rounded-full shadow-[0_0_8px_#ffb1c3]" />
-              )}
-              <Compass className={`w-5 h-5 mb-0.5 ${isDiscoverActive ? 'stroke-[2.5]' : 'stroke-[2]'}`} />
-            </div>
-            <span className="text-[10px] leading-tight font-bold">
-              {language === 'ml' ? 'ഡിസ്കവർ' : 'Discover'}
-            </span>
-          </button>
-
-          {/* Tab 3: Services / Expertise */}
+          {/* Tab 2: Services / Expertise */}
           <button
             onClick={handleNavServices}
             className={`flex flex-col items-center justify-center px-2 sm:px-3 py-1 rounded-full transition-all active:scale-95 cursor-pointer ${

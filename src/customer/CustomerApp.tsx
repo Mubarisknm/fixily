@@ -78,7 +78,6 @@ import { DisputeModal } from '../components/DisputeModal';
 import { InvoiceModal } from '../components/InvoiceModal';
 import { LiveDispatchTicker } from '../components/LiveDispatchTicker';
 import { AIDiagnosticAssistant } from '../components/AIDiagnosticAssistant';
-import { StitchDiscoverFeed } from './StitchDiscoverFeed';
 import { useTranslation } from '../utils/translations';
 import { api } from '../services/api';
 import { sendPushNotification } from '../utils/pushNotifications';
@@ -877,17 +876,6 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                 <span className={`text-xs font-semibold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
                   {greetingText}
                 </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (setCustomerNavTab) setCustomerNavTab('discover');
-                  }}
-                  className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-pink-500/10 text-pink-600 dark:text-[#ffb1c3] border border-pink-500/30 hover:scale-105 transition-all cursor-pointer shadow-xs"
-                  title="Open Stitch AI Discover Feed"
-                >
-                  <Sparkles className="w-2.5 h-2.5 text-pink-500 animate-pulse" />
-                  <span>Stitch AI Feed</span>
-                </button>
               </div>
               <h2 className="text-xl sm:text-2xl font-black tracking-tight leading-snug">
                 {displayUserName}
@@ -1344,31 +1332,6 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
               </button>
             </div>
           </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* VIEW: STITCH DISCOVER FEED (Faithfully implementing stitch_vertical_feed)   */}
-      {/* ========================================================================= */}
-      {customerNavTab === 'discover' && (
-        <div className="animate-in fade-in duration-300 -mx-4 sm:-mx-6 -mt-6">
-          <StitchDiscoverFeed
-            services={services}
-            selectedLocation={selectedLocation}
-            onSelectService={handleStartBookingByCatalog}
-            onOpenEmergency={() => setEmergencyModalOpen(true)}
-            theme={theme}
-            onNavigateHome={() => setCustomerNavTab && setCustomerNavTab('home')}
-            onNavigateServices={() => setCustomerNavTab && setCustomerNavTab('services')}
-            onNavigateOrders={() => setCustomerNavTab && setCustomerNavTab('orders')}
-            onOpenProfileDrawer={() => {
-              if (onOpenManageAddress) {
-                onOpenManageAddress();
-              } else if (onOpenAuthModal && !currentUser) {
-                onOpenAuthModal('customer');
-              }
-            }}
-          />
         </div>
       )}
 
