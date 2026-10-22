@@ -77,10 +77,7 @@ import { CancellationPolicyModal } from '../components/CancellationPolicyModal';
 import { DisputeModal } from '../components/DisputeModal';
 import { InvoiceModal } from '../components/InvoiceModal';
 import { LiveDispatchTicker } from '../components/LiveDispatchTicker';
-import { InteractivePriceCalculator } from '../components/InteractivePriceCalculator';
-import { LiveFleetRadar } from '../components/LiveFleetRadar';
 import { AIDiagnosticAssistant } from '../components/AIDiagnosticAssistant';
-import { InteractiveFykziPerks } from '../components/InteractiveFykziPerks';
 import { StitchDiscoverFeed } from './StitchDiscoverFeed';
 import { useTranslation } from '../utils/translations';
 import { api } from '../services/api';
@@ -1107,14 +1104,6 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             </div>
           </div>
 
-          {/* Real-time Kerala Roadside Fleet Radar with Emergency SOS Dispatch */}
-          <LiveFleetRadar
-            theme={theme}
-            selectedLocation={selectedLocation}
-            onOpenEmergency={() => setEmergencyModalOpen(true)}
-            activeSpecialistsCount={18}
-          />
-
           {/* "OUR EXPERTISE" CATEGORY GRID (Interactive 3D Spatial Hub) */}
           <div id="our-expertise-section" className="space-y-3 pt-2 expertise-3d-perspective-container">
             <div className="flex items-center justify-between px-1">
@@ -1166,12 +1155,6 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             </div>
           </div>
 
-          {/* Interactive Diagnostic Rate & Live ETA Calculator */}
-          <InteractivePriceCalculator
-            theme={theme}
-            onBookIssue={handleBookCalculatorIssue}
-          />
-
           {/* AI Smart Triage & Instant Diagnostic Assistant */}
           <AIDiagnosticAssistant
             theme={theme}
@@ -1185,12 +1168,6 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
               setBookingStep(1);
             }}
             onOpenSOS={() => setEmergencyModalOpen(true)}
-          />
-
-          {/* Interactive Trust, Insurance & Police Verification Showcase */}
-          <InteractiveFykziPerks
-            theme={theme}
-            onExploreServices={() => navigateToServices('all')}
           />
 
           {/* "HOW FYKZI WORKS" (4 Simple Steps Walkthrough) */}
