@@ -857,6 +857,39 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             </div>
           </div>
 
+          {/* 🚨 ACTIVE ORDER LIVE - Main Dashboard Hero Notification */}
+          {myActiveJobs.length > 0 && (
+            <div
+              onClick={navigateToOrders}
+              className="p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-emerald-950 via-[#004D40] to-slate-950 border border-emerald-500/50 text-white shadow-xl shadow-emerald-950/30 cursor-pointer flex items-center justify-between group hover:scale-[1.01] transition-all select-none"
+              title="Click to track live order"
+            >
+              <div className="flex items-center space-x-3 min-w-0">
+                <div className="w-10 h-10 rounded-2xl bg-emerald-500/20 border border-emerald-400/50 flex items-center justify-center shrink-0">
+                  <Clock className="w-5 h-5 text-emerald-400 animate-spin" />
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-400 text-slate-950">
+                      Active Order Live
+                    </span>
+                    <span className="text-xs font-bold text-emerald-200">#{myActiveJobs[0].id}</span>
+                    {myActiveJobs.length > 1 && (
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/20 text-white">
+                        +{myActiveJobs.length - 1} more
+                      </span>
+                    )}
+                  </div>
+                  <h4 className="font-black text-sm mt-0.5 truncate">{myActiveJobs[0].serviceTitle}</h4>
+                </div>
+              </div>
+              <div className="flex items-center space-x-1.5 text-xs font-bold text-emerald-200 group-hover:text-white shrink-0 ml-3">
+                <span>Track Order</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+          )}
+
           {/* Real-time Kerala Live Activity Marquee Ticker */}
           <LiveDispatchTicker
             theme={theme}
@@ -1159,33 +1192,6 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
             theme={theme}
             onExploreServices={() => navigateToServices('all')}
           />
-
-          {/* Quick Active Bookings Banner */}
-          {myActiveJobs.length > 0 && (
-            <div
-              onClick={navigateToOrders}
-              className="p-4 rounded-3xl bg-gradient-to-r from-teal-950 via-[#004D40] to-slate-950 border border-teal-500/40 text-white shadow-lg cursor-pointer flex items-center justify-between group hover:scale-[1.01] transition-transform"
-            >
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-2xl bg-teal-500/30 border border-teal-400 flex items-center justify-center">
-                  <Clock className="w-5 h-5 text-teal-300 animate-spin" />
-                </div>
-                <div>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-400 text-slate-950">
-                      Active Order Live
-                    </span>
-                    <span className="text-xs font-bold text-teal-200">#{myActiveJobs[0].id}</span>
-                  </div>
-                  <h4 className="font-black text-sm mt-0.5">{myActiveJobs[0].serviceTitle}</h4>
-                </div>
-              </div>
-              <div className="flex items-center space-x-1.5 text-xs font-bold text-teal-200 group-hover:text-white">
-                <span>Track Order</span>
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </div>
-          )}
 
           {/* "HOW FYKZI WORKS" (4 Simple Steps Walkthrough) */}
           <div id="how-it-works-section" className={`rounded-3xl p-6 border shadow-sm space-y-4 ${
