@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   ShieldCheck,
   MapPin,
@@ -467,8 +468,8 @@ export const Header: React.FC<HeaderProps> = ({
       {/* ======================================================== */}
       {/* SLIDE-OUT NAVIGATION DRAWER (Clean Menu & Account Settings) */}
       {/* ======================================================== */}
-      {isDrawerVisible && (
-        <div className="fixed inset-0 z-[100] flex justify-end animate-in fade-in duration-200">
+      {isDrawerVisible && typeof document !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[9999] flex justify-end animate-in fade-in duration-200">
           {/* Backdrop */}
           <div
             onClick={() => setDrawerVisible(false)}
@@ -476,7 +477,7 @@ export const Header: React.FC<HeaderProps> = ({
           />
 
           {/* Drawer Content */}
-          <div className={`relative w-full max-w-sm h-full flex flex-col z-10 shadow-2xl overflow-y-auto animate-in slide-in-from-right duration-300 ${
+          <div className={`relative w-full max-w-sm h-screen flex flex-col z-10 shadow-2xl overflow-y-auto animate-in slide-in-from-right duration-300 ${
             isDark ? 'bg-slate-950 text-white border-l border-slate-800' : 'bg-white text-slate-900 border-l border-slate-200'
           }`}>
             
@@ -730,7 +731,8 @@ export const Header: React.FC<HeaderProps> = ({
             )}
 
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Interactive Kerala Map & Rural Village Selector Modal */}
