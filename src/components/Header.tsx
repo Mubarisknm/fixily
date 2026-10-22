@@ -54,6 +54,8 @@ interface HeaderProps {
   isDetectingLiveGps?: boolean;
   onOpenManageAddress?: () => void;
   onOpenNotificationSettings?: () => void;
+  isMenuDrawerOpen?: boolean;
+  onSetMenuDrawerOpen?: (open: boolean) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -76,13 +78,17 @@ export const Header: React.FC<HeaderProps> = ({
   onDetectLiveGps,
   isDetectingLiveGps,
   onOpenManageAddress,
-  onOpenNotificationSettings
+  onOpenNotificationSettings,
+  isMenuDrawerOpen,
+  onSetMenuDrawerOpen
 }) => {
   const { t } = useTranslation(language);
   const isDark = theme === 'dark';
 
   const [showLocationModal, setShowLocationModal] = useState<boolean>(false);
   const [showMenuDrawer, setShowMenuDrawer] = useState<boolean>(false);
+  const isDrawerVisible = isMenuDrawerOpen !== undefined ? isMenuDrawerOpen : showMenuDrawer;
+  const setDrawerVisible = onSetMenuDrawerOpen || setShowMenuDrawer;
   const [activeCategoryTab, setActiveCategoryTab] = useState<'services' | 'rescue' | 'partner'>('services');
   const [instantFilterActive, setInstantFilterActive] = useState<boolean>(false);
   const [headerSearchQuery, setHeaderSearchQuery] = useState<string>('');
@@ -263,38 +269,47 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           </div>
 
-          {/* Right: Circular Menu Hamburger Button (replaces cluttered right buttons) */}
+          {/* Right: Notification Bell & Profile Avatar (Matching Second Image Icon) */}
           <div className="flex items-center space-x-2 shrink-0">
+            {/* Notification Bell Icon */}
             <button
               onClick={() => {
                 sound.playClick();
-                setShowMenuDrawer(true);
+                if (onOpenNotificationSettings) {
+                  onOpenNotificationSettings();
+                } else {
+                  alert('No new notifications right now.');
+                }
               }}
-              className={`w-10 h-10 rounded-full border flex items-center justify-center transition-all cursor-pointer relative shadow-sm ${
+              className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all cursor-pointer relative shadow-sm ${
                 isDark
-                  ? 'bg-slate-900 border-slate-700/80 text-white hover:bg-slate-800 hover:border-teal-500/50'
-                  : 'bg-white border-slate-200 text-slate-800 hover:bg-slate-100 hover:border-slate-300'
+                  ? 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800'
+                  : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100 shadow-sm'
               }`}
-              title="Open Navigation Menu & Account"
+              title="Notifications & Reminders"
+            >
+              <Bell className="w-4 h-4" />
+              <span className="absolute top-2 right-2 w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+            </button>
+
+            {/* Profile Avatar Icon (Next to Notification Icon, exactly matching Second Image) */}
+            <button
+              onClick={() => {
+                sound.playClick();
+                setDrawerVisible(true);
+              }}
+              className="w-10 h-10 rounded-full bg-[#004D40] hover:bg-teal-700 text-white font-black text-sm flex items-center justify-center shadow-md cursor-pointer transition-transform hover:scale-105"
+              title={currentUser ? `${currentUser.name} - Open Menu & Portals` : 'Click to Login & Open Menu'}
             >
               {currentUser?.avatar ? (
                 <img
                   src={currentUser.avatar}
                   alt={currentUser.name}
-                  className="w-8 h-8 rounded-full object-cover ring-2 ring-teal-500"
+                  className="w-full h-full rounded-full object-cover"
                 />
-              ) : currentUser ? (
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-teal-600 to-emerald-600 text-white font-black text-xs flex items-center justify-center">
-                  {currentUser.name.charAt(0).toUpperCase()}
-                </div>
               ) : (
-                <Menu className="w-5 h-5 text-slate-700 dark:text-slate-200" />
+                <span>{currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : 'V'}</span>
               )}
-
-              {/* Status Indicator */}
-              <span className={`absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 ${
-                isDark ? 'border-[#0B0F19]' : 'border-white'
-              } ${currentUser ? 'bg-emerald-500' : 'bg-teal-500'}`} />
             </button>
           </div>
 
@@ -496,11 +511,11 @@ export const Header: React.FC<HeaderProps> = ({
       {/* ======================================================== */}
       {/* SLIDE-OUT NAVIGATION DRAWER (Clean Menu & Account Settings) */}
       {/* ======================================================== */}
-      {showMenuDrawer && (
+      {isDrawerVisible && (
         <div className="fixed inset-0 z-[100] flex justify-end animate-in fade-in duration-200">
           {/* Backdrop */}
           <div
-            onClick={() => setShowMenuDrawer(false)}
+            onClick={() => setDrawerVisible(false)}
             className="fixed inset-0 bg-black/60 backdrop-blur-sm cursor-pointer"
           />
 
@@ -515,7 +530,7 @@ export const Header: React.FC<HeaderProps> = ({
                 <FykziLogo isDark={isDark} size="sm" variant="full" />
               </div>
               <button
-                onClick={() => setShowMenuDrawer(false)}
+                onClick={() => setDrawerVisible(false)}
                 className="p-1.5 rounded-full text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer"
               >
                 <X className="w-5 h-5" />
@@ -556,7 +571,7 @@ export const Header: React.FC<HeaderProps> = ({
                   </p>
                   <button
                     onClick={() => {
-                      setShowMenuDrawer(false);
+                      setDrawerVisible(false);
                       onOpenAuthModal('customer');
                     }}
                     className="w-full py-2.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-black text-xs shadow-md shadow-teal-600/30 flex items-center justify-center space-x-2 cursor-pointer transition-all"
@@ -578,7 +593,7 @@ export const Header: React.FC<HeaderProps> = ({
                 onClick={() => {
                   sound.playClick();
                   setActiveTab('customer');
-                  setShowMenuDrawer(false);
+                  setDrawerVisible(false);
                 }}
                 className={`w-full flex items-center justify-between p-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   activeTab === 'customer'
@@ -597,7 +612,7 @@ export const Header: React.FC<HeaderProps> = ({
                 onClick={() => {
                   sound.playClick();
                   setActiveTab('partner');
-                  setShowMenuDrawer(false);
+                  setDrawerVisible(false);
                 }}
                 className={`w-full flex items-center justify-between p-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   activeTab === 'partner'
@@ -615,7 +630,7 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 onClick={() => {
                   sound.playClick();
-                  setShowMenuDrawer(false);
+                  setDrawerVisible(false);
                   if (currentUser?.role === 'admin') {
                     setActiveTab('admin');
                   } else {
@@ -705,7 +720,7 @@ export const Header: React.FC<HeaderProps> = ({
 
               <button
                 onClick={() => {
-                  setShowMenuDrawer(false);
+                  setDrawerVisible(false);
                   if (onOpenManageAddress) {
                     onOpenManageAddress();
                   } else if (onOpenLocationModal) {
@@ -727,7 +742,7 @@ export const Header: React.FC<HeaderProps> = ({
 
               <button
                 onClick={() => {
-                  setShowMenuDrawer(false);
+                  setDrawerVisible(false);
                   onOpenNotificationSettings?.();
                 }}
                 className={`w-full flex items-center justify-between p-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
@@ -747,7 +762,7 @@ export const Header: React.FC<HeaderProps> = ({
               <div className="p-4 border-t border-slate-200 dark:border-slate-800">
                 <button
                   onClick={() => {
-                    setShowMenuDrawer(false);
+                    setDrawerVisible(false);
                     onLogout();
                   }}
                   className="w-full flex items-center justify-center space-x-2 py-2.5 rounded-xl text-rose-500 font-bold hover:bg-rose-500/10 cursor-pointer transition-colors text-xs"

@@ -103,6 +103,7 @@ interface CustomerAppProps {
   onOpenLocationModal?: () => void;
   onOpenManageAddress?: () => void;
   onOpenNotificationSettings?: () => void;
+  onOpenMenuDrawer?: () => void;
 }
 
 interface HeroShowcaseSlide {
@@ -183,7 +184,8 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
   onOpenAuthModal,
   onOpenLocationModal,
   onOpenManageAddress,
-  onOpenNotificationSettings
+  onOpenNotificationSettings,
+  onOpenMenuDrawer
 }) => {
   const isDark = theme === 'dark';
   const { t } = useTranslation(language);
@@ -876,6 +878,17 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                 <span className={`text-xs font-semibold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
                   {greetingText}
                 </span>
+                {currentUser && (
+                  <button
+                    type="button"
+                    onClick={() => onOpenMenuDrawer?.()}
+                    className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 hover:bg-emerald-500/20 transition cursor-pointer"
+                    title="Click to view verified profile & switch portals"
+                  >
+                    <CheckCircle2 className="w-3 h-3" />
+                    <span>Verified Account</span>
+                  </button>
+                )}
               </div>
               <h2 className="text-xl sm:text-2xl font-black tracking-tight leading-snug">
                 {displayUserName}
@@ -931,17 +944,20 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                 )}
               </button>
 
-              <div
+              <button
+                type="button"
                 onClick={() => {
-                  if (!currentUser && onOpenAuthModal) {
+                  if (onOpenMenuDrawer) {
+                    onOpenMenuDrawer();
+                  } else if (!currentUser && onOpenAuthModal) {
                     onOpenAuthModal('customer');
                   }
                 }}
                 className="w-10 h-10 rounded-full bg-[#004D40] hover:bg-teal-700 text-white font-black text-sm flex items-center justify-center shadow-md cursor-pointer transition-transform hover:scale-105"
-                title={currentUser ? currentUser.name : 'Click to Login'}
+                title={currentUser ? `${currentUser.name} - Open Menu & Portals` : 'Click to Login'}
               >
                 {userAvatarInitial}
-              </div>
+              </button>
             </div>
           </div>
 

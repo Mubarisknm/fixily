@@ -128,6 +128,7 @@ export function App() {
   const [isLocationModalOpen, setIsLocationModalOpen] = useState<boolean>(false);
   const [isManageAddressOpen, setIsManageAddressOpen] = useState<boolean>(false);
   const [isNotificationSettingsOpen, setIsNotificationSettingsOpen] = useState<boolean>(false);
+  const [isMenuDrawerOpen, setIsMenuDrawerOpen] = useState<boolean>(false);
   const [isDetectingLiveGps, setIsDetectingLiveGps] = useState<boolean>(false);
   const [liveGpsToast, setLiveGpsToast] = useState<{ message: string; isLive: boolean } | null>(null);
 
@@ -429,6 +430,8 @@ export function App() {
           isDetectingLiveGps={isDetectingLiveGps}
           onOpenManageAddress={() => setIsManageAddressOpen(true)}
           onOpenNotificationSettings={() => setIsNotificationSettingsOpen(true)}
+          isMenuDrawerOpen={isMenuDrawerOpen}
+          onSetMenuDrawerOpen={setIsMenuDrawerOpen}
         />
 
         {/* Live GPS & Location Change Floating Notification Toast */}
@@ -477,6 +480,7 @@ export function App() {
                   onOpenLocationModal={() => setIsLocationModalOpen(true)}
                   onOpenManageAddress={() => setIsManageAddressOpen(true)}
                   onOpenNotificationSettings={() => setIsNotificationSettingsOpen(true)}
+                  onOpenMenuDrawer={() => setIsMenuDrawerOpen(true)}
                 />
               )}
 
