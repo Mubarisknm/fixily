@@ -7,11 +7,18 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
+    "cap:sync": "npm run build && npx cap sync",
+    "cap:android": "npx cap open android",
+    "cap:ios": "npx cap open ios",
     "server": "node server/index.js",
     "start": "node server/index.js",
     "deploy": "vite build && wrangler deploy"
   },
   "dependencies": {
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/cli": "^8.5.3",
+    "@capacitor/core": "^8.5.3",
+    "@capacitor/ios": "^8.5.3",
     "clsx": "^2.1.1",
     "cors": "^2.8.5",
     "express": "^4.19.2",
